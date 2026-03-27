@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.swp
+*.egg-info/
+*.egg
+.eggs/
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Build / distribución
+dist/
+build/
+*.whl
+
+# Documentación compilada
+docs/_build/
+
+# Datos (archivos pesados: no versionar)
+data/
+src/ruidaqan/datos/
+src/ruidaqan/test_files/
+
+# Tests
+tests/fixtures/*.h5
+tests/fixtures/*.RUI
+tests/fixtures/*.pkl
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Variables de entorno
+.env

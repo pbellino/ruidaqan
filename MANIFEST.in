@@ -1,0 +1,11 @@
+# Incluir documentación compilada dentro del wheel
+graft src/ruidaqan/docs/
+
+# Incluir datos de transferencia (funciones de transferencia de los reactores)
+recursive-include src/ruidaqan/constants *.py *.PSD
+
+# Excluir siempre
+global-exclude *.pyc
+global-exclude *.pyo
+prune src/ruidaqan/datos/
+prune src/ruidaqan/test_files/
