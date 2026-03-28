@@ -1,4 +1,4 @@
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __commit__ = "766a36aa5f15a454e34c3e6d8721781e2cb461e0"
 
 import os
@@ -21,7 +21,7 @@ DEBUG_MODE = eval(debug_mode_str)
 #
 # TODO: verificar si sigue siendo válida en futuras versiones de los
 # paquetes
-# v0.1.1
+# v0.1.2
 
 if os.name == "nt":
     os.environ["QTWEBENGINE_DISABLE_SANDBOX"] = "1"
