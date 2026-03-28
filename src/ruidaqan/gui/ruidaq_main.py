@@ -11,7 +11,7 @@ from .parameters import GeneralParamTree, AdvancedParamTree
 from .acquisition_window import BackgroundWindow
 from .oscilloscope_window import OscilloscopeWindow
 from .measurement_window import MeasurementWindow, AdvanceConfigurationWindow
-from .config import RESET_DEFAULT_PARAMS
+from .appconfig import get_data_folder, ask_data_folder, RESET_DEFAULT_PARAMS
 from .ventanas_ayuda import VentanaAyuda, AboutWindow
 import ruidaqan
 if ruidaqan.DEBUG_MODE:
@@ -27,33 +27,26 @@ class MainWindow(QMainWindow):
         """Initializer."""
         super().__init__(parent)
 
-        # current = os.path.dirname(os.path.realpath(__file__))
-        # parent = os.path.dirname(current)
-
         self.init_estructura_datos()
         self.init_ui()
         self._create_data_folder()
 
-        # Oscilloscope window created every botton clicked 
         self.osc_win_exist = False
         self.btn_osciloscope.clicked.connect(self.show_osc_win)
         self.meas_win_exist = False
         self.btn_measurement.clicked.connect(self.show_meas_win)
         self.advconf_win_exist = False
         self.cfg_gral.paramChange.connect(self.cfg_gral_change)
-        # Ventana medición fondo
         self.background_win_exist = False
         self.btn_fondo.clicked.connect(self.show_background_win)
 
 
     def init_estructura_datos(self):
-        # Inicialización de la estructura de datos
         self.cfg_gral = GeneralParamTree(reset=RESET_DEFAULT_PARAMS)
         self.n_det = self.cfg_gral.get_param_value("Parámetros generales",
                                             "Cadenas de medición")
         self.cip = self.cfg_gral.get_param_value("Parámetros generales",
                                             "Medición de CIp")
-
         self.cfg_adv = AdvancedParamTree(self.n_det, self.cip, reset=True)
         self.cfg_gral.set_whole_tree("writable")
 
@@ -62,18 +55,15 @@ class MainWindow(QMainWindow):
         self.setGeometry(10, 30, 350, 500)
         self.setWindowTitle('RuiDAQAn')
         self._createMenu()
-        # self._createToolBar()
 
         self.mainbox = QWidget(self)
         self.setCentralWidget(self.mainbox)
-        # Define widgets
         self.btn_osciloscope = QPushButton("Osciloscopio")
         self.btn_fondo = QPushButton("Medición del fondo")
         self.btn_measurement = QPushButton("Medición")
         self.title = QLabel("Medición de ruido neutrónico")
         self.title.setAlignment(
                 Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
-        # Layout
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.title, 1)
         self.layout.addWidget(self.cfg_gral, 7)
@@ -84,30 +74,21 @@ class MainWindow(QMainWindow):
 
 
     def _create_data_folder(self):
-        self.DATA_FOLDER = os.path.join(os.getcwd(), "datos")
+        """Obtiene la carpeta de trabajo y la crea si no existe."""
+        self.DATA_FOLDER = get_data_folder(self)
+        self.DATA_FOLDER.mkdir(parents=True, exist_ok=True)
 
-        # Write path to data folder in config.py
-        current = os.path.dirname(os.path.realpath(__file__))
-        path_config = os.path.join(current, "config.py")
-        with open(path_config, 'r', encoding='utf-8') as file:
-            data = file.readlines()
-        for k, line in enumerate(data):
-            if "DATA_FOLDER" in line:
-                data[k] = f'DATA_FOLDER = r"{self.DATA_FOLDER}"\n'
-                break
-        with open(path_config, 'w', encoding='utf-8') as file:
-            file.writelines(data)
 
-        try:
-            os.mkdir(self.DATA_FOLDER)
-        except FileExistsError:
-            # La carpeta ya existe
-            pass
+    def _cambiar_data_folder(self):
+        """Permite al usuario cambiar la carpeta de trabajo."""
+        self.DATA_FOLDER = ask_data_folder(self)
+        self.DATA_FOLDER.mkdir(parents=True, exist_ok=True)
 
 
     def _createMenu(self):
         menu1 = self.menuBar()
         menu = menu1.addMenu('&Menu')
+        menu.addAction('Cambiar carpeta de trabajo', self._cambiar_data_folder)
         menu.addAction('&Exit', self.close)
         conf = menu1.addMenu("&Cfg. avanzada")
         conf.addAction('&Ver/Editar', self.show_advconf_win)
@@ -169,26 +150,18 @@ class MainWindow(QMainWindow):
         serie = self.cfg_gral.get_param_value("Parámetros generales",
                                               "Serie")
         dev_info = GetDevicesInfo().device_info(dev)
-        # Rangos disponibles de la tarjeta
         rangos = dev_info.ai_ranges
-        # Tomo por comodidad el primer canal
         canal = self.cfg_adv.get_channels()[0]
-        # Diccionario para guardar los coeficientes
         coeficientes = {}
         for rg in rangos:
-            # La clave de los dics es el rango positivo
             coeficientes[rg[1]] = dev_info.scaling_coeff(canal, rg)
-        # Grabo los coeficientes en un archivo pickle
         filename = f"S{serie:02d}-coeficientes_int_to_volt.pkl"
         with open(os.path.join(self.DATA_FOLDER, filename), 'wb') as f:
             pickle.dump(coeficientes, f)
 
 
-    #@pyqtSlot()
     def show_advconf_win(self):
         if not self.advconf_win_exist:
-            # Grabo la configuración porque se usa en dentro de la
-            # clase AdvanceConfigurationWindow()
             self.cfg_gral.save_settings()
             self.cfg_adv.save_settings()
             self.advconf_win = AdvanceConfigurationWindow(parent=self)
@@ -221,7 +194,6 @@ class MainWindow(QMainWindow):
         """
         Cuando se cambia cantidad de detectores y medición de CIp
         se actualizan los datos de la configuración avanzada
-
         """
         for param, change, data in changes:
             _childs = self.cfg_gral.params.childPath(param)
@@ -231,7 +203,6 @@ class MainWindow(QMainWindow):
             elif "Cadenas de medición" in _childs and change == "value":
                 self.n_det = data
                 self.cfg_adv.actualiza_cadenas_med(data)
-                #self.cfg_adv.set_channels_names()
 
 
     @pyqtSlot()
@@ -255,7 +226,6 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         self.cfg_gral.save_settings()
-        """ Manage closing main window """
         if self.osc_win_exist:
             self.osc_win.close()
         if self.meas_win_exist:

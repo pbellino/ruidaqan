@@ -9,6 +9,7 @@ import sys
 import pickle
 from scipy import signal
 from uncertainties import ufloat, unumpy, correlated_values
+import importlib.resources
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
@@ -39,9 +40,7 @@ class HDF5FileProcessing():
 
         self._read_file(self.file_name)
 
-        current = os.path.dirname(os.path.realpath(__file__))
-        parent = os.path.dirname(current)
-        self.TRANSFERS_FOLDER = os.path.join(parent, "transferencias")
+        self.TRANSFERS_FOLDER = str(importlib.resources.files("ruidaqan") / "transferencias")
 
 
     def _read_file(self, file_name):
@@ -614,9 +613,7 @@ class RUIFileProcessing():
 
         self._read_file(self.file_name)
 
-        current = os.path.dirname(os.path.realpath(__file__))
-        parent = os.path.dirname(current)
-        self.TRANSFERS_FOLDER = os.path.join(parent, "transferencias")
+        self.TRANSFERS_FOLDER = str(importlib.resources.files("ruidaqan") / "transferencias")
 
         if resolution is None:
             self.ADC_resolution = self._get_resolution()
@@ -1724,8 +1721,6 @@ class FitResults():
 
 
 if __name__ == "__main__":
-    current = os.path.dirname(os.path.realpath(__file__))
-    parent = os.path.dirname(current)
     sys.path.append(parent)
 
     ##########################################################################

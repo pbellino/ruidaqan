@@ -46,6 +46,7 @@ dependencies = [
     "tomli>=2.0.1",
     "uncertainties>=3.1.6,<3.2",
     "darkdetect>=0.8.0",
+    "platformdirs>=3.0.0",
 ]
 
 [project.optional-dependencies]

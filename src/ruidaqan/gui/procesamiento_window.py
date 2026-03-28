@@ -18,7 +18,7 @@ import pyqtgraph as pg
 from .resultados_window import ShowSpectrumFittedValues
 from .plotter import PlotProcessing
 from .ventanas_ayuda import VentanaAyuda, AboutWindow
-from .config import DATA_FOLDER
+from .appconfig import get_data_folder
 from ..constants import constantes_reactores as CONREAC
 from ..script.data_fercin3_io import RUIFileProcessing, HDF5FileProcessing
 
@@ -35,7 +35,7 @@ class FitWindow(QMainWindow):
         super().__init__()
 
         # Carpeta donde se leerán y gardarán datos por default
-        self.data_folder = DATA_FOLDER
+        self.data_folder = str(get_data_folder())
 
         self.time_filename = file_name
         self.from_acquisition = from_acquisition

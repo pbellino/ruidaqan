@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (QVBoxLayout, QPushButton, QWidget, QTableView,
 
 from .ventanas_ayuda import VentanaAyuda, AboutWindow
 from .ScientificDoubleSpinBox import ScientificDoubleSpinBox
-from .config import DATA_FOLDER
+from .appconfig import get_data_folder
 from ..script.data_fercin3_io import FitResults
 from ..script.fit_models import ajuste_lineal, weighted_average
 
@@ -404,7 +404,7 @@ class ShowSpectrumFittedValues(QMainWindow):
 
     prev_win_closed = pyqtSignal()
 
-    def __init__(self, serie=None, folder=DATA_FOLDER):
+    def __init__(self, serie=None, folder=None):
         """
         Serie: int
             Identificación de la serie
@@ -413,7 +413,7 @@ class ShowSpectrumFittedValues(QMainWindow):
         self.serie = serie
 
         # Carpeta donde se leerán y gardarán datos poe default
-        self.data_folder = folder
+        self.data_folder = folder if folder is not None else str(get_data_folder())
 
         self.init_ui()
         self.tabs_view.setEnabled(False)
