@@ -153,7 +153,7 @@ jobs:
         shell: pwsh
         run: |
           $HASH = git rev-parse --short HEAD
-          (Get-Content src\ruidaqan\__init__.py) -replace '__commit__ =.*', "__commit__ = `"$HASH`"" | Set-Content src\ruidaqan\__init__.py
+          (Get-Content src\ruidaqan\__init__.py) -replace '^__commit__ =.*', "__commit__ = `"$HASH`"" | Set-Content src\ruidaqan\__init__.py
 
       - name: Generar documentación y copiar al paquete
         shell: pwsh
