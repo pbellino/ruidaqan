@@ -33,3 +33,14 @@ language = 'es'
 
 html_theme = 'pydata_sphinx_theme'
 html_static_path = ['_static']
+
+# -- Mocking de dependencias pesadas -----------------------------------------
+import unittest.mock
+
+MOCK_MODULES = [
+    'PyQt5', 'PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.QtWidgets',
+    'PyQt5.QtWebEngineWidgets', 'numpy', 'pandas', 'matplotlib',
+    'matplotlib.pyplot', 'pyqtgraph'
+]
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = unittest.mock.Mock()
