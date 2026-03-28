@@ -13,7 +13,7 @@ where = ["src"]
 
 [project]
 name        = "ruidaqan"
-version     = "0.1.9"  # bumpver
+version     = "0.1.10"  # bumpver
 description = "Adquisición y procesamiento para ruido neutrónico"
 readme      = "README.rst"
 authors     = [{ name = "Pablo Bellino", email = "pbellino@cnea.gov.ar" }]
@@ -79,7 +79,7 @@ Repository = "https://github.com/pbellino/ruidaqan"
 # ---------------------------------------------------------------------------
 
 [tool.bumpver]
-current_version = "v0.1.9"
+current_version = "v0.1.10"
 version_pattern = "vMAJOR.MINOR.PATCH"
 commit_message  = "bump version {old_version} -> {new_version}"
 commit = true
