@@ -93,9 +93,7 @@ jobs:
           sudo apt-get install -y libegl1 libgl1-mesa-dev zip
 
       - name: Instalar paquete y PyInstaller
-        run: |
-          pip install -e ".[dev,build,docs]"
-          pip install pyinstaller
+        run: pip install -e ".[dev,build,docs]"
 
       - name: Stampar commit hash
         run: |
@@ -145,9 +143,7 @@ jobs:
           cache: pip
 
       - name: Instalar paquete y PyInstaller
-        run: |
-          pip install -e ".[dev,build,docs]"
-          pip install pyinstaller
+        run: pip install -e ".[dev,build,docs]"
 
       - name: Stampar commit hash
         shell: pwsh
