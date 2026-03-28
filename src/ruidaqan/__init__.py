@@ -1,4 +1,4 @@
-__version__ = "0.1.8"
+__version__ = "0.1.9"
 __commit__ = ""
 
 import os
@@ -22,7 +22,7 @@ DEBUG_MODE = eval(debug_mode_str)
 #
 # TODO: verificar si sigue siendo válida en futuras versiones de los
 # paquetes
-# v0.1.8
+# v0.1.9
 
 if os.name == "nt":
     os.environ["QTWEBENGINE_DISABLE_SANDBOX"] = "1"
