@@ -7,7 +7,7 @@ Info         Adquisición y análisis de señales para la técnica de ruido
 Author       División FER - CNEA
 ===========  ==================================================================
 
-version = "0.1.6"
+version = "0.1.7"
 
 Acerca
 ======
