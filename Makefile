@@ -32,25 +32,24 @@ test_cov:
 
 # ── Documentación ─────────────────────────────────────────────────────────────
 
-docs:
-	$(MAKE) -C docs html
-
-# ── Distribución ──────────────────────────────────────────────────────────────
-
 dist: docs
-	# Sincronizamos la documentación generada dentro del paquete
+	# 1. Preparar carpeta de docs interna
 	mkdir -p src/ruidaqan/docs/
 	cp -r docs/_build/html/* src/ruidaqan/docs/
-	
-	# Seteamos configuración de producción para la GUI
-	sed -i -e 's/DEBUG_MODE =.*/DEBUG_MODE = False/g'       src/ruidaqan/gui/config.py
-	sed -i -e 's/DATA_FOLDER =.*/DATA_FOLDER = ""/g'        src/ruidaqan/gui/config.py
-	
-	# Construimos el paquete
+
+	# 2. Configuración de producción (GUI y Commit Hash)
+	sed -i -e 's/DEBUG_MODE =.*/DEBUG_MODE = False/g'   src/ruidaqan/gui/config.py
+	sed -i -e 's/DATA_FOLDER =.*/DATA_FOLDER = ""/g'    src/ruidaqan/gui/config.py
+
+	# El estampado con el ancla ^ para evitar el IndentationError
+	$(eval HASH=$(shell git rev-parse --short HEAD))
+	sed -i 's/^__commit__ =.*/__commit__ = "$(HASH)"/' src/ruidaqan/__init__.py
+
+	# 3. Construir paquete
 	python -m build
-	
-	# Restauramos los archivos modificados para no ensuciar el repo local
-	git restore src/ruidaqan/gui/config.py
+
+	# 4. Limpiar para que tu repo local siga igual
+	git restore src/ruidaqan/gui/config.py src/ruidaqan/__init__.py
 
 clean:
 	rm -fr dist build src/*.egg-info
