@@ -5,9 +5,6 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.setuptools.dynamic]
-version = {attr = "ruidaqan.__version__"}
-
 [tool.setuptools.package-data]
 "ruidaqan" = [
     "docs/**/*",
@@ -16,7 +13,7 @@ version = {attr = "ruidaqan.__version__"}
 
 [project]
 name        = "ruidaqan"
-version     = ["version"]
+version     = "0.0.3"  # bumpver
 description = "Adquisición y procesamiento para ruido neutrónico"
 readme      = "README.rst"
 authors     = [{ name = "Pablo Bellino", email = "pbellino@cnea.gov.ar" }]
@@ -84,7 +81,10 @@ tag    = true
 push   = false
 
 [tool.bumpver.file_patterns]
-"pyproject.toml"            = ['current_version = "{version}"']
+"pyproject.toml" = [
+    'current_version = "{version}"',
+    'version     = "{version}"  # bumpver',
+]
 "README.rst"                = ["{version}"]
 "src/ruidaqan/__init__.py"  = ["{version}"]
 
