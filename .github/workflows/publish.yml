@@ -113,14 +113,23 @@ jobs:
           path: dist/*.zip
 
   publish-pypi:
+    name: Publicar en TestPyPI
     needs: build-wheel
     runs-on: ubuntu-latest
-    permissions: {id-token: write}
+    environment: pypi
+    permissions:
+      id-token: write
     steps:
-      - uses: actions/download-artifact@v4
-        with: {name: wheel, path: dist/}
-      - uses: pypa/gh-action-pypi-publish@release/v1
-        with: {repository-url: https://test.pypi.org/legacy/}
+      - name: Descargar wheel
+        uses: actions/download-artifact@v4
+        with:
+          name: wheel
+          path: dist/
+
+      - name: Publicar en TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
 
   release:
     needs: [build-wheel, build-linux, build-windows, publish-pypi]
