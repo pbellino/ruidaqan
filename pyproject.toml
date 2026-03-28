@@ -79,6 +79,7 @@ commit_message  = "bump version {old_version} -> {new_version}"
 commit = true
 tag    = true
 push   = false
+tag_pattern = "v{version}"
 
 [tool.bumpver.file_patterns]
 "pyproject.toml" = [
