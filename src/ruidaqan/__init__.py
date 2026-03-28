@@ -1,7 +1,8 @@
 __version__ = "0.1.3"
-__commit__ = "766a36aa5f15a454e34c3e6d8721781e2cb461e0"
+__commit__ = ""
 
 import os
+import subprocess
 
 # Constante para saber si se cargarán o no los drivers de NI
 # Se lee como variable de entorno del sistema
@@ -25,3 +26,13 @@ DEBUG_MODE = eval(debug_mode_str)
 
 if os.name == "nt":
     os.environ["QTWEBENGINE_DISABLE_SANDBOX"] = "1"
+
+
+if not __commit__:
+    try:
+        __commit__ = subprocess.check_output(
+            ['git', 'rev-parse', '--short', 'HEAD'],
+            stderr=subprocess.DEVNULL
+        ).decode('ascii').strip()
+    except Exception:
+        __commit__ = "desconocido"

@@ -69,7 +69,7 @@ class AboutWindow(QMainWindow):
         version = ruidaqan.__version__
         commit = ruidaqan.__commit__
         # __commit__ sólo si se corre una distribución
-        if commit == "": commit = "en desarrollo"
+        # if commit == "": commit = "en desarrollo"
         self.label = QLabel(str_vent_about%(version, commit))
         self.label.setAlignment(
                 Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
