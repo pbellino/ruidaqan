@@ -70,7 +70,7 @@ jobs:
           pip install -e ".[dev,docs]"
           pip install pyinstaller
           sphinx-build docs docs/_build/html
-          cp -r docs/_build/html/* src/ruidaqan/docs/
+          cp -r docs/_build/html src/ruidaqan/docs/
           make -f pyinstaller/Makefile.exe exe_procesamiento
           make -f pyinstaller/Makefile.exe exe_resultados
           make -f pyinstaller/Makefile.exe exe_adquisicion
