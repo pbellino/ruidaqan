@@ -49,11 +49,11 @@ jobs:
 
       - name: Verificar que el tag coincide con la versión del paquete
         run: |
-          TAG_VERSION="${GITHUB_REF_NAME}"
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
           PKG_VERSION=$(python -c "import tomli; f=open('pyproject.toml','rb'); d=tomli.load(f); print(d['project']['version'])")
-          echo "Tag: $TAG_VERSION  |  pyproject.toml: $PKG_VERSION"
+          echo "Tag (normalizado): $TAG_VERSION  |  pyproject.toml: $PKG_VERSION"
           if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
-            echo "ERROR: el tag ($TAG_VERSION) no coincide con la versión ($PKG_VERSION)"
+            echo "ERROR: el tag normalizado ($TAG_VERSION) no coincide con la versión ($PKG_VERSION)"
             exit 1
           fi
 
