@@ -81,7 +81,7 @@ tag    = true
 push   = false
 
 [tool.bumpver.file_patterns]
-"pyproject.toml"            = ['version = "{version}"', 'current_version = "{version}"']
+"pyproject.toml"            = ['current_version = "{version}"', 'project.version = "{version}"']
 "README.rst"                = ["{version}"]
 "src/ruidaqan/__init__.py"  = ["{version}"]
 
