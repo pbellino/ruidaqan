@@ -1,7 +1,11 @@
 NAME = ruidaqan
 
 .SUFFIXES:
-.PHONY: clean dist install install_dev docs lint test
+.PHONY: clean dist install install_dev docs lint test exe stamp_hash restore_hash
+
+# Variables de ruta
+INIT_FILE = src/ruidaqan/__init__.py
+MAKE_EXE = make -f pyinstaller/Makefile.exe
 
 # ── Instalación ──────────────────────────────────────────────────────────────
 
@@ -35,7 +39,7 @@ test_cov:
 dist: docs
 	# 1. Preparar carpeta de docs interna
 	mkdir -p src/ruidaqan/docs/
-	cp -r docs/_build/html/* src/ruidaqan/docs/
+	cp -r docs/_build/html/* src/ruidaqan/docs/html/
 
 	# 2. Configuración de producción (GUI y Commit Hash)
 	sed -i -e 's/DEBUG_MODE =.*/DEBUG_MODE = False/g'   src/ruidaqan/gui/config.py
@@ -53,3 +57,23 @@ dist: docs
 
 clean:
 	rm -fr dist build src/*.egg-info
+
+# Construye todo el ecosistema de distribución
+# Nota: 'dist' ya hace su propio stamp/restore interno.
+exe: dist
+	@$(MAKE) stamp_hash
+	@echo "Generando ejecutables independientes..."
+	$(MAKE_EXE) exe_adquisicion
+	$(MAKE_EXE) exe_procesamiento
+	$(MAKE_EXE) exe_resultados
+	@$(MAKE) restore_hash
+	@echo "Proceso de ejecutables finalizado y repo limpio."
+
+stamp_hash:
+	$(eval HASH=$(shell git rev-parse --short HEAD))
+	@echo "Estampando hash $(HASH) en $(INIT_FILE)..."
+	sed -i 's/^__commit__ =.*/__commit__ = "$(HASH)"/' $(INIT_FILE)
+
+restore_hash:
+	@echo "Restaurando $(INIT_FILE) al estado original..."
+	git restore $(INIT_FILE)
