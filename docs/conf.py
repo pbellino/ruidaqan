@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.abspath('../src'))
 # -- Extracción de Versión y Hash de Git -------------------------------------
 try:
     try:
-        import tomllib as tomli
+        import tomllib as tomli  # Python 3.11+
     except ImportError:
         import tomli
 
@@ -40,7 +40,7 @@ extensions = [
     'sphinx_design',
 ]
 
-# ESTO SOLUCIONA LOS ERRORES DE IMPORTACIÓN EN EL CI
+# ESTO ES LO QUE EVITA LOS ERRORES DE "No module named numpy" o "libEGL"
 autodoc_mock_imports = [
     'PyQt5', 'PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.QtWidgets', 
     'PyQt5.QtWebEngineWidgets', 'PyQt5.QtChart', 'pyqtgraph',
