@@ -44,18 +44,18 @@ jobs:
           python-version: "3.10"
           cache: pip
 
+      - name: Instalar dependencias de build
+        run: pip install build twine sphinx sphinx-design pydata-sphinx-theme tomli
+
       - name: Verificar que el tag coincide con la versión del paquete
         run: |
           TAG_VERSION="${GITHUB_REF_NAME}"
-          PKG_VERSION=$(python -c "import tomllib; f=open('pyproject.toml','rb'); d=tomllib.load(f); print(d['project']['version'])")
+          PKG_VERSION=$(python -c "import tomli; f=open('pyproject.toml','rb'); d=tomli.load(f); print(d['project']['version'])")
           echo "Tag: $TAG_VERSION  |  pyproject.toml: $PKG_VERSION"
           if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
             echo "ERROR: el tag ($TAG_VERSION) no coincide con la versión ($PKG_VERSION)"
             exit 1
           fi
-
-      - name: Instalar dependencias de build
-        run: pip install build twine sphinx sphinx-design pydata-sphinx-theme
 
       - name: Instalar paquete
         run: pip install -e .
