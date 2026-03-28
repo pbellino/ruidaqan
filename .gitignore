@@ -19,15 +19,20 @@ build/
 
 # Documentación compilada
 docs/_build/
+src/ruidaqan/docs/html/
+src/ruidaqan/docs/_modules/
 
-# Datos (archivos pesados: no versionar)
+# Datos de usuario (archivos pesados: no versionar)
 src/ruidaqan/datos/
 src/ruidaqan/test_files/
 
-# Tests
+# Fixtures de tests (archivos de datos reales)
 tests/fixtures/*.h5
 tests/fixtures/*.RUI
 tests/fixtures/*.pkl
+
+# PyInstaller
+pyinstaller/build/
 
 # IDE
 .vscode/
@@ -36,6 +41,3 @@ tests/fixtures/*.pkl
 
 # Variables de entorno
 .env
-
-# Docs compilada (se genera con make docs, se incluye solo en el wheel)
-src/ruidaqan/docs/html/
