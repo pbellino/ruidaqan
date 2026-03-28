@@ -74,21 +74,21 @@ Repository = "https://github.com/pbellino/ruidaqan"
 # ---------------------------------------------------------------------------
 
 [tool.bumpver]
-current_version = "0.0.0"
+current_version = "v0.0.0"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message  = "bump version {old_version} -> {new_version}"
 commit = true
 tag    = true
 push   = false
-tag_format = "v{version}"
+tag_format = "{version}"
 
 [tool.bumpver.file_patterns]
 "pyproject.toml" = [
     'current_version = "{version}"',
-    'version     = "{version}"  # bumpver',
+    'version     = "{pep440_version}"  # bumpver',
 ]
-"README.rst"                = ["{version}"]
-"src/ruidaqan/__init__.py"  = ["{version}"]
+"README.rst"                = ["{pep440_version}"]
+"src/ruidaqan/__init__.py"  = ["{pep440_version}"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
