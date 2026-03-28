@@ -21,7 +21,6 @@ build/
 docs/_build/
 
 # Datos (archivos pesados: no versionar)
-data/
 src/ruidaqan/datos/
 src/ruidaqan/test_files/
 
