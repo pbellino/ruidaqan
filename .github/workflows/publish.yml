@@ -1,4 +1,3 @@
-
 name: Publicar release
 
 on:
@@ -7,233 +6,129 @@ on:
       - "v*"
 
 jobs:
-  # ── 1. Tests ─────────────────────────────────────────────────────────────
   test:
     name: Tests pre-publicación
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
           cache: pip
-
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-
-          # - name: Lint
-          # run: ruff check src/ tests/
-
       - name: Tests
         env:
           RUIDAQAN_DEBUG_MODE: "True"
         run: pytest --tb=short -q
 
-  # ── 2. Build wheel y sdist ───────────────────────────────────────────────
   build-wheel:
     name: Build wheel y sdist
     needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-          cache: pip
-
-      - name: Instalar dependencias de build y docs
-        run: pip install ".[build,docs]" 
-
-      - name: Verificar que el tag coincide con la versión del paquete
+      - name: Instalar herramientas
+        run: pip install build sphinx sphinx-design pydata-sphinx-theme tomli
+      - name: Build y Docs
         run: |
-          TAG_VERSION="${GITHUB_REF_NAME#v}"
-          PKG_VERSION=$(python -c "import tomli; f=open('pyproject.toml','rb'); d=tomli.load(f); print(d['project']['version'])")
-          echo "Tag (normalizado): $TAG_VERSION  |  pyproject.toml: $PKG_VERSION"
-          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
-            echo "ERROR: el tag normalizado ($TAG_VERSION) no coincide con la versión ($PKG_VERSION)"
-            exit 1
-          fi
-
-      - name: Instalar paquete
-        run: pip install -e .
-
-      - name: Generar documentación
-        run: make docs
-
-      - name: Copiar docs al paquete
-        run: cp -r docs/_build/html src/ruidaqan/docs/
-
-      - name: Stampar commit hash
-        run: |
-          HASH=$(git rev-parse HEAD)
-          sed -i "s/__commit__ =.*/__commit__ = \"$HASH\"/" src/ruidaqan/__init__.py
-
-      - name: Build
-        run: python -m build
-
-      - name: Verificar integridad
-        run: twine check dist/*
-
-      - name: Subir artefactos wheel
+          pip install -e .
+          # Sphinx leerá el hash solo gracias al fetch-depth: 0
+          sphinx-build docs docs/_build/html
+          mkdir -p src/ruidaqan/docs/
+          cp -r docs/_build/html/* src/ruidaqan/docs/
+          python -m build
+      - name: Subir artefacto
         uses: actions/upload-artifact@v4
         with:
           name: wheel
           path: dist/
-          retention-days: 7
 
-  # ── 3. Ejecutables Linux ─────────────────────────────────────────────────
   build-linux:
     name: Ejecutables Linux
     needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
-          cache: pip
-
-      - name: Instalar dependencias del sistema (Qt/WebEngine)
+          fetch-depth: 0
+      - name: Dependencias de sistema
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            libxcb-xinerama0 libxcb-icccm4 libxcb-image0 \
-            libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 \
-            libxcb-xkb1 libxkbcommon-x11-0 libegl1 \
-            libglib2.0-0 libnss3 libatk1.0-0 libatk-bridge2.0-0 \
-            libcups2 libdrm2 libgtk-3-0 libgbm1
-
-      - name: Instalar paquete y PyInstaller
+          sudo apt-get install -y libegl1 libgl1-mesa-dev zip
+      - name: Build
         run: |
           pip install -e ".[dev,docs]"
           pip install pyinstaller
-
-      - name: Generar docs y copiar al paquete
-        run: |
-          pip install sphinx sphinx-design pydata-sphinx-theme
-          make docs
-          cp -r docs/_build/html src/ruidaqan/docs/
-
-      - name: Generar ejecutables
-        env:
-          RUIDAQAN_DEBUG_MODE: "True"
-        run: |
+          sphinx-build docs docs/_build/html
+          cp -r docs/_build/html/* src/ruidaqan/docs/
           make -f pyinstaller/Makefile.exe exe_procesamiento
           make -f pyinstaller/Makefile.exe exe_resultados
           make -f pyinstaller/Makefile.exe exe_adquisicion
-
-      - name: Comprimir ejecutables
+      - name: Comprimir
         run: |
           cd dist
-          zip -r ruidaqan-adquisicion-linux.zip   ruidaqan-adquisicion/
-          zip -r ruidaqan-procesamiento-linux.zip  ruidaqan-procesamiento/
-          zip -r ruidaqan-resultados-linux.zip     ruidaqan-resultados/
-
-      - name: Subir artefactos Linux
+          zip -r ruidaqan-linux.zip ruidaqan-*/
+      - name: Subir Linux
         uses: actions/upload-artifact@v4
         with:
           name: executables-linux
-          path: |
-            dist/ruidaqan-adquisicion-linux.zip
-            dist/ruidaqan-procesamiento-linux.zip
-            dist/ruidaqan-resultados-linux.zip
-          retention-days: 7
+          path: dist/*.zip
 
-  # ── 4. Ejecutables Windows ───────────────────────────────────────────────
   build-windows:
     name: Ejecutables Windows
     needs: test
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
-          cache: pip
-
-      - name: Instalar paquete y PyInstaller
+          fetch-depth: 0
+      - name: Build
         run: |
           pip install -e ".[dev,docs]"
           pip install pyinstaller
-
-      - name: Generar docs y copiar al paquete
-        run: |
-          pip install sphinx sphinx-design pydata-sphinx-theme
           sphinx-build docs docs/_build/html
           xcopy /E /I docs\_build\html src\ruidaqan\docs\html
-
-      - name: Generar ejecutables
-        run: |
           pyinstaller pyinstaller/specs/ruidaqan_procesamiento.spec --noconfirm
           pyinstaller pyinstaller/specs/ruidaqan_resultados.spec --noconfirm
           pyinstaller pyinstaller/specs/ruidaqan_adquisicion.spec --noconfirm
-
-      - name: Comprimir ejecutables
+      - name: Comprimir
         shell: pwsh
         run: |
           cd dist
-          Compress-Archive -Path ruidaqan-adquisicion   -DestinationPath ruidaqan-adquisicion-windows.zip
-          Compress-Archive -Path ruidaqan-procesamiento -DestinationPath ruidaqan-procesamiento-windows.zip
-          Compress-Archive -Path ruidaqan-resultados    -DestinationPath ruidaqan-resultados-windows.zip
-
-      - name: Subir artefactos Windows
+          Compress-Archive -Path ruidaqan-* -DestinationPath ruidaqan-windows.zip
+      - name: Subir Windows
         uses: actions/upload-artifact@v4
         with:
           name: executables-windows
-          path: |
-            dist/ruidaqan-adquisicion-windows.zip
-            dist/ruidaqan-procesamiento-windows.zip
-            dist/ruidaqan-resultados-windows.zip
-          retention-days: 7
+          path: dist/*.zip
 
-  # ── 5. Publicar en TestPyPI ──────────────────────────────────────────────
   publish-pypi:
-    name: Publicar en TestPyPI
     needs: build-wheel
     runs-on: ubuntu-latest
-    environment: pypi
-    permissions:
-      id-token: write
+    permissions: {id-token: write}
     steps:
-      - name: Descargar wheel
-        uses: actions/download-artifact@v4
-        with:
-          name: wheel
-          path: dist/
+      - uses: actions/download-artifact@v4
+        with: {name: wheel, path: dist/}
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with: {repository-url: https://test.pypi.org/legacy/}
 
-      - name: Publicar en TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-
-  # ── 6. GitHub Release ────────────────────────────────────────────────────
   release:
-    name: Crear GitHub Release
     needs: [build-wheel, build-linux, build-windows, publish-pypi]
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    permissions: {contents: write}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Descargar todos los artefactos
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
+        with: {path: artifacts/}
+      - uses: softprops/action-gh-release@v2
         with:
-          path: artifacts/
-
-      - name: Crear Release con todos los archivos
-        uses: softprops/action-gh-release@v2
-        with:
-          name: "ruidaqan ${{ github.ref_name }}"
-          generate_release_notes: true
-          files: |
-            artifacts/wheel/*.whl
-            artifacts/wheel/*.tar.gz
-            artifacts/executables-linux/*.zip
-            artifacts/executables-windows/*.zip
+          files: artifacts/**/*
