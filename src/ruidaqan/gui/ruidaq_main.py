@@ -72,17 +72,18 @@ class MainWindow(QMainWindow):
         self.layout.addWidget(self.btn_measurement, 4)
         self.mainbox.setLayout(self.layout)
 
-
     def _create_data_folder(self):
         """Obtiene la carpeta de trabajo y la crea si no existe."""
         self.DATA_FOLDER = get_data_folder(self)
-        self.DATA_FOLDER.mkdir(parents=True, exist_ok=True)
-
+        if self.DATA_FOLDER is not None:
+            self.DATA_FOLDER.mkdir(parents=True, exist_ok=True)
 
     def _cambiar_data_folder(self):
         """Permite al usuario cambiar la carpeta de trabajo."""
-        self.DATA_FOLDER = ask_data_folder(self)
-        self.DATA_FOLDER.mkdir(parents=True, exist_ok=True)
+        nueva = ask_data_folder(self)
+        if nueva is not None:
+            self.DATA_FOLDER = nueva
+            self.DATA_FOLDER.mkdir(parents=True, exist_ok=True)
 
 
     def _createMenu(self):

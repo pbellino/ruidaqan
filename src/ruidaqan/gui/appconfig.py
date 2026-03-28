@@ -74,21 +74,30 @@ def ask_data_folder(parent=None):
     Path
         Carpeta de trabajo seleccionada.
     """
+
     folder = QFileDialog.getExistingDirectory(
         parent,
         "Seleccionar carpeta de trabajo",
         str(Path.home()),
     )
-    if not folder:
-        QMessageBox.critical(
-            parent,
-            "Error",
-            "Es necesario seleccionar una carpeta de trabajo para continuar.",
-        )
-        raise SystemExit(1)
+    if folder:
+        folder = Path(folder)
+        cfg = _load()
+        cfg["data_folder"] = str(folder)
+        _save(cfg)
+        return folder
 
-    folder = Path(folder)
+    # El usuario canceló — crear carpeta por defecto
+    folder = Path.home() / "Datos"
+    folder.mkdir(parents=True, exist_ok=True)
     cfg = _load()
     cfg["data_folder"] = str(folder)
     _save(cfg)
+    QMessageBox.information(
+        parent,
+        "Carpeta de trabajo",
+        f"No se seleccionó ninguna carpeta.\n"
+        f"Se utilizará la carpeta por defecto:\n{folder}",
+    )
     return folder
+
