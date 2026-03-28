@@ -14,8 +14,14 @@ class VentanaAyuda(QMainWindow):
         super().__init__(parent)
 
         # Ruta del archivo de ayuda
-        two_up = os.path.normpath(__file__).rsplit(os.sep, maxsplit=2)[0]
-        path = os.path.join(two_up, 'docs', 'html', 'manual', 'pantallas.html')
+        pkg_path = os.path.normpath(
+        os.path.join(os.path.dirname(__file__), '..', 'docs', 'html', 'manual', 'pantallas.html')
+        )
+        if not os.path.exists(pkg_path):
+            four_up = os.path.normpath(__file__).rsplit(os.sep, maxsplit=4)[0]
+            pkg_path = os.path.join(four_up, 'docs', '_build', 'html', 'manual', 'pantallas.html')
+        path = pkg_path
+
         URL = QUrl.fromLocalFile(path)
         # Para abrir la página en una determinada referencia
         if referencia: URL.setFragment(referencia)

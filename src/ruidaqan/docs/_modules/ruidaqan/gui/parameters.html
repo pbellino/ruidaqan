@@ -1,0 +1,1810 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ruidaqan.gui.parameters &#8212; documentación de RuiDAQAn - </title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=e2bb6099"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ruidaqan/gui/parameters';</script>
+    <link rel="index" title="Índice" href="../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">documentación de RuiDAQAn - </p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../manual/pantallas.html">
+    Ventanas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../manual/funcionamiento.html">
+    Funcionamiento
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../modules.html">
+    Código
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../manual/pantallas.html">
+    Ventanas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../manual/funcionamiento.html">
+    Funcionamiento
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../modules.html">
+    Código
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Miga de pan" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Inicio">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Código de módulo</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ruidaqan.gui.parameters</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Código fuente para ruidaqan.gui.parameters</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pprint</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyqtgraph.Qt</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyqtgraph.parametertree</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PyQt6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">QSettings</span><span class="p">,</span> <span class="n">pyqtSlot</span>
+
+<span class="c1">#from src.gui.config import *</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ruidaqan</span>
+<span class="k">if</span> <span class="n">ruidaqan</span><span class="o">.</span><span class="n">DEBUG_MODE</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.reader_debug</span><span class="w"> </span><span class="kn">import</span> <span class="n">GetDevicesInfo</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">GetDevicesInfo</span>
+
+
+<div class="viewcode-block" id="ParamTreeBase">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.ParamTreeBase">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParamTreeBase</span><span class="p">(</span><span class="n">ParameterTree</span><span class="p">):</span>
+    <span class="c1"># ParamTree will output a signal that has the param and the output</span>
+    <span class="n">paramChange</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">QSettings</span><span class="p">(</span><span class="s2">&quot;ruidaqan&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">Parameter</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                       <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                                       <span class="n">children</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="c1"># load saved data when available or otherwise specified in config.py</span>
+        <span class="c1">#if self.settings.value(&quot;State&quot;) != None and not RESET_DEFAULT_PARAMS:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;State&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">reset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;State&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">restoreState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading default params for&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setParameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">showTop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># When the params change, send to method to emit.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">sigTreeStateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">send_change</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ParamTreeBase.send_change">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.ParamTreeBase.send_change">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">send_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">changes</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paramChange</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">changes</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ParamTreeBase.get_param_value">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.ParamTreeBase.get_param_value">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_param_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">childs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the current value of a parameter.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">childs</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="ParamTreeBase.set_param_value">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.ParamTreeBase.set_param_value">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_param_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">childs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the current value of a parameter.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">childs</span><span class="p">)</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ParamTreeBase.set_param_limits">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.ParamTreeBase.set_param_limits">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_param_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">childs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the limits of a parameter.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">childs</span><span class="p">)</span><span class="o">.</span><span class="n">setLimits</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ParamTreeBase.set_whole_tree">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.ParamTreeBase.set_whole_tree">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_whole_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set properties for the whole tree</span>
+
+<span class="sd">        method = &quot;readonly&quot;, &quot;writable&quot;, &quot;enabled&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">set_recursive</span><span class="p">(</span><span class="n">childs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">childs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">hasChildren</span><span class="p">():</span>
+                    <span class="n">set_recursive</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;readonly&quot;</span><span class="p">:</span>
+                        <span class="n">child</span><span class="o">.</span><span class="n">setReadonly</span><span class="p">()</span>
+                    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;writable&quot;</span><span class="p">:</span>
+                        <span class="n">child</span><span class="o">.</span><span class="n">setWritable</span><span class="p">()</span>
+
+        <span class="n">set_recursive</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">children</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="ParamTreeBase.save_settings">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.ParamTreeBase.save_settings">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">saveState</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s2">&quot;State&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ParamTreeBase.print">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.ParamTreeBase.print">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GeneralParamTree">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.GeneralParamTree">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeneralParamTree</span><span class="p">(</span><span class="n">ParamTreeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuración de parámetros generales de la medición</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">_reactores</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RA-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
+        <span class="n">_reactores</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;RP-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">general_settings</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Parámetros generales&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Reactor&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;RA-1&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">_reactores</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Núcleo&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Núcleo en donde se realiza la medición&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Cadenas de medición&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+                        <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Cantidad de detectores para ruido neutrónico&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Medición de CIp&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                        <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Adquirir la señal de Ip&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Serie&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span>
+                        <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Identificación del a serie de medición&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Comentarios&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Información general sobre la medición&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Config Gral&quot;</span><span class="p">,</span>
+                         <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">general_settings</span><span class="p">,</span>
+                         <span class="n">reset</span><span class="o">=</span><span class="n">reset</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AdvancedParamTree</span><span class="p">(</span><span class="n">ParamTreeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuración avanzada</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_det</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">devices</span> <span class="o">=</span> <span class="n">GetDevicesInfo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">dev_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">=</span> <span class="n">n_det</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cip</span> <span class="o">=</span> <span class="n">cip</span>
+
+        <span class="c1"># Lista con los nombres de los canales para dev_names[0]</span>
+        <span class="n">ch_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dev_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">channel_names</span>
+        <span class="c1"># Lista con los rangos para dev_names[0]</span>
+        <span class="n">rgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dev_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">ai_ranges</span>
+
+        <span class="n">_cadenas</span> <span class="o">=</span> <span class="p">[</span>
+                     <span class="p">{</span>
+                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                         <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                             <span class="p">{</span>
+                                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;AC&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                     <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal para la componente fluctuante&quot;</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                      <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango para la componente fluctuante&quot;</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                      <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Label&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;AC@</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                 <span class="p">]</span>
+                             <span class="p">},</span>
+                             <span class="p">{</span>
+                                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                     <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">[</span><span class="n">n_det</span> <span class="o">+</span> <span class="n">i</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal para la componente continua&quot;</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                      <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal para la componente fluctuante&quot;</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                      <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Label&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;DC@</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                 <span class="p">]</span>
+                             <span class="p">},</span>
+                             <span class="p">{</span>
+                                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;AC filtro&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                     <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">[</span><span class="n">n_det</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="n">i</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal para monitoreo del filtro anti-aliasing&quot;</span>
+                                     <span class="p">},</span>
+                                     <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal para la componente fluctuante&quot;</span><span class="p">,</span>
+                                     <span class="p">},</span>
+                                     <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Label&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;AC_filt@</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                 <span class="p">]</span>
+                             <span class="p">},</span>
+                         <span class="p">]</span>
+                     <span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_det</span><span class="p">)</span>
+                   <span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span>
+            <span class="n">_cadenas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+               <span class="p">{</span>
+                   <span class="s2">&quot;name&quot;</span><span class="p">:</span>  <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                       <span class="p">{</span>
+                           <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                               <span class="p">{</span>
+                                  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal&quot;</span><span class="p">,</span>
+                                  <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                  <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">[</span><span class="n">n_det</span><span class="o">*</span><span class="mi">3</span><span class="p">],</span>
+                                  <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">,</span>
+                                  <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;CAnal para adquirir la señal de CIp&quot;</span><span class="p">,</span>
+                               <span class="p">},</span>
+                               <span class="p">{</span>
+                                  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                  <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                  <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                  <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">,</span>
+                                  <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;CAnal para adquirir la señal de CIp&quot;</span><span class="p">,</span>
+                               <span class="p">},</span>
+                               <span class="p">{</span>
+                                  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Label&quot;</span><span class="p">,</span>
+                                  <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                                  <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;DC_Ip&quot;</span><span class="p">,</span>
+                                  <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                               <span class="p">},</span>
+                           <span class="p">]</span>
+                       <span class="p">}</span>
+                   <span class="p">]</span>
+               <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">advanced_settings</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Dispositivo&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                        <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="s1">&#39;limits&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev_names</span><span class="p">,</span>
+
+                    <span class="p">},</span>
+                    <span class="o">*</span><span class="n">_cadenas</span><span class="p">,</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Config Avanzada&quot;</span><span class="p">,</span>
+                         <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">advanced_settings</span><span class="p">,</span>
+                         <span class="n">reset</span><span class="o">=</span><span class="n">reset</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AdvancedParamTree.actualiza_cadenas_med">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.actualiza_cadenas_med">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">actualiza_cadenas_med</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuevas_cadenas</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Se aagregan o quitan cadenas de medición</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span> <span class="s2">&quot;Dispositivo&quot;</span><span class="p">)</span>
+        <span class="n">ch_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span><span class="o">.</span><span class="n">channel_names</span>
+        <span class="n">rgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span><span class="o">.</span><span class="n">ai_ranges</span>
+
+        <span class="k">if</span> <span class="n">nuevas_cadenas</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">:</span>
+            <span class="c1"># Agrego canales luego de los existentes</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nuevas_cadenas</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">insertChild</span><span class="p">(</span>
+                        <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">,</span>
+                    <span class="p">{</span>
+                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                         <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                             <span class="p">{</span>
+                                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;AC&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                     <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal para la componente fluctuante&quot;</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                      <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango para la componente fluctuante&quot;</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                      <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Label&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;AC@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                                      <span class="p">},</span>
+
+                                 <span class="p">]</span>
+                             <span class="p">},</span>
+                             <span class="p">{</span>
+                                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                     <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal para la componente continua&quot;</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                      <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal para la componente fluctuante&quot;</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                      <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Label&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;DC@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                                      <span class="p">},</span>
+
+                                 <span class="p">]</span>
+                             <span class="p">},</span>
+                             <span class="p">{</span>
+                                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;AC filtro&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                     <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal para monitoreo del filtro anti-aliasing&quot;</span>
+                                     <span class="p">},</span>
+                                     <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+                                         <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">,</span>
+                                         <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal para la componente fluctuante&quot;</span><span class="p">,</span>
+                                     <span class="p">},</span>
+                                     <span class="p">{</span>
+                                         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Label&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;AC_filt@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                                      <span class="p">},</span>
+                                 <span class="p">]</span>
+                             <span class="p">},</span>
+                         <span class="p">]</span>
+                     <span class="p">}</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">-</span> <span class="n">nuevas_cadenas</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">))</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_channels_names</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.actualiza_cip">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.actualiza_cip">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">actualiza_cip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span> <span class="s2">&quot;Dispositivo&quot;</span><span class="p">)</span>
+        <span class="n">ch_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span><span class="o">.</span><span class="n">channel_names</span>
+        <span class="n">rgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span><span class="o">.</span><span class="n">ai_ranges</span>
+
+        <span class="n">_childs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">children</span><span class="p">()</span>
+        <span class="n">_child_name</span> <span class="o">=</span> <span class="p">[</span><span class="n">_child</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="k">for</span> <span class="n">_child</span> <span class="ow">in</span> <span class="n">_childs</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;Cadena CIp&quot;</span> <span class="ow">in</span> <span class="n">_child_name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                               <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">insertChild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span>  <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                <span class="p">{</span>
+                                   <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="o">*</span><span class="mi">3</span><span class="p">],</span>
+                                   <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">ch_n</span><span class="p">,</span>
+                                   <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;CAnal para adquirir la señal de CIp&quot;</span><span class="p">,</span>
+                                <span class="p">},</span>
+                                <span class="p">{</span>
+                                   <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                   <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="n">rgs</span><span class="p">,</span>
+                                   <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;CAnal para adquirir la señal de CIp&quot;</span><span class="p">,</span>
+                                <span class="p">},</span>
+                                <span class="p">{</span>
+                                   <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Label&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;DC_Ip&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                                <span class="p">},</span>
+                            <span class="p">]</span>
+                        <span class="p">}</span>
+                    <span class="p">]</span>
+                <span class="p">}</span>
+             <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cip</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.get_channels_labels">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.get_channels_labels">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_channels_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve los labels para cada canal</span>
+
+<span class="sd">        [Cadena1.AC  Cadena1.DC  Cadena1.AC_filtro  Cadena2.AC ... Cadena.CIp]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lbls</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">tipo</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;AC&quot;</span><span class="p">,</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span> <span class="s2">&quot;AC filtro&quot;</span><span class="p">]:</span>
+                <span class="n">lbls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                                  <span class="n">tipo</span><span class="p">,</span> <span class="s2">&quot;Label&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span>
+            <span class="n">lbls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span> <span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                              <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span>
+                                              <span class="s2">&quot;Label&quot;</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">lbls</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.get_channels_ranges">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.get_channels_ranges">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_channels_ranges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve los rangos para cada canal</span>
+
+<span class="sd">        [Cadena1.AC  Cadena1.DC  Cadena1.AC_filtro  Cadena2.AC ... Cadena.CIp]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rngs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">tipo</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;AC&quot;</span><span class="p">,</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span> <span class="s2">&quot;AC filtro&quot;</span><span class="p">]:</span>
+                <span class="n">rngs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                                  <span class="n">tipo</span><span class="p">,</span> <span class="s2">&quot;Rango&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span>
+            <span class="n">rngs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span> <span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                              <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span>
+                                              <span class="s2">&quot;Rango&quot;</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">rngs</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.set_channels_ranges">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.set_channels_ranges">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_channels_ranges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ranges</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setea los rangos para cada canal</span>
+
+<span class="sd">        El orden de &quot;Values&quot; debe ser</span>
+<span class="sd">        [Cadena1.AC  Cadena1.DC  Cadena1.AC_filtro  Cadena2.AC ... Cadena.CIp]</span>
+
+<span class="sd">        Cada elemento debe ser una tupla (min, max). Ejemplo: (-10, 10)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">tipo</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;AC&quot;</span><span class="p">,</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span> <span class="s2">&quot;AC filtro&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_param_value</span><span class="p">(</span><span class="n">ranges</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                                <span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">tipo</span><span class="p">,</span>
+                                                <span class="s2">&quot;Rango&quot;</span><span class="p">)</span>
+                <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_param_value</span><span class="p">(</span><span class="n">ranges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                             <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span> <span class="s2">&quot;Rango&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.set_channels_range_limits">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.set_channels_range_limits">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_channels_range_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limits</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Aplica &quot;limits&quot; a los rangos de todos los canales. El mismo para todos.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cadenas</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">cadena</span> <span class="ow">in</span> <span class="n">cadenas</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">tipo</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;AC&quot;</span><span class="p">,</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span> <span class="s2">&quot;AC filtro&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_param_limits</span><span class="p">(</span><span class="n">limits</span><span class="p">,</span> <span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                                      <span class="n">cadena</span><span class="p">,</span>
+                                                      <span class="n">tipo</span><span class="p">,</span>
+                                                      <span class="s2">&quot;Rango&quot;</span>
+                                                      <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_param_limits</span><span class="p">(</span><span class="n">limits</span><span class="p">,</span> <span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span>
+                                                 <span class="s2">&quot;DC&quot;</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Rango&quot;</span>
+                                                 <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.get_ADC_ranges">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.get_ADC_ranges">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ADC_ranges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span> <span class="s2">&quot;Dispositivo&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span><span class="o">.</span><span class="n">ai_ranges</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.get_ADC_resolution">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.get_ADC_resolution">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ADC_resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span> <span class="s2">&quot;Dispositivo&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span><span class="o">.</span><span class="n">resolution_ADC</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.get_channels_coefs">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.get_channels_coefs">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_channels_coefs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">ranges</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve los coeficientes de la calibración para pasar de raw a voltaje</span>
+
+<span class="sd">        [Cadena1.AC  Cadena1.DC  Cadena1.AC_filtro  Cadena2.AC ... Cadena.CIp]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span> <span class="s2">&quot;Dispositivo&quot;</span><span class="p">)</span>
+        <span class="n">_dev_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+        <span class="n">coef</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ch</span><span class="p">,</span> <span class="n">rg</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="n">ranges</span><span class="p">):</span>
+            <span class="n">coef</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_dev_info</span><span class="o">.</span><span class="n">scaling_coeff</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">rg</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">coef</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.update_device">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.update_device">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_dev</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reemplaza el dispositivo en todos los canales</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">old_chan_suff</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_channels</span><span class="p">()]</span>
+        <span class="n">new_chan</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_dev</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">ch</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">old_chan_suff</span><span class="p">]</span>
+        <span class="c1"># Cambio los límites de cada canal</span>
+        <span class="n">new_limits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">new_dev</span><span class="p">)</span><span class="o">.</span><span class="n">channel_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_channels_limits</span><span class="p">(</span><span class="n">new_limits</span><span class="p">)</span>
+        <span class="c1"># Cambio los valores de cada canal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_channels_names</span><span class="p">(</span><span class="n">new_chan</span><span class="p">)</span>
+        <span class="c1"># Copio los rangos previos al cambio</span>
+        <span class="n">old_rngs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_channels_ranges</span><span class="p">()</span>
+        <span class="c1"># Actualiza los limits de los rangos de cada canal</span>
+        <span class="n">rgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">new_dev</span><span class="p">)</span><span class="o">.</span><span class="n">ai_ranges</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_channels_range_limits</span><span class="p">(</span><span class="n">rgs</span><span class="p">)</span>
+        <span class="c1"># Trata de poner los mismos rangos que había (puede que no sea posible</span>
+        <span class="c1"># siempre, en tal caso queda el primero de la lista nueva)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_channels_ranges</span><span class="p">(</span><span class="n">old_rngs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.set_channels_limits">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.set_channels_limits">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_channels_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limits</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Aplica &quot;limits&quot; a los limits de todos los canales. El mismo para todos.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cadenas</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">cadena</span> <span class="ow">in</span> <span class="n">cadenas</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">tipo</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;AC&quot;</span><span class="p">,</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span> <span class="s2">&quot;AC filtro&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_param_limits</span><span class="p">(</span><span class="n">limits</span><span class="p">,</span> <span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                                      <span class="n">cadena</span><span class="p">,</span>
+                                                      <span class="n">tipo</span><span class="p">,</span>
+                                                      <span class="s2">&quot;Canal&quot;</span>
+                                                      <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_param_limits</span><span class="p">(</span><span class="n">limits</span><span class="p">,</span> <span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span>
+                                                 <span class="s2">&quot;DC&quot;</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Canal&quot;</span>
+                                                 <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.get_channels">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.get_channels">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tipos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve los canales utilizados para la adquisició</span>
+
+<span class="sd">        Se puede especifica el tipo de canal que se quiere leer. Si tipos =</span>
+<span class="sd">        None devuelve todos los canales</span>
+
+<span class="sd">        Ordenados por cadena y por tipo:</span>
+<span class="sd">            [ Cadena1(AC) Cadena1(DC) Cadena1(AC filtro) Cadena2(AC)</span>
+<span class="sd">            ...CadenaCIp(DC) ]</span>
+
+<span class="sd">        tipo: string or list of string [&#39;AC&#39;, &#39;DC&#39;, &#39;AC filtro&#39;]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cadenas</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="n">tipos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_tipos</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;AC&#39;</span><span class="p">,</span> <span class="s1">&#39;DC&#39;</span><span class="p">,</span> <span class="s1">&#39;AC filtro&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_tipos</span> <span class="o">=</span> <span class="p">[</span><span class="n">tipos</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tipos</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">tipos</span>
+
+        <span class="n">channels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cadena</span> <span class="ow">in</span> <span class="n">cadenas</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">tipo</span> <span class="ow">in</span> <span class="n">_tipos</span><span class="p">:</span>
+                <span class="n">channels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                                      <span class="n">cadena</span><span class="p">,</span>
+                                                      <span class="n">tipo</span><span class="p">,</span>
+                                                      <span class="s2">&quot;Canal&quot;</span>
+                                                      <span class="p">)</span>
+                                                    <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span> <span class="ow">and</span> <span class="s1">&#39;DC&#39;</span> <span class="ow">in</span> <span class="n">_tipos</span><span class="p">:</span>
+            <span class="n">channels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span>
+                                                 <span class="s2">&quot;DC&quot;</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Canal&quot;</span>
+                                                 <span class="p">)</span>
+                                              <span class="p">)</span>
+        <span class="k">return</span> <span class="n">channels</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.set_channels_names">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.set_channels_names">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_channels_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Escribe los valores de los canales</span>
+
+<span class="sd">        Si new_names == None, se elige un orden por default (polémtico). De lo</span>
+<span class="sd">        contrario se usa new_names</span>
+
+<span class="sd">        TODO: chequear que coincidan tamaños entre new_names y los canales</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span> <span class="s2">&quot;Dispositivo&quot;</span><span class="p">)</span>
+        <span class="c1"># Esta es una fomra posible de hacer la conexiones</span>
+        <span class="c1"># no es la misma que se utiliza en la actualidad</span>
+        <span class="k">if</span> <span class="n">new_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Valores por default</span>
+            <span class="n">chan_num</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                    <span class="n">chan_num</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="o">*</span><span class="n">j</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span> <span class="n">chan_num</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">dev</span> <span class="o">+</span> <span class="s1">&#39;/ai&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">chan_num</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">new_names</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">tipo</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;AC&#39;</span><span class="p">,</span> <span class="s1">&#39;DC&#39;</span><span class="p">,</span> <span class="s1">&#39;AC filtro&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_param_value</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                     <span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">tipo</span><span class="p">,</span> <span class="s2">&quot;Canal&quot;</span><span class="p">)</span>
+                <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_param_value</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span> <span class="s2">&quot;Canal&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AdvancedParamTree.get_DC_channels">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.AdvancedParamTree.get_DC_channels">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_DC_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve los canales utilizados para medir las DC&#39;s</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cadenas</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span> <span class="n">cadenas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Cadena CIp&quot;</span><span class="p">)</span>
+
+        <span class="n">channels</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span> <span class="n">cad</span><span class="p">,</span>
+                                        <span class="s2">&quot;DC&quot;</span><span class="p">,</span> <span class="s2">&quot;Canal&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">cad</span> <span class="ow">in</span> <span class="n">cadenas</span> <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">channels</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EspMedParamTree">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.EspMedParamTree">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EspMedParamTree</span><span class="p">(</span><span class="n">ParamTreeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuración de parámetros específicoss a una dada medición</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_det</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">=</span> <span class="n">n_det</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cip</span> <span class="o">=</span> <span class="n">cip</span>
+
+        <span class="n">_cadenas</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Sensibilidad&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span>
+                                <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="s2">&quot;[1] 1E-9 A/V&quot;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span>
+                                    <span class="s2">&quot;[2] 1E-8 A/V&quot;</span><span class="p">:</span> <span class="mf">1e-8</span><span class="p">,</span>
+                                    <span class="s2">&quot;[3] 1E-7 A/V&quot;</span><span class="p">:</span> <span class="mf">1e-7</span><span class="p">,</span>
+                                    <span class="s2">&quot;[4] 1E-6 A/V&quot;</span><span class="p">:</span> <span class="mf">1e-6</span><span class="p">,</span>
+                                    <span class="s2">&quot;[5] 1E-5 A/V&quot;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
+                                    <span class="s2">&quot;[6] 1E-4 A/V&quot;</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span>
+                                    <span class="s2">&quot;Otro&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="p">},</span>
+                                <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango del amplificador&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s2">&quot;A/V&quot;</span><span class="p">,</span>
+                            <span class="p">},</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Multiplicador&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;x3&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
+                                <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Factor de multiplicación&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">True</span>
+                            <span class="p">},</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Manual&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span>
+                                <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">),</span>
+                                <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Ingresar sensibilidad manualmente&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s2">&quot;A/V&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                            <span class="p">},</span>
+
+                        <span class="p">]</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Ganancia AC&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">800</span><span class="p">],</span>
+                        <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Ganancia de la AC&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Offset&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Offset del amplificador&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="c1"># TODO: Sacarlo de acá, dejar el general. Queda</span>
+                        <span class="c1"># mientras se prueba escribir el .RUI</span>
+                        <span class="c1"># Estos comentarios deben estar en los generales de la</span>
+                        <span class="c1"># medición</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Comentario&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;Ubicación detector &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Comentario para .RUI&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">&quot;expanded&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="p">},</span>
+
+                <span class="p">]</span>
+           <span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span>
+            <span class="n">_cadenas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Sensibilidad&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="mf">1e-9</span><span class="p">,</span>
+                            <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango del amplificador de CIp&quot;</span><span class="p">,</span>
+                            <span class="s1">&#39;suffix&#39;</span><span class="p">:</span> <span class="s2">&quot;A/V&quot;</span>
+                        <span class="p">},</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Offset&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                            <span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Offset del amplificador&quot;</span><span class="p">,</span>
+                        <span class="p">},</span>
+                    <span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">specific_settings</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Parámetros medición&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="o">*</span><span class="n">_cadenas</span><span class="p">,</span>
+                    <span class="p">{</span>   <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;DAQ&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                             <span class="p">{</span>
+                             <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s2">&quot;BW&quot;</span><span class="p">,</span>
+                             <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;list&#39;</span><span class="p">,</span>
+                             <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;40 Hz&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+                                        <span class="s1">&#39;200 Hz&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+                                         <span class="s1">&#39;Otro&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+                             <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+                             <span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s2">&quot;Hz&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Ancho de banda (fs = 2BW)&quot;</span>
+                             <span class="p">},</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;BW manual&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+                                <span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s1">&#39;Hz&#39;</span><span class="p">,</span>
+                                <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                                <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Ancho de banda (fs = 2BW)&quot;</span>
+                            <span class="p">},</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Puntos&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+                                <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4104304</span><span class="p">),</span>
+                                <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Número de puntos por historia&quot;</span><span class="p">,</span>
+                            <span class="p">},</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Historias&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                                <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">),</span>
+                                <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Número de historias&quot;</span><span class="p">,</span>
+                            <span class="p">},</span>
+
+                        <span class="p">]</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>   <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Medición&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Nivel&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span>
+                                <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Identificador del nivel actual&quot;</span><span class="p">,</span>
+                            <span class="p">},</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Medición&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span>
+                                <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Identificador de la medición actual&quot;</span><span class="p">,</span>
+                            <span class="p">},</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Comentario&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;BC1: </span><span class="se">\n</span><span class="s2">BC2: </span><span class="se">\n</span><span class="s2">BC3: </span><span class="se">\n</span><span class="s2">BC4: &quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;tip&quot;</span><span class="p">:</span> <span class="s2">&quot;Comentario sobre la medición actual&quot;</span><span class="p">,</span>
+                            <span class="p">},</span>
+
+                        <span class="p">]</span>
+                    <span class="p">},</span>
+
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Config Espec&quot;</span><span class="p">,</span>
+                         <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_settings</span><span class="p">,</span>
+                         <span class="n">reset</span><span class="o">=</span><span class="n">reset</span><span class="p">)</span>
+
+        <span class="c1"># Mantiene actualizada sensibilidad manual</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paramChange</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sensib_manual</span><span class="p">)</span>
+        <span class="c1"># Mantiene actualizad BW manual</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;Parámetros medición&quot;</span><span class="p">,</span> <span class="s2">&quot;DAQ&quot;</span><span class="p">,</span> <span class="s2">&quot;BW&quot;</span>
+                                    <span class="p">)</span><span class="o">.</span><span class="n">sigValueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bw_manual</span><span class="p">)</span>
+
+
+    <span class="nd">@pyqtSlot</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_bw_manual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">change</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Actualiz BW manual &quot;&quot;&quot;</span>
+        <span class="n">_path</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Parámetros medición&quot;</span><span class="p">,</span> <span class="s2">&quot;DAQ&quot;</span><span class="p">,</span> <span class="s2">&quot;BW manual&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">change</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">_path</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Pasa el valor a BW manual (la que se lee siempre)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_param_value</span><span class="p">(</span><span class="n">change</span><span class="p">,</span> <span class="o">*</span><span class="n">_path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">_path</span><span class="p">)</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+
+
+    <span class="nd">@pyqtSlot</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sensib_manual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">changes</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        En (&quot;Sensibilidad, Manual&quot;) se escribe siempore el producto del rango</span>
+<span class="sd">        por el multiplicador. Es el valor que se leerá para convertir a</span>
+<span class="sd">        corriente.</span>
+
+<span class="sd">        Se mantiene (Sensiblidad, Manual) actualizado ante cambios en rango y</span>
+<span class="sd">        multiplicador.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">change</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">changes</span><span class="p">:</span>
+            <span class="n">_childs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">childPath</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_childs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;Rango&quot;</span> <span class="ow">in</span> <span class="n">_childs</span> <span class="ow">and</span> <span class="n">change</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span>
+                    <span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">_childs</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+                    <span class="n">_parent_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">childPath</span><span class="p">(</span><span class="n">_parent</span><span class="p">)</span>
+                    <span class="n">_man_child</span> <span class="o">=</span> <span class="n">_parent_path</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Manual&quot;</span><span class="p">]</span>
+                    <span class="n">_mult_child</span> <span class="o">=</span> <span class="n">_parent_path</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Multiplicador&quot;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">_man_child</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                        <span class="c1"># Se esconden multiplicador y se muestra sensibilidad</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">_man_child</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">_mult_child</span><span class="p">)</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Lee el valor del multiplicador</span>
+                        <span class="n">_mult_path</span> <span class="o">=</span> <span class="n">_parent_path</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Multiplicador&quot;</span><span class="p">]</span>
+                        <span class="n">_mult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="o">*</span><span class="n">_mult_path</span><span class="p">)</span>
+                        <span class="c1"># Escribe el valor de la sensibilidad</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">set_param_value</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="n">_mult</span><span class="p">,</span> <span class="o">*</span><span class="n">_man_child</span><span class="p">)</span>
+                        <span class="c1"># Se esconde ingreso manual y se muestra multiplicador</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">_man_child</span><span class="p">)</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">_mult_child</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="s2">&quot;Multiplicador&quot;</span> <span class="ow">in</span> <span class="n">_childs</span> <span class="ow">and</span> <span class="n">change</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
+                    <span class="c1"># Lee el valor del rango</span>
+                    <span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">*</span><span class="n">_childs</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+                    <span class="n">_parent_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">childPath</span><span class="p">(</span><span class="n">_parent</span><span class="p">)</span>
+                    <span class="n">_sens_child</span> <span class="o">=</span> <span class="n">_parent_path</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Rango&quot;</span><span class="p">]</span>
+                    <span class="n">_sens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="o">*</span><span class="n">_sens_child</span><span class="p">)</span>
+                    <span class="c1"># Escribe el valor de la sensibilidad</span>
+                    <span class="n">_man_child</span> <span class="o">=</span> <span class="n">_parent_path</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Manual&quot;</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set_param_value</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="n">_sens</span><span class="p">,</span> <span class="o">*</span><span class="n">_man_child</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="EspMedParamTree.get_sensitivities">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.EspMedParamTree.get_sensitivities">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sensitivities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve las sensibilidades de los amplificadores utilizadas para cada</span>
+<span class="sd">        cadena</span>
+
+<span class="sd">        Ordenados por cadena:</span>
+<span class="sd">            [ Sensibilidad_1 Sensibilidad_2 .... Sensibilidad_CIp]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cadenas</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">)]</span>
+
+        <span class="n">sens</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cadena</span> <span class="ow">in</span> <span class="n">cadenas</span><span class="p">:</span>
+            <span class="n">sens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Parámetros medición&quot;</span><span class="p">,</span>
+                                              <span class="n">cadena</span><span class="p">,</span>
+                                              <span class="s2">&quot;Sensibilidad&quot;</span><span class="p">,</span>
+                                              <span class="s2">&quot;Manual&quot;</span><span class="p">,</span>
+                                              <span class="p">)</span>
+                        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span>
+            <span class="n">sens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Parámetros medición&quot;</span><span class="p">,</span>
+                                             <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span>
+                                             <span class="s2">&quot;Sensibilidad&quot;</span><span class="p">,</span>
+                                              <span class="p">)</span>
+                        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">sens</span></div>
+
+
+
+<div class="viewcode-block" id="EspMedParamTree.get_AC_gains">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.EspMedParamTree.get_AC_gains">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_AC_gains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve la ganancia de la componente AC de cada cadena</span>
+
+<span class="sd">        Ordenados por cadena:</span>
+<span class="sd">            [AC_gain_1  AC_gain_2 ....]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cadenas</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">)]</span>
+
+        <span class="n">ac_gains</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cadena</span> <span class="ow">in</span> <span class="n">cadenas</span><span class="p">:</span>
+            <span class="n">ac_gains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Parámetros medición&quot;</span><span class="p">,</span>
+                                                 <span class="n">cadena</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Ganancia AC&quot;</span><span class="p">,</span>
+                                                 <span class="p">)</span>
+                           <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ac_gains</span></div>
+
+
+
+<div class="viewcode-block" id="EspMedParamTree.hide_AC_gains">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.EspMedParamTree.hide_AC_gains">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hide_AC_gains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Oculta el parámetro AC_gain de todas las cadenas</span>
+
+<span class="sd">        Ordenados por cadena:</span>
+<span class="sd">            [AC_gain_1  AC_gain_2 ....]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cadenas</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">)]</span>
+
+        <span class="n">ac_gains</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cadena</span> <span class="ow">in</span> <span class="n">cadenas</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;Parámetros medición&quot;</span><span class="p">,</span> <span class="n">cadena</span><span class="p">,</span>
+                    <span class="s2">&quot;Ganancia AC&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="EspMedParamTree.get_offsets">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.EspMedParamTree.get_offsets">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_offsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve los offsets de los amplificadores utilizadas para cada cadena</span>
+
+<span class="sd">        Ordenados por cadena:</span>
+<span class="sd">            [ Offset_1 Offset_2 .... Offset_CIp]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cadenas</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">)]</span>
+
+        <span class="n">offsets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cadena</span> <span class="ow">in</span> <span class="n">cadenas</span><span class="p">:</span>
+            <span class="n">offsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Parámetros medición&quot;</span><span class="p">,</span>
+                                                <span class="n">cadena</span><span class="p">,</span>
+                                                <span class="s2">&quot;Offset&quot;</span><span class="p">,</span>
+                                                <span class="p">)</span>
+                           <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">:</span>
+            <span class="n">offsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Parámetros medición&quot;</span><span class="p">,</span>
+                                                <span class="s2">&quot;Cadena CIp&quot;</span><span class="p">,</span>
+                                                <span class="s2">&quot;Offset&quot;</span><span class="p">,</span>
+                                                <span class="p">)</span>
+                          <span class="p">)</span>
+        <span class="k">return</span> <span class="n">offsets</span></div>
+
+
+
+<div class="viewcode-block" id="EspMedParamTree.get_comments">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.EspMedParamTree.get_comments">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_comments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve los comentarios para cada cadena de medición</span>
+
+<span class="sd">        Ordenados por cadena:</span>
+<span class="sd">            [ comment_1 comment_2 ...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cadenas</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Cadena &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">)]</span>
+        <span class="n">comments</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cadena</span> <span class="ow">in</span> <span class="n">cadenas</span><span class="p">:</span>
+            <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Parámetros medición&quot;</span><span class="p">,</span>
+                                                 <span class="n">cadena</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Comentario&quot;</span><span class="p">,</span>
+                                                 <span class="p">)</span>
+                            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">comments</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="OscilloscopeParamTree">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.OscilloscopeParamTree">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OscilloscopeParamTree</span><span class="p">(</span><span class="n">ParamTreeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuración de parámetros generales de la medición</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_chan</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span> <span class="o">=</span> <span class="n">n_chan</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">devices</span> <span class="o">=</span> <span class="n">GetDevicesInfo</span><span class="p">()</span>
+        <span class="n">dev_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">dev_names</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="n">dev_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dev_names</span> <span class="o">=</span> <span class="n">dev_names</span>
+
+        <span class="c1"># Lista con los nombres de los canales para dev_names[0]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ch_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span><span class="o">.</span><span class="n">channel_names</span>
+        <span class="c1"># Lista con los rangos para dev_names[0]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span><span class="o">.</span><span class="n">ai_ranges</span>
+
+        <span class="n">canales</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Nombre&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ch_n</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ch_n</span><span class="p">,</span>
+                            <span class="p">},</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rgs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rgs</span><span class="p">,</span>
+                            <span class="p">},</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Color&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;color&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+                            <span class="p">},</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Identificación&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                            <span class="p">},</span>
+
+
+                       <span class="p">]</span>
+                    <span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_chan</span><span class="p">)</span>
+                  <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">osc_settings</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Configuración&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Cantidad de canales&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ch_n</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Dispositivo&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">dev</span><span class="p">,</span>
+                        <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev_names</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Frecuencia&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+                        <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e9</span><span class="p">),</span>
+                        <span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s2">&quot;Hz&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Datos lectura&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+                        <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e9</span><span class="p">),</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Datos buffer&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e9</span><span class="p">),</span>
+                        <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="o">*</span><span class="n">canales</span><span class="p">,</span>
+
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Config osciloscopio&quot;</span><span class="p">,</span>
+                         <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">osc_settings</span><span class="p">,</span>
+                         <span class="n">reset</span><span class="o">=</span><span class="n">reset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">dev</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
+
+
+    <span class="nd">@device</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_dev</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">new_dev</span>
+        <span class="c1"># Cambio los valores de cada canal</span>
+        <span class="n">old_chan_suff</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_channels</span><span class="p">()]</span>
+        <span class="n">new_chan</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_dev</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">ch</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">old_chan_suff</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_channels_names</span><span class="p">(</span><span class="n">new_chan</span><span class="p">)</span>
+        <span class="c1"># Cambio los límites de cada canal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ch_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">new_dev</span><span class="p">)</span><span class="o">.</span><span class="n">channel_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_channels_limits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ch_n</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">new_dev</span><span class="p">)</span><span class="o">.</span><span class="n">ai_ranges</span>
+
+
+<div class="viewcode-block" id="OscilloscopeParamTree.actualizar_numero_canales">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.OscilloscopeParamTree.actualizar_numero_canales">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">actualizar_numero_canales</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuevos_canales</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">nuevos_canales</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">:</span>
+            <span class="c1"># Agrego canales luego de los existentes</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nuevos_canales</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+                        <span class="s2">&quot;Configuración&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">insertChild</span><span class="p">(</span><span class="mi">5</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">,</span>
+                                <span class="p">{</span>
+                                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">)</span> <span class="p">,</span>
+                                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                        <span class="p">{</span>
+                                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Nombre&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ch_n</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">],</span>
+                                            <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ch_n</span><span class="p">,</span>
+                                        <span class="p">},</span>
+                                        <span class="p">{</span>
+                                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rgs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                            <span class="s2">&quot;limits&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rgs</span><span class="p">,</span>
+                                        <span class="p">},</span>
+                                        <span class="p">{</span>
+                                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Color&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;color&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                                        <span class="p">},</span>
+                                        <span class="p">{</span>
+                                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Identificación&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;Canal &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">),</span>
+                                        <span class="p">},</span>
+
+                                    <span class="p">]</span>
+                                 <span class="p">}</span>
+                             <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Quito canales</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span> <span class="o">-</span> <span class="n">nuevos_canales</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;Configuración&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;Canal &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">))</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="OscilloscopeParamTree.get_channels">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.OscilloscopeParamTree.get_channels">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve los canales utilizados para la adquisición</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span>
+                                         <span class="s2">&quot;Configuración&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;Canal &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                                         <span class="s2">&quot;Nombre&quot;</span><span class="p">,</span>
+                                         <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">)</span>
+                                    <span class="p">]</span>
+        <span class="k">return</span> <span class="n">channels</span></div>
+
+
+
+<div class="viewcode-block" id="OscilloscopeParamTree.get_colors">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.OscilloscopeParamTree.get_colors">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_colors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve los colores utilizados para cada canal</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">colores</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span>
+                                         <span class="s2">&quot;Configuración&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;Canal &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                                         <span class="s2">&quot;Color&quot;</span><span class="p">,</span>
+                                         <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">)</span>
+                                    <span class="p">]</span>
+        <span class="k">return</span> <span class="n">colores</span></div>
+
+
+
+<div class="viewcode-block" id="OscilloscopeParamTree.get_names">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.OscilloscopeParamTree.get_names">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve los nombres utilizados para cada canal</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nombres</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span>
+                                         <span class="s2">&quot;Configuración&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;Canal &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                                         <span class="s2">&quot;Identificación&quot;</span><span class="p">,</span>
+                                         <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">)</span>
+                                    <span class="p">]</span>
+        <span class="k">return</span> <span class="n">nombres</span></div>
+
+
+
+<div class="viewcode-block" id="OscilloscopeParamTree.get_ranges">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.OscilloscopeParamTree.get_ranges">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ranges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devuelve los rangos utilizados para cada canal</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rangos</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span>
+                                         <span class="s2">&quot;Configuración&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;Canal &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                                         <span class="s2">&quot;Rango&quot;</span><span class="p">,</span>
+                                         <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">)</span>
+                                    <span class="p">]</span>
+        <span class="k">return</span> <span class="n">rangos</span></div>
+
+
+
+<div class="viewcode-block" id="OscilloscopeParamTree.set_channels_names">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.OscilloscopeParamTree.set_channels_names">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_channels_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Escribe los valores de los canales</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">set_param_value</span><span class="p">(</span><span class="n">new_names</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                         <span class="s2">&quot;Configuración&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;Canal &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                                         <span class="s2">&quot;Nombre&quot;</span><span class="p">,</span>
+                                         <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">)</span>
+                                    <span class="p">]</span>
+        <span class="k">return</span> <span class="n">channels</span></div>
+
+
+
+<div class="viewcode-block" id="OscilloscopeParamTree.set_channels_limits">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.parameters.OscilloscopeParamTree.set_channels_limits">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_channels_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Escribe los valores de los canales</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">set_param_limits</span><span class="p">(</span><span class="n">new_names</span><span class="p">,</span>
+                                         <span class="s2">&quot;Configuración&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;Canal &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                                         <span class="s2">&quot;Nombre&quot;</span><span class="p">,</span>
+                                         <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_chan</span><span class="p">)</span>
+                                    <span class="p">]</span>
+        <span class="k">return</span> <span class="n">channels</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, División Física Experimental de Reactores.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Construido con el <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html"> Tema PyData Sphinx </a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

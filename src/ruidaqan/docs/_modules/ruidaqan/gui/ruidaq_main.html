@@ -1,0 +1,711 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ruidaqan.gui.ruidaq_main &#8212; documentación de RuiDAQAn - </title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=e2bb6099"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ruidaqan/gui/ruidaq_main';</script>
+    <link rel="index" title="Índice" href="../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">documentación de RuiDAQAn - </p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../manual/pantallas.html">
+    Ventanas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../manual/funcionamiento.html">
+    Funcionamiento
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../modules.html">
+    Código
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../manual/pantallas.html">
+    Ventanas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../manual/funcionamiento.html">
+    Funcionamiento
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../modules.html">
+    Código
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Miga de pan" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Inicio">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Código de módulo</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ruidaqan.gui.ruidaq_main</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Código fuente para ruidaqan.gui.ruidaq_main</h1><div class="highlight"><pre>
+<span></span><span class="ch">#! /usr/bin/env python3</span>
+
+<span class="sd">&quot;&quot;&quot;GUI for the neutron noise measurement program&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PyQt6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">pyqtSlot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PyQt6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">QApplication</span><span class="p">,</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span>
+                             <span class="n">QLabel</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QMenuBar</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneralParamTree</span><span class="p">,</span> <span class="n">AdvancedParamTree</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.acquisition_window</span><span class="w"> </span><span class="kn">import</span> <span class="n">BackgroundWindow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.oscilloscope_window</span><span class="w"> </span><span class="kn">import</span> <span class="n">OscilloscopeWindow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.measurement_window</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeasurementWindow</span><span class="p">,</span> <span class="n">AdvanceConfigurationWindow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">RESET_DEFAULT_PARAMS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ventanas_ayuda</span><span class="w"> </span><span class="kn">import</span> <span class="n">VentanaAyuda</span><span class="p">,</span> <span class="n">AboutWindow</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ruidaqan</span>
+<span class="k">if</span> <span class="n">ruidaqan</span><span class="o">.</span><span class="n">DEBUG_MODE</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.reader_debug</span><span class="w"> </span><span class="kn">import</span> <span class="n">GetDevicesInfo</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">GetDevicesInfo</span>
+
+
+<div class="viewcode-block" id="MainWindow">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MainWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main Window.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializer.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="c1"># current = os.path.dirname(os.path.realpath(__file__))</span>
+        <span class="c1"># parent = os.path.dirname(current)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_estructura_datos</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_ui</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_data_folder</span><span class="p">()</span>
+
+        <span class="c1"># Oscilloscope window created every botton clicked </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">osc_win_exist</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_osciloscope</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_osc_win</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meas_win_exist</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_measurement</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_meas_win</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">advconf_win_exist</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">paramChange</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral_change</span><span class="p">)</span>
+        <span class="c1"># Ventana medición fondo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">background_win_exist</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_fondo</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_background_win</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MainWindow.init_estructura_datos">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.init_estructura_datos">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_estructura_datos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Inicialización de la estructura de datos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span> <span class="o">=</span> <span class="n">GeneralParamTree</span><span class="p">(</span><span class="n">reset</span><span class="o">=</span><span class="n">RESET_DEFAULT_PARAMS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Parámetros generales&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;Cadenas de medición&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Parámetros generales&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;Medición de CIp&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg_adv</span> <span class="o">=</span> <span class="n">AdvancedParamTree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">set_whole_tree</span><span class="p">(</span><span class="s2">&quot;writable&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.init_ui">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.init_ui">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">&#39;RuiDAQAn&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_createMenu</span><span class="p">()</span>
+        <span class="c1"># self._createToolBar()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainbox</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mainbox</span><span class="p">)</span>
+        <span class="c1"># Define widgets</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_osciloscope</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Osciloscopio&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_fondo</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Medición del fondo&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_measurement</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Medición&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Medición de ruido neutrónico&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span>
+                <span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignHCenter</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignVCenter</span><span class="p">)</span>
+        <span class="c1"># Layout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">btn_osciloscope</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">btn_fondo</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">btn_measurement</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainbox</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">)</span></div>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_data_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DATA_FOLDER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;datos&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Write path to data folder in config.py</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+        <span class="n">path_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="s2">&quot;config.py&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_config</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;DATA_FOLDER&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;DATA_FOLDER = r&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">DATA_FOLDER</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="k">break</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_config</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATA_FOLDER</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileExistsError</span><span class="p">:</span>
+            <span class="c1"># La carpeta ya existe</span>
+            <span class="k">pass</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_createMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">menu1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="n">menu1</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s1">&#39;&amp;Menu&#39;</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;&amp;Exit&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+        <span class="n">conf</span> <span class="o">=</span> <span class="n">menu1</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;&amp;Cfg. avanzada&quot;</span><span class="p">)</span>
+        <span class="n">conf</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;&amp;Ver/Editar&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_advconf_win</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">menu_bar</span> <span class="o">=</span> <span class="n">QMenuBar</span><span class="p">(</span><span class="n">menu1</span><span class="p">)</span>
+        <span class="n">menu1</span><span class="o">.</span><span class="n">setCornerWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">menu_bar</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Corner</span><span class="o">.</span><span class="n">TopRightCorner</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menu_derecho</span>  <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">menu_bar</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ayuda</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menu_bar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;&amp;Ayuda&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ayuda</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;Ayuda ventana&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_ayuda_win</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ayuda</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;Ace&amp;rca&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_about_win</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MainWindow.show_about_win">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.show_about_win">[documentos]</a>
+    <span class="nd">@pyqtSlot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_about_win</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">about_win</span> <span class="o">=</span> <span class="n">AboutWindow</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">about_win</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.show_ayuda_win">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.show_ayuda_win">[documentos]</a>
+    <span class="nd">@pyqtSlot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_ayuda_win</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ayuda_win</span> <span class="o">=</span> <span class="n">VentanaAyuda</span><span class="p">(</span><span class="n">referencia</span><span class="o">=</span><span class="s2">&quot;ventana-principal&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ayuda_win</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.show_osc_win">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.show_osc_win">[documentos]</a>
+    <span class="nd">@pyqtSlot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_osc_win</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">osc_win_exist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">osc_win</span> <span class="o">=</span> <span class="n">OscilloscopeWindow</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">osc_win_exist</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">osc_win</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">osc_win</span><span class="o">.</span><span class="n">osc_win_closed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">close_osc_win</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">osc_win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.show_meas_win">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.show_meas_win">[documentos]</a>
+    <span class="nd">@pyqtSlot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_meas_win</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">meas_win_exist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">save_settings</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg_adv</span><span class="o">.</span><span class="n">save_settings</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meas_win</span> <span class="o">=</span> <span class="n">MeasurementWindow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATA_FOLDER</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meas_win_exist</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meas_win</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meas_win</span><span class="o">.</span><span class="n">meas_win_closed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">close_meas_win</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">set_whole_tree</span><span class="p">(</span><span class="s2">&quot;readonly&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">escribe_coeficientes</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meas_win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.escribe_coeficientes">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.escribe_coeficientes">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">escribe_coeficientes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Escribe coeficientes de conversión int16 a voltaje.</span>
+
+<span class="sd">        Se utiliza solamente para procesar los archivos .RUI</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_adv</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Configuración avanzada&quot;</span><span class="p">,</span>
+                                           <span class="s2">&quot;Dispositivo&quot;</span><span class="p">)</span>
+        <span class="n">serie</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">get_param_value</span><span class="p">(</span><span class="s2">&quot;Parámetros generales&quot;</span><span class="p">,</span>
+                                              <span class="s2">&quot;Serie&quot;</span><span class="p">)</span>
+        <span class="n">dev_info</span> <span class="o">=</span> <span class="n">GetDevicesInfo</span><span class="p">()</span><span class="o">.</span><span class="n">device_info</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+        <span class="c1"># Rangos disponibles de la tarjeta</span>
+        <span class="n">rangos</span> <span class="o">=</span> <span class="n">dev_info</span><span class="o">.</span><span class="n">ai_ranges</span>
+        <span class="c1"># Tomo por comodidad el primer canal</span>
+        <span class="n">canal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_adv</span><span class="o">.</span><span class="n">get_channels</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Diccionario para guardar los coeficientes</span>
+        <span class="n">coeficientes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">rg</span> <span class="ow">in</span> <span class="n">rangos</span><span class="p">:</span>
+            <span class="c1"># La clave de los dics es el rango positivo</span>
+            <span class="n">coeficientes</span><span class="p">[</span><span class="n">rg</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dev_info</span><span class="o">.</span><span class="n">scaling_coeff</span><span class="p">(</span><span class="n">canal</span><span class="p">,</span> <span class="n">rg</span><span class="p">)</span>
+        <span class="c1"># Grabo los coeficientes en un archivo pickle</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;S</span><span class="si">{</span><span class="n">serie</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">-coeficientes_int_to_volt.pkl&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATA_FOLDER</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">coeficientes</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+
+    <span class="c1">#@pyqtSlot()</span>
+<div class="viewcode-block" id="MainWindow.show_advconf_win">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.show_advconf_win">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_advconf_win</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">advconf_win_exist</span><span class="p">:</span>
+            <span class="c1"># Grabo la configuración porque se usa en dentro de la</span>
+            <span class="c1"># clase AdvanceConfigurationWindow()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">save_settings</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg_adv</span><span class="o">.</span><span class="n">save_settings</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">advconf_win</span> <span class="o">=</span> <span class="n">AdvanceConfigurationWindow</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">advconf_win_exist</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">advconf_win</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">advconf_win</span><span class="o">.</span><span class="n">advconf_win_closed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">close_advconf_win</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">advconf_win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.close_osc_win">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.close_osc_win">[documentos]</a>
+    <span class="nd">@pyqtSlot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_osc_win</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">osc_win_exist</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.close_meas_win">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.close_meas_win">[documentos]</a>
+    <span class="nd">@pyqtSlot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_meas_win</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meas_win_exist</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">set_whole_tree</span><span class="p">(</span><span class="s2">&quot;writable&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.close_advconf_win">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.close_advconf_win">[documentos]</a>
+    <span class="nd">@pyqtSlot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_advconf_win</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">advconf_win_exist</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg_adv</span> <span class="o">=</span> <span class="n">AdvancedParamTree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_det</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cip</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.cfg_gral_change">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.cfg_gral_change">[documentos]</a>
+    <span class="nd">@pyqtSlot</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfg_gral_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">changes</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cuando se cambia cantidad de detectores y medición de CIp</span>
+<span class="sd">        se actualizan los datos de la configuración avanzada</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">change</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">changes</span><span class="p">:</span>
+            <span class="n">_childs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">childPath</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;Medición de CIp&quot;</span> <span class="ow">in</span> <span class="n">_childs</span> <span class="ow">and</span> <span class="n">change</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cip</span> <span class="o">=</span> <span class="n">data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfg_adv</span><span class="o">.</span><span class="n">actualiza_cip</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="s2">&quot;Cadenas de medición&quot;</span> <span class="ow">in</span> <span class="n">_childs</span> <span class="ow">and</span> <span class="n">change</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">=</span> <span class="n">data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfg_adv</span><span class="o">.</span><span class="n">actualiza_cadenas_med</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+                <span class="c1">#self.cfg_adv.set_channels_names()</span>
+
+
+<div class="viewcode-block" id="MainWindow.show_background_win">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.show_background_win">[documentos]</a>
+    <span class="nd">@pyqtSlot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_background_win</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_win_exist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">save_settings</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg_adv</span><span class="o">.</span><span class="n">save_settings</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">background_win</span> <span class="o">=</span> <span class="n">BackgroundWindow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATA_FOLDER</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">background_win_exist</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">background_win</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">background_win</span><span class="o">.</span><span class="n">background_win_closed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">close_background_win</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">background_win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.close_background_win">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.close_background_win">[documentos]</a>
+    <span class="nd">@pyqtSlot</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_background_win</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">background_win_exist</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.closeEvent">
+<a class="viewcode-back" href="../../../ruidaqan.gui.html#ruidaqan.gui.ruidaq_main.MainWindow.closeEvent">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg_gral</span><span class="o">.</span><span class="n">save_settings</span><span class="p">()</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Manage closing main window &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">osc_win_exist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">osc_win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">meas_win_exist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meas_win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_win_exist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">background_win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">advconf_win_exist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">advconf_win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">win</span> <span class="o">=</span> <span class="n">MainWindow</span><span class="p">()</span>
+    <span class="n">win</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">())</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, División Física Experimental de Reactores.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Construido con el <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html"> Tema PyData Sphinx </a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1077 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Ventanas &#8212; documentación de RuiDAQAn - </title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=e2bb6099"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'manual/pantallas';</script>
+    <link rel="index" title="Índice" href="../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../search.html" />
+    <link rel="next" title="Funcionamiento" href="funcionamiento.html" />
+    <link rel="prev" title="Documentación de RuiDAQAn" href="../index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">documentación de RuiDAQAn - </p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Ventanas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="funcionamiento.html">
+    Funcionamiento
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    Código
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Ventanas
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="funcionamiento.html">
+    Funcionamiento
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../modules.html">
+    Código
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Navegación del sección">
+  <p class="bd-links__title" role="heading" aria-level="1">Navegación del sección</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Miga de pan" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Inicio">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Ventanas</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="ventanas">
+<h1>Ventanas<a class="headerlink" href="#ventanas" title="Link to this heading">#</a></h1>
+<p>Se describen los contenidos y comportamientos de las principales ventanas que
+posee el programa.</p>
+<p>Está orientado para ayudar al usuario a entender todos los parámetros
+relevantes para la adquisición y procesamiento de señales durante una
+calibración en potencia.</p>
+<section id="ventana-principal">
+<h2>Ventana principal<a class="headerlink" href="#ventana-principal" title="Link to this heading">#</a></h2>
+<p>Es la ventana principal para la adquisición de datos. Se abre al ejecutar,
+desde la línea de comandos, cualquiera de los dos comandos:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>ruidaqan<span class="w"> </span>adquisicion
+&gt;<span class="w"> </span>ruidaqan<span class="w"> </span>a
+</pre></div>
+</div>
+<p>En esta ventana se definen los parámetros generales de las mediciones. Los
+valores aquí definidos serán comunes para todas las mediciones realizadas
+durante una calibración en potencia.</p>
+<a class="reference internal image-reference" href="../_images/pantalla_principal.png"><img alt="Ventana principal." class="align-center" src="../_images/pantalla_principal.png" width="300" />
+</a>
+<section id="parametros-configurables">
+<h3>Parámetros configurables<a class="headerlink" href="#parametros-configurables" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt><strong>Reactor</strong></dt><dd><p>Nombre del reactor en donde se realiza la medición. En base a este nombre
+se elegirán las constantes nucleares como así también las funciones
+transferencia para normalizar los espectros.</p>
+</dd>
+<dt><strong>Núcleo</strong></dt><dd><p>Identificación del núcleo en donde se realizal a medición.  Junto con
+<strong>Reactor</strong> se utilizará para elegir las constantes nucleares.</p>
+</dd>
+<dt><strong>Cadenas de medición</strong></dt><dd><p>Cantidad de cadenas neutrónicas utilizadas para la medición. La cantidad
+mínima es 1. La cantidad máxima está limitada por cuántas señales se
+pueden adquirir (por cada cadena se adquieren tres señales).</p>
+</dd>
+<dt><strong>Medición de CIp</strong></dt><dd><p>Indica si se utilizará la placa de adquisición para medir la señal de Ip
+(tildado) o por el contrario, se utilizará el ingreso manual de datos
+(no tildado).</p>
+</dd>
+<dt><strong>Serie</strong></dt><dd><p>Identificación de la medición. Se utilizará, entre otras cosas, para
+identificar los nombres de los archivos de datos guardados.</p>
+</dd>
+<dt><strong>Comentarios</strong></dt><dd><p>Cualquier tipo de comentario relevante para la medición.</p>
+</dd>
+</dl>
+</section>
+<section id="botones-y-menu">
+<h3>Botones y menú<a class="headerlink" href="#botones-y-menu" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt><strong>Osciloscopio</strong></dt><dd><p>Abre la pantalla del osciloscopio.</p>
+</dd>
+<dt><strong>Medición de fondo</strong></dt><dd><p>Abre la pantala para la medición de fondo.</p>
+</dd>
+<dt><strong>Medición</strong></dt><dd><p>Abre la pantalla para la medición de ruido neutrónico</p>
+</dd>
+<dt><strong>Menú</strong></dt><dd><p>TODO</p>
+</dd>
+<dt><strong>Cfg. Avanzada</strong></dt><dd><p>Permite abrir la ventana de configuración avanzada</p>
+</dd>
+<dt><strong>Ayuda</strong></dt><dd><p>Ayuda e información del programa</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="osciloscopio">
+<h2>Osciloscopio<a class="headerlink" href="#osciloscopio" title="Link to this heading">#</a></h2>
+<p>Aplicación para visualizar las señales conectadas en las distintos canales
+analógicos de la placa de adquisición.</p>
+<a class="reference internal image-reference" href="../_images/pantalla_osciloscopio.png"><img alt="Ventana para la configuración avanzada." class="align-center" src="../_images/pantalla_osciloscopio.png" width="400" />
+</a>
+<p>La adquisición se realiza en forma de bloques, cuya cantidad de puntos se puede
+configurar.</p>
+<p>Se pueden configurar tanto los parámetros comunes a todos los canales, como así
+también parámetros individuales a cada canal por separado.</p>
+<dl class="simple">
+<dt><strong>Parámetros comunes</strong></dt><dd><p>Configuran la forma en que se realizará la adquisición de datos</p>
+<ul class="simple">
+<li><p>Cantidad de canales: cantidad de canales que se desean adquirir.</p></li>
+<li><p>Dispositivo: identificación del dispositivo NI dispinible para la
+adquisición. Sólo se muestran los disponibles.</p></li>
+<li><p>Frecuencia: frecuencia de muestreo, en Hertz.</p></li>
+<li><p>Datos lectura: Cantidad de puntos que se desean adquirir en cada bloque.</p></li>
+</ul>
+</dd>
+<dt><strong>Parámetros de cada canal</strong></dt><dd><p>Configuran los parámetros de cada canal por separado.</p>
+<ul class="simple">
+<li><p>Nombre: identificación del canal analógico. Sólo se muestran los
+disponibles en la placa de adquisición.</p></li>
+<li><p>Rango: rango en que se realizará la adquisicón. Sólo se muestran los
+rangos disponibles en la placa de adquisición.</p></li>
+<li><p>Color: color que tendrán los datos adquiridos al ser visualizados.</p></li>
+<li><p>Identificación: nombre con que se identificarán a la curva de datos
+adquiridos al ser graficados.</p></li>
+</ul>
+</dd>
+</dl>
+<p>En la parte derecha del gráfico se pueden seleccionar, mientras se realiza la
+adquisición, qué canales visualizar. Para ello se debe tildar o des-tildar la
+identificación correspondiente a cada canal.</p>
+</section>
+<section id="configuracion-avanzada">
+<h2>Configuración avanzada<a class="headerlink" href="#configuracion-avanzada" title="Link to this heading">#</a></h2>
+<p>En esta ventana se permite hacer una configuración detallada de la tarjeta
+que se utilizará para la adquisición de datos y de sus parámetros asociados.</p>
+<a class="reference internal image-reference" href="../_images/pantalla_cfg_adv.png"><img alt="Ventana para la configuración avanzada." class="align-center" src="../_images/pantalla_cfg_adv.png" width="300" />
+</a>
+<dl class="simple">
+<dt><em>Importante:</em></dt><dd><p><em>Esta ventana se debe acceder una vez seteados los parámetros de la `Ventana
+principal`_ (pues depende de ellos).</em></p>
+</dd>
+</dl>
+<p>Al abrir esta ventana, por default lo hace en modo de sólo lectura. Si se desea
+modificar los parámetros abrá que tildar, en la parte superior, la opción
+<strong>Editar configuracón</strong></p>
+<p>Los parámetros configurables están organizados en tres grupos: dispositivo,
+cadenas para la medición de ruido neutrónico y cadena para la medición de Ip (
+en caso de haber tildado <strong>Medición de CIp</strong> en la <a class="reference internal" href="#ventana-principal">Ventana principal</a>).</p>
+<dl>
+<dt><strong>Dispositivo</strong></dt><dd><p>Selección del dispositivo NI con que se hará la adquisición de datos.
+Automaticamente se listan todos los dipositivos disponibles. Pueden ser
+reales o simulados.</p>
+</dd>
+<dt><strong>Cadena n</strong></dt><dd><p>En cada cadena se deben especificar la adquisicón de las tres señales:</p>
+<ul class="simple">
+<li><p>AC: Canal donde se hará la adquisición de la componente fluctuante a
+la salida del filtro anti-aliasing.</p></li>
+<li><p>DC: Canal donde se hará la adquisición de la componente contínua a la
+salida del amplificador.</p></li>
+<li><p>AC filtro: Canal donde se hará la adquisición de la componente
+fluctuante que entra al filtro anti-aliasing (salida del
+amplificador).</p></li>
+</ul>
+<p>En cada una de ellas se podrán configurar los siguientes parámetros:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Canal</strong></dt><dd><p>Nombre del canal de la tarjeta de adquisición donde se leerá la señal.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Rango</strong></dt><dd><p>Rango de la tarjeta con que se medirá la señal.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Label</strong></dt><dd><p>Identificación que se le dará a la señal adquirida (es lo que
+aparecerá en los gráficos).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>Cadena CIp</strong></dt><dd><p>Aparece sólo si se tildó <strong>Medición de CIp</strong> en la <a class="reference internal" href="#ventana-principal">Ventana principal</a>.
+Sólamente se configura la adquisición de la señal de DC de dicho detector.
+Los parámetros son similares a los especificados anteriormente para cada
+<strong>Cadena n</strong>.</p>
+</dd>
+</dl>
+<p>La lista de canales disponibles, como así también de rangos disponibles, son
+leídos directamente del <strong>Dispositivo</strong> indicado.</p>
+<p>Por default, el orden en que se especifican los canales coincide con el orden
+utilizado por el programa FERCIN-3 para la adquisición de dos cadenas de ruido.</p>
+<p>Conviente siempre adquirir canales consecutivos. De nos ser posible, se deben
+corto-circuitear los canales libres intermedios.</p>
+</section>
+<section id="medicion-de-fondo">
+<h2>Medición de fondo<a class="headerlink" href="#medicion-de-fondo" title="Link to this heading">#</a></h2>
+<p>Esta ventana permite fijar los parámetros para realizar la medición de fondo.</p>
+<a class="reference internal image-reference" href="../_images/pantalla_med_fondo.png"><img alt="Ventana para la configuración avanzada." class="align-center" src="../_images/pantalla_med_fondo.png" width="300" />
+</a>
+<p>Los parámetros a configurar están agrupados por cadena de medición.</p>
+<dl>
+<dt><strong>Cadena n</strong></dt><dd><p>Los parámetros configurables asumen que se está trabajando con un
+amplificador CNEA-K330, aunque existe la opción de introducir los valores
+de forma personalizada para cualquier otro tipo de amplificador.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Rango</strong></dt><dd><p>Rango del amplificador que relaciona la corriente medida
+(en Amperes) con el voltaje adquirido (en Volts). Se listan los rangos
+disponibles del amplificador CNEA-K330.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Multiplicador</strong></dt><dd><p>Multiplicador del rango. La sensibilidad (S) del amplificador se tomará
+como: <cite>S = multiplicador x rango</cite>. Se listan los multiplicadores
+disponibles del amplificador CNEA-K330.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>En caso de seleccionar la opción <strong>Otro</strong> en el rango en lugar de
+<strong>Multiplicador</strong> aparecerá <strong>Manual</strong> y se podrá escribir directamente la
+sensibilidad del amplificador utilizado en unidades de A/V.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Offset</strong></dt><dd><p>Cero-vivo (en Volts) del amplificador utilizado. Para el
+CNEA-K330 es cero.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Comentario</strong></dt><dd><p>Para introducir cualquier información relevante sobre la medición de
+fondo.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>Cadena CIp</strong></dt><dd><p>Sólo aparece en caso de haber tildado <strong>Medición de CIp</strong> en la <a class="reference internal" href="#ventana-principal">Ventana
+principal</a>.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Sensibilidad</strong></dt><dd><p>Sensibilidad del amplificador de CIp utilizada para convertir la
+corriente medida en voltaje, en unidades de A/V.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Offset</strong></dt><dd><p>Cero-vivo (en Volts) del amplificador utilizado para la cadena CIp</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>Una vez finalizada la configuración, se debe apretar el botón <strong>Comenzar
+medición</strong> ubicado en la parte inferior de la pantalla. Al hacerlo, se abrirá
+la ventana de <a class="reference internal" href="#ajuste-de-rangos">Ajuste de rangos</a>.</p>
+<p>Al comenzar la medición de fondo se podrá ver el avance a través de la barra
+de progreso.</p>
+<p>Se muestran también los voltajes (en Volts) instantáneos de cada señal medida.
+Los instantáneos (promedio de cada bloque adquirido) y el inicial. Utilizando
+la sensibilidad y el offset definidos se muestra también la corriente (en
+Amperes).</p>
+<p>Los valores instantáneos cambian de color cuando éstos cambian en más de un 1%
+respecto al valor inicial (ver clase <cite>ProgresoMedicion</cite> en <cite>procesado_gui.py</cite>):</p>
+<ul class="simple">
+<li><p>negro: valores dentro del 1% respecto al valor inicial</p></li>
+<li><p>rojo: valores en más del 1% por encima del valor inicial</p></li>
+<li><p>azul: valores en más del 1% por debajo del valor inicial</p></li>
+</ul>
+<p>La comparación entre valores instantáneos e iniciales se hace sobre las
+corrientes medidas (y no sobre los voltajes).</p>
+<p>La medición de fondo se hace tomando 512 puntos con una frecuencia de muestreo
+de 400 Hz. Se toman 100 bloques (o historias) en total (ver
+clase <cite>BackgroundWindow</cite> en <cite>acquisition_window.py</cite>).</p>
+<dl>
+<dt><strong>Control de saturación</strong></dt><dd><p>No se comprueba la saturación de entrada del filtro anti-aliasing.</p>
+<p>Tampoco que las señales AC estén en el rango correcto (ya que no
+intervienen en la medición de fondo). Sólo se comprueba la saturación de
+rango en las señales DC.</p>
+</dd>
+<dt><strong>Archivos generados</strong></dt><dd><p>Los valores de las corrientes de fondo son guardados en el archivo
+<cite>SXXX-FONDOS</cite> (donde XXX es la <strong>Serie</strong> definida en la <a class="reference internal" href="#ventana-principal">Ventana
+principal</a>). Todas las corrientes con sus incertezas se ordenan por fila
+(ver encabezado de dicho archivo).</p>
+<p>Por compatibilidad con el programa FERCIN3, también se guardan en los
+archivos <cite>FONDO1</cite>, <cite>FONDO2</cite> (en caso de medir con dos detectores) y
+<cite>FONDO-IP</cite> por separado.</p>
+</dd>
+</dl>
+</section>
+<section id="ajuste-de-rangos">
+<h2>Ajuste de rangos<a class="headerlink" href="#ajuste-de-rangos" title="Link to this heading">#</a></h2>
+<p>Esta ventana permitirá ajustar de forma óptima a los rangos utilizados para la
+adquisición de voltaje de la tarjeta.</p>
+<a class="reference internal image-reference" href="../_images/pantalla_ajuste_rangos.png"><img alt="Ventana para la configuración avanzada." class="align-center" src="../_images/pantalla_ajuste_rangos.png" width="300" />
+</a>
+<p>Una vez abierta esta ventana, automáticamente se comenzará a buscar cuál es el
+mejor rango para utilizar con cada canal.</p>
+<p>En la parte superior de la pantalla se muestran cuatro columnas que contienen
+al canal, su identificación (el <strong>Label</strong> puesto en <a class="reference internal" href="#configuracion-avanzada">Configuración avanzada</a>),
+el rango y el porcentaje de utilización de dicho rango.</p>
+<dl class="simple">
+<dt><strong>Monitorear</strong></dt><dd><p>Calcula el porcentaje de utilización de los rangos actuales de la tarjeta
+(por lo general serán aquellos configurados en <a class="reference internal" href="#configuracion-avanzada">Configuración avanzada</a>).</p>
+</dd>
+<dt><strong>Ajustar</strong></dt><dd><p>Selecciona a los mejores rangos disponibles en la tarjeta de acuerdo a las
+señales medidas en cada canal.</p>
+</dd>
+</dl>
+<p>Si los porcentajes de utilización de los rangos no son satisfactorios, se debe
+cerrar esta ventana, para volver a la anterior y modificar los parámetros del
+amplificador.</p>
+<p>Si los porcentajes de utilización de los rangos son satisfactorios, se puede
+continuar con alguna de las tres opciones:</p>
+<dl class="simple">
+<dt><strong>Actuales</strong></dt><dd><p>Comienza la medición utilizando los rangos actuales de la tarjeta. Esta
+opción permite trabajar con rangos fijos (aquellos fijados en
+<a class="reference internal" href="#configuracion-avanzada">Configuración avanzada</a>).</p>
+</dd>
+<dt><strong>Ajustados</strong></dt><dd><p>Comienza la medición utilizando los rangos ajustados de acuerdo al criterio
+(TODO).</p>
+</dd>
+<dt><strong>Cancelar</strong></dt><dd><p>Cierra la ventana sin efectuar ninguna modificación en los rangos. Se
+retorna a la ventana <a class="reference internal" href="#medicion-de-fondo">Medición de fondo</a> para realizar las modificaciones
+pertinentes.</p>
+</dd>
+</dl>
+<p>Si se selecciona <strong>Actuales</strong> o <strong>Ajustados</strong> comienza la medición de fondo y
+se vuelve a la ventana <a class="reference internal" href="#medicion-de-fondo">Medición de fondo</a> donde se indicará el progreso de
+la misma.</p>
+</section>
+<section id="configuracion-de-cada-medicion">
+<h2>Configuración de cada medición<a class="headerlink" href="#configuracion-de-cada-medicion" title="Link to this heading">#</a></h2>
+<p>Esta ventana permite configurar los parámetros relacionados con cada medición
+individual.</p>
+<a class="reference internal image-reference" href="../_images/pantalla_cfg_medicion.png"><img alt="Ventana para la configuración de cada medición." class="align-center" src="../_images/pantalla_cfg_medicion.png" width="400" />
+</a>
+<dl>
+<dt><strong>Cadena n</strong></dt><dd><p>Los parámetros configurables asumen que se está trabajando con un
+amplificador CNEA-K330, aunque existe la opción de introducir los valores
+de forma personalizada para cualquier otro tipo de amplificador.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Rango</strong></dt><dd><p>Rango del amplificador que relaciona la corriente medida
+(en Amperes) con el voltaje adquirido (en Volts). Se listan los rangos
+disponibles del amplificador CNEA-K330.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Multiplicador</strong></dt><dd><p>Multiplicador del rango. La sensibilidad (S) del amplificador se tomará
+como: <cite>S = multiplicador x rango</cite>. Se listan los multiplicadores
+disponibles del amplificador CNEA-K330.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>En caso de seleccionar la opción <strong>Otro</strong> en el rango en lugar de
+<strong>Multiplicador</strong> aparecerá <strong>Manual</strong> y se podrá escribir directamente la
+sensibilidad del amplificador utilizado en unidades de A/V.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Ganancia AC</strong></dt><dd><p>Ganancia que se aplica a la componente fluctuante de la señal. Sólo se
+permite elegir entre las ganancias disponibles dek amplificador
+CNEA-K330.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Offset</strong></dt><dd><p>Cero-vivo (en Volts) del amplificador utilizado. Para el
+CNEA-K330 es cero.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Comentario</strong></dt><dd><p>Para introducir cualquier información relevante sobre la medición. Está
+por compatibilidad con el FERCIN3, en el futuro será eliminado.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>Cadena CIp</strong></dt><dd><p>Sólo aparece en caso de haber tildado <strong>Medición de CIp</strong> en la <a class="reference internal" href="#ventana-principal">Ventana
+principal</a>.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Sensibilidad</strong></dt><dd><p>Sensibilidad del amplificador de CIp utilizada para convertir la
+corriente medida en voltaje, en unidades de A/V.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Offset</strong></dt><dd><p>Cero-vivo (en Volts) del amplificador utilizado para la cadena CIp</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>DAQ</strong></dt><dd><p>Configuración de parámetros relevantes para la adquisición de datos.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>BW</strong></dt><dd><p>Ancho de banda (en Hz) que se utilizará para la medición. la frecuencia
+de muestreo será el doble de <strong>BW</strong>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Puntos</strong></dt><dd><p>Cantidad de datos que se adquirirán por bloque (o historia).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Historias</strong></dt><dd><p>Cantidad de historias que se adquirirán por medición</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>Medición</strong></dt><dd><p>Configuración para identificar a cada medición</p>
+<ul>
+<li><dl class="simple">
+<dt><strong>Nivel</strong></dt><dd><p>Número que identifica al nivel de potencia en que se está midiendo</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Medición</strong></dt><dd><p>Número para identificar a la medición dentro de un mismo <strong>Nivel</strong></p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><strong>Comentario</strong></dt><dd><p>Cualquier comentario relevante a la medición en particular.</p>
+<p>Este campo será el reemplazo de los comentarios que se hacen dentro
+de cada <strong>Cadena n</strong>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>En el menú superior se encuentra un botón para abrir la ventana de <strong>Ajustes</strong>
+en caso de que se quiera analizar una medición ya realizada.</p>
+<p>En la parte inferior se encuentran los botones para abrir el <strong>Osciloscopio</strong> y
+para <strong>Comenzar la medición</strong>.</p>
+<p>Al apretar <strong>Comenzar la medición</strong>, primero se abrirá la ventana de <a class="reference internal" href="#ajuste-de-rangos">Ajuste
+de rangos</a> idéntica a la descripta anteriormente. Una vez ajustados los rangos
+se abrirá la ventana de <a class="reference internal" href="#medicion">Medición</a> y la medición comenzará automáticamente.</p>
+</section>
+<section id="medicion">
+<h2>Medición<a class="headerlink" href="#medicion" title="Link to this heading">#</a></h2>
+<p>Esta ventana muestra los datos adquiridos mientras se está efectuando la
+medición. Permite también ver el progreso de la misma y comprobar los valores
+más relevantes.</p>
+<a class="reference internal image-reference" href="../_images/pantalla_medicion.png"><img alt="Ventana durante la medición." class="align-center" src="../_images/pantalla_medicion.png" width="300" />
+</a>
+<dl>
+<dt><strong>Gráficos</strong></dt><dd><p>Los gráficos se organizan a través de tres solapas (<strong>AC</strong>, <strong>Espectros</strong> y
+<strong>DC</strong>):</p>
+<ul>
+<li><dl class="simple">
+<dt><strong>AC</strong></dt><dd><p>Muestra el gráfico con los valores de las componentes fluctuantes de
+las señales medidas. Se actualiza con cada historia leída.</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><strong>Espectros</strong></dt><dd><p>Muestra el espectro asociado de la componente fluctuantes <strong>AC</strong>. Con
+cada nueva historia adquirida se calcula un espectro. El gráfico que
+se muestra consiste en los promedios de todos los espectros adquiridos
+hasta ese momento.</p>
+<p><strong>Importante</strong>: los espectros no están normalizados con las corrientes
+medias, como así tampoco están corregidos por la función transferencia.
+Sólo se lo pone para ir viendo si la forma del espectro es la esperada.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>DC</strong></dt><dd><p>Muestra el gráfico con los valores de las componentes contínuas de las
+señales medidas. Se actualiza con cada historia leída.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>En todas las pestañas es posible elegir qué señales se mostrarán al tildar o no
+tildar la identificación de cada señal en la columna a la derecha de los
+gráficos.</p>
+<p>En la parte inferior se muestra información sobre el progreso de la medición y
+sobre los valores medios medidos. Son idénticos a los descriptos en la ventana
+de <a class="reference internal" href="#medicion-de-fondo">Medición de fondo</a>.</p>
+<section id="barra-de-menu">
+<h3>Barra de menú<a class="headerlink" href="#barra-de-menu" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt><strong>Start/Stop</strong></dt><dd><p>Comienza y detiene la medición. Para usar en caso de que algo salga mal, de
+lo contrario no debe accionarse (la medición comienza y termina
+automáticamente).</p>
+</dd>
+<dt><strong>Configuraciones</strong></dt><dd><p>Muestra y/o oculta las pestañas de configuración, que aparecerá a la
+izquierda de los gráficos. Se muestran todas los parámetros configurados
+(en modo sólo lectura). También existe una pestaña para controlar
+visualmente la saturación de los rangos de cada señal.</p>
+</dd>
+<dt><strong>Control</strong></dt><dd><p>Abre una ventana donde se replica toda la información sobre el progreso de
+la medición (lo que aparece en la parte inferior de la ventana de
+<a class="reference internal" href="#medicion">Medición</a>. Está ampliada para que, de ser necesario, pueda ser observada
+de lejos.</p>
+</dd>
+<dt><strong>Salir</strong></dt><dd><p>Cierra la ventana de <a class="reference internal" href="#medicion">Medición</a>. Salvo que algo haya salido mal, no es
+necesario accionar este botón. La ventana se cerrará sola una vez
+finalizada la medición.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="procesamiento-y-ajustes">
+<h2>Procesamiento y ajustes<a class="headerlink" href="#procesamiento-y-ajustes" title="Link to this heading">#</a></h2>
+<p>Es la ventana que permite procesar los datos medidos y realizar los ajustes
+espectrales para obtener los parámetros cinéticos de interés.</p>
+<p>Puede ser considerado como un programa en sí mismo, pero que está acoplado
+a la ventana de adquisición. Se llega a ella mediante dos maneras:</p>
+<ol class="arabic">
+<li><p>A través de la consola, escribiendo cualquiera de los siguientes comandos:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>ruidaqan<span class="w"> </span>procesamiento
+&gt;<span class="w"> </span>ruidaqan<span class="w"> </span>p
+</pre></div>
+</div>
+<p>De esta forma habrá que abrir manualmente el archivo con los datos
+adquiridos. La ventana funciona de forma autónoma.</p>
+</li>
+<li><p>Automáticamente se abrirá esta ventana al finalizar una adquisición de datos.</p>
+<p>En este caso, se abre el archivo corresponiente a la medición que acaba de
+finalizar.</p>
+</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/pantalla_procesamiento.png"><img alt="Ventana para el procesamiento y ajuste de los datos." class="align-center" src="../_images/pantalla_procesamiento.png" width="500" />
+</a>
+<p>El uso de esta ventana consiste en cuatro etapas consecutivas:</p>
+<ol class="arabic simple">
+<li><p>Cargado del archivo con los datos medidos</p></li>
+<li><p>Selección de los parámetros cinéticos del reactor</p></li>
+<li><p>Estimación de los espectros (NPSD y/o CPSD)</p></li>
+<li><p>Ajuste de los espectros para obtener los parámetros cinéticos</p></li>
+</ol>
+<p>Dependiendo de cómo se llame a esta ventana, es posible que muchas de estas
+etapas se ejecuten automáticamente (con parámetros por default o leidos del
+archivo con los datos adquiridos).</p>
+<section id="cargado-del-archivo">
+<h3>1. Cargado del archivo<a class="headerlink" href="#cargado-del-archivo" title="Link to this heading">#</a></h3>
+<p>Permite abrir el archivo que contiene los datos adquiridos. Reconoce los
+siguientes archivos:</p>
+<ul>
+<li><p>Archivos grabados por el programa <code class="docutils literal notranslate"><span class="pre">RuiDAQAn</span></code></p>
+<p>Tanto en el formato HDF5 (extensión .h5) como con el formato similar al
+FERCIN3 (extensión .RUI)</p>
+</li>
+<li><p>Archivos grabados con el programa <code class="docutils literal notranslate"><span class="pre">FERCIN3</span></code></p>
+<p>Son archivos con extensión .RUI. La mayoría de las veces se los reconoce por
+haber sido generados a partir de una DAQ de 12 bits.</p>
+</li>
+<li><p>Archivos grabados con el programa <code class="docutils literal notranslate"><span class="pre">FERCIN3-VB`</span></code></p>
+<p>Son archivos con extensión .RUI. La mayoría de las veces se los reconoce por
+haber sido generados a partir de una DAQ con 16 bits.</p>
+</li>
+</ul>
+<p>Como se puede ver, los archivos con formato .RUI pueden venir de distintos
+programas de adquisición. Se los diferencia por la cantidad de bits de la DAQ
+(se analizan los datos adquiridos, es confiable para identificar una DAQ de 16
+bits, pero para una de 12 bits puede ser erróneo).</p>
+<p>Tanto los programas <code class="docutils literal notranslate"><span class="pre">RuiDAQAn</span></code> como <code class="docutils literal notranslate"><span class="pre">FERCIN3-VB</span></code> trabajan con DAQ de 16
+bits. La diferencia radica en que el primero genera un archivo extra con los
+valores de los coeficientes para pasar de enteros a voltajes
+(<code class="docutils literal notranslate"><span class="pre">SXX-coeficientes_int_to_volt.pkl</span></code> dentro de la carpeta <code class="docutils literal notranslate"><span class="pre">datos</span></code>).
+Entonces, al cargar el .RUI, el programa busca dicho archivo. Si no lo
+encuentra, asume que fue generado por el <code class="docutils literal notranslate"><span class="pre">FERCIN3-VB</span></code> y se toman
+coeficientes genéricos.</p>
+</section>
+<section id="seleccion-de-los-parametros-cineticos-del-reactor">
+<h3>2. Selección de los parámetros cinéticos del reactor<a class="headerlink" href="#seleccion-de-los-parametros-cineticos-del-reactor" title="Link to this heading">#</a></h3>
+<p>Se deberá seleccionar el reactor y, de ser necesario, el núcleo en donde se
+realizaron las mediciones. Estos datos están incluidos en los archvios .h5,
+por lo cual la selección se hace automáticamente. De todas formas, si se desea
+modificar esos parámetros, se debe tildar <code class="docutils literal notranslate"><span class="pre">Habilitar</span> <span class="pre">edición</span></code>.</p>
+<p>Si se abre un .RUI se debe saber de ante-mano en qué reactor se realizó la
+medición.</p>
+<p>Los datos cinéticos son leidos del archivo
+<code class="docutils literal notranslate"><span class="pre">ruidaqan/constantes/constantes_reactores.py</span></code> ubicado en la carpeta donde
+se instaló el paquete. Si se quieren agregar o modificar datos, se deberá
+editar dicho archivo (y volver a abrir el programa).</p>
+</section>
+<section id="estimacion-de-los-espectros">
+<h3>3. Estimación de los espectros<a class="headerlink" href="#estimacion-de-los-espectros" title="Link to this heading">#</a></h3>
+<p>En esta parte se configuran los parámetros que definen cómo se hará la
+estimación espectral.</p>
+<p>Se utilizará el estimador de Welch para los espectros (se dividen todos
+los datos en bloques, con o sin solapamiento, se calculan espectros de
+cada bloque y finalmente se promedian).</p>
+<dl class="simple">
+<dt><strong>Tamaño bloque</strong></dt><dd><p>Cantidad de datos que se utilizarán para calcular cada espectro.</p>
+</dd>
+<dt><strong>Solapamiento</strong></dt><dd><p>Cantidad de datos que se solaparán entre bloques consecutivos</p>
+</dd>
+<dt><strong>Frecuencia de línea</strong></dt><dd><p>Se utilizará para eliminar el pico en el espectro correspondiente a la
+frecuencia de línea y a sus dos primeros armónicos
+(<span class="math notranslate nohighlight">\(f_l, 2f_l\text{ y } 3f_l\)</span>).
+La forma de eliminar el pico es buscando el punto donde ocurre y borrando
+dicho punto con sus dos vecinos.</p>
+</dd>
+</dl>
+</section>
+<section id="ajuste-de-los-espectros">
+<h3>4. Ajuste de los espectros<a class="headerlink" href="#ajuste-de-los-espectros" title="Link to this heading">#</a></h3>
+<p>Se define el rango de frecuencias en donde se hará el ajuste.</p>
+<p>Los valores por default coinciden con los utilizados por el programa
+<cite>FERCIN3</cite>.</p>
+<p>Se pueden seleccionar los espectros individualmente o todo juntos, a través
+del combo-box <strong>Espectros</strong>. La selección también se puede hacer moviendo
+la zona de ajuste desde el mismo gráfico.</p>
+<p>Cuando se abre un archivo .h5, los pasos 1 a 4 se realizan automáticamente.</p>
+<p>Una vez realizado el ajuste, aparecerán los resultados en la parte inferior de
+la ventanaUna vez realizado el ajuste, aparecerán los resultados en la parte
+inferior de la ventana.</p>
+<p>Los botones a la derecha son:</p>
+<dl>
+<dt><strong>Datos previos</strong></dt><dd><p>Basado en el número de serie del archivo con datos, se abrirá (de existir)
+la ventana de <a href="#id1"><span class="problematic" id="id2">`Resultados`_</span></a> con los datos de las mediciones previas de la
+misma serie.</p>
+<p>Se abre el archivo <code class="docutils literal notranslate"><span class="pre">SXXX-resultados_ajustes.pkl</span></code>.</p>
+</dd>
+<dt><strong>Grabar datos</strong></dt><dd><p>Una vez que se está conforme con los resultados del ajuste, es necesario
+apretar este botón para que queden guardados.</p>
+<p>Se guarda en el archivo <code class="docutils literal notranslate"><span class="pre">SXXX-resultados_ajustes.pkl</span></code>.</p>
+<p><strong>Importante</strong>: Si no se aprieta este botón, no se guardan los datos.</p>
+</dd>
+<dt><strong>Cerrar</strong></dt><dd><p>Cierra la ventana del programa.</p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../index.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title">Documentación de RuiDAQAn</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="funcionamiento.html"
+       title="siguiente página">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">siguiente</p>
+        <p class="prev-next-title">Funcionamiento</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> En esta página
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ventana-principal">Ventana principal</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parametros-configurables">Parámetros configurables</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#botones-y-menu">Botones y menú</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#osciloscopio">Osciloscopio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion-avanzada">Configuración avanzada</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#medicion-de-fondo">Medición de fondo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ajuste-de-rangos">Ajuste de rangos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion-de-cada-medicion">Configuración de cada medición</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#medicion">Medición</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#barra-de-menu">Barra de menú</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#procesamiento-y-ajustes">Procesamiento y ajustes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cargado-del-archivo">1. Cargado del archivo</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seleccion-de-los-parametros-cineticos-del-reactor">2. Selección de los parámetros cinéticos del reactor</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estimacion-de-los-espectros">3. Estimación de los espectros</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ajuste-de-los-espectros">4. Ajuste de los espectros</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>Esta página</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/manual/pantallas.rst.txt"
+            rel="nofollow">Mostrar el código</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, División Física Experimental de Reactores.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Construido con el <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html"> Tema PyData Sphinx </a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

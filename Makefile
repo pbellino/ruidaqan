@@ -40,6 +40,7 @@ docs:
 # ── Distribución ──────────────────────────────────────────────────────────────
 
 dist: docs
+	cp -r docs/_build/html src/ruidaqan/docs/
 	sed -i -e 's/__commit__ =.*/__commit__ = "$(HASH)"/g' src/ruidaqan/__init__.py
 	sed -i -e 's/DEBUG_MODE =.*/DEBUG_MODE = False/g'       src/ruidaqan/gui/config.py
 	sed -i -e 's/DATA_FOLDER =.*/DATA_FOLDER = ""/g'        src/ruidaqan/gui/config.py

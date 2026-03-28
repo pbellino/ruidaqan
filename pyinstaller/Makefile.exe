@@ -1,0 +1,20 @@
+# Uso (desde la raíz del repo):
+#   make -f pyinstaller/Makefile.exe exe
+
+SPECS = pyinstaller/specs
+
+.PHONY: exe exe_adquisicion exe_procesamiento exe_resultados
+
+exe: exe_adquisicion exe_procesamiento exe_resultados
+	@echo ""
+	@echo "Ejecutables generados en dist/:"
+	@ls dist/ruidaqan-*/
+
+exe_adquisicion:
+	pyinstaller $(SPECS)/ruidaqan_adquisicion.spec --noconfirm
+
+exe_procesamiento:
+	pyinstaller $(SPECS)/ruidaqan_procesamiento.spec --noconfirm
+
+exe_resultados:
+	pyinstaller $(SPECS)/ruidaqan_resultados.spec --noconfirm

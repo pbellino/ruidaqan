@@ -12,6 +12,6 @@ Subpaquetes
 .. toctree::
    :maxdepth: 4
 
-   ruidaqan.constantes
+   ruidaqan.constants
    ruidaqan.gui
    ruidaqan.script

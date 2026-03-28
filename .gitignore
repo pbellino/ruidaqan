@@ -36,3 +36,6 @@ tests/fixtures/*.pkl
 
 # Variables de entorno
 .env
+
+# Docs compilada (se genera con make docs, se incluye solo en el wheel)
+src/ruidaqan/docs/html/
