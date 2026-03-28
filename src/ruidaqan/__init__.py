@@ -1,5 +1,5 @@
 __version__ = "0.0.2"
-__commit__ = ""
+__commit__ = "766a36aa5f15a454e34c3e6d8721781e2cb461e0"
 
 import os
 

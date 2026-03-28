@@ -2,7 +2,7 @@
 graft src/ruidaqan/docs/
 
 # Incluir datos de transferencia (funciones de transferencia de los reactores)
-recursive-include src/ruidaqan/constants *.py *.PSD
+recursive-include src/ruidaqan/transferencias *.PSD
 
 # Excluir siempre
 global-exclude *.pyc
