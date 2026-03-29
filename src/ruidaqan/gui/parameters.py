@@ -1,7 +1,7 @@
 import pprint
 
 from pyqtgraph.Qt import QtCore
-from pyqtgraph.parametertree import *
+from pyqtgraph.parametertree import ParameterTree, Parameter
 from PyQt6.QtCore import QSettings, pyqtSlot
 
 #from src.gui.config import *

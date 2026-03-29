@@ -1,7 +1,8 @@
 NAME = ruidaqan
 
 .SUFFIXES:
-.PHONY: clean dist install install_dev docs lint test exe stamp_hash restore_hash
+.PHONY: clean dist install install_dev docs lint test exe exe_adquisicion \
+        exe_procesamiento exe_resultados stamp_hash restore_hash
 
 # Variables de ruta
 INIT_FILE = src/ruidaqan/__init__.py
@@ -36,14 +37,16 @@ test_cov:
 
 # ── Documentación ─────────────────────────────────────────────────────────────
 
+docs:
+	$(MAKE) -C docs html
+
 dist: docs
 	# 1. Preparar carpeta de docs interna
-	mkdir -p src/ruidaqan/docs/
+	mkdir -p src/ruidaqan/docs/html/
 	cp -r docs/_build/html/* src/ruidaqan/docs/html/
 
 	# 2. Configuración de producción (GUI y Commit Hash)
 	sed -i -e 's/DEBUG_MODE =.*/DEBUG_MODE = False/g'   src/ruidaqan/gui/config.py
-	sed -i -e 's/DATA_FOLDER =.*/DATA_FOLDER = ""/g'    src/ruidaqan/gui/config.py
 
 	# El estampado con el ancla ^ para evitar el IndentationError
 	$(eval HASH=$(shell git rev-parse --short HEAD))
@@ -60,6 +63,12 @@ clean:
 
 # Construye todo el ecosistema de distribución
 # Nota: 'dist' ya hace su propio stamp/restore interno.
+
+exe_adquisicion exe_procesamiento exe_resultados: dist stamp_hash
+	$(MAKE_EXE) $@
+	@$(MAKE) restore_hash
+	@echo "Ejecutable $@ generado y repo restaurado."
+
 exe: dist
 	@$(MAKE) stamp_hash
 	@echo "Generando ejecutables independientes..."

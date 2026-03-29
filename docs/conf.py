@@ -1,5 +1,5 @@
-import os
 import sys
+import os
 import subprocess
 import datetime
 
@@ -45,9 +45,14 @@ extensions = [
 
 # Mock de imports para evitar dependencias pesadas o de sistema en el build
 autodoc_mock_imports = [
-    'PyQt5', 'PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.QtWidgets', 
-    'PyQt5.QtWebEngineWidgets', 'PyQt5.QtChart', 'pyqtgraph',
-    'numpy', 'pandas', 'matplotlib', 'tables', 'scipy', 'nidaqmx'
+    'PyQt5', 'PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.QtWidgets',
+    'PyQt5.QtWebEngineWidgets', 'PyQt5.QtChart',
+    'pyqtgraph',
+    'pyqtgraph.Qt',
+    'pyqtgraph.parametertree',
+    'pyqtgraph.parametertree.parameterTypes',
+    'numpy', 'pandas', 'matplotlib', 'tables', 'scipy', 'nidaqmx',
+    'uncertainties', 'seaborn', 'lmfit',
 ]
 
 templates_path = ['_templates']

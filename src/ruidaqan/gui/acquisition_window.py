@@ -321,7 +321,7 @@ class RangeAdjustmentWindow(QMainWindow):
         self.close()
 
 
-    @pyqtSlot(np.ndarray)
+    @pyqtSlot(object)
     def acumula_historias_volt(self, new_data):
         """ Acumula datos para luego promediar """
         self.historias_acumuladas.append(new_data)
@@ -540,7 +540,7 @@ class BackgroundWindow(QMainWindow):
             self.read_thread.start()
 
 
-    @pyqtSlot(np.ndarray)
+    @pyqtSlot(object)
     def acumula_historias_volt(self, new_data):
         """ Acumula datos para luego promediar """
         self.historias_acumuladas.append(new_data)
@@ -820,7 +820,7 @@ class AcquisitionWindow(QMainWindow):
             self.control_win_exist = False
 
 
-    @pyqtSlot(np.ndarray)
+    @pyqtSlot(object)
     def acumula_historias(self, new_data):
         # Copio los datos debido a que append guarda referencias de los datos
         cp_data = np.copy(new_data)
