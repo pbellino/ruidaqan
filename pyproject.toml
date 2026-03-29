@@ -15,7 +15,7 @@ where = ["src"]
 name        = "ruidaqan"
 version     = "0.1.13"  # bumpver
 description = "Adquisición y procesamiento para ruido neutrónico"
-readme      = "README.rst"
+readme      = "README.md"
 authors     = [{ name = "Pablo Bellino", email = "pbellino@cnea.gov.ar" }]
 license     = { file = "LICENSE" }
 keywords    = ["neutron noise", "nidaqmx", "power calibration", "reactor"]
@@ -93,7 +93,6 @@ tag_format = "{version}"
     'current_version = "{version}"',
     'version     = "{pep440_version}"  # bumpver',
 ]
-"README.rst"                = ["{pep440_version}"]
 "src/ruidaqan/__init__.py"  = ["{pep440_version}"]
 
 [tool.pytest.ini_options]
