@@ -60,9 +60,9 @@ class AboutWindow(QMainWindow):
         Consultas, sugerencias y reportes de errores comunicarse con:<br>
         Pablo A. Bellino<br>
         <a href="mailto:pbellino@cnea.gov.ar">
-        pbellino@cnea.gov.ar</a><br><br>
-        División Física Experimental de Reactores<br>
-        Centro Atómico Constituyentes<br>
+        pablobellino@cnea.gob.ar</a><br><br>
+        Reactor RA-3<br>
+        Centro Atómico Ezeiza<br>
         CNEA</center>"""
 
         # Información sobre versión y hash
