@@ -1,8 +1,8 @@
 # RuiDAQAn
 
-![GitHub release](https://img.shields.io/github/v/release/pbellino/ruidaqan)
+![GitHub Release](https://img.shields.io/github/v/release/pbellino/ruidaqan?style=flat-square&color=blue)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue)
-![License](https://img.shields.io/github/license/pbellino/ruidaqan)
+![License](https://img.shields.io/github/license/pbellino/ruidaqan?style=flat-square&color=green)
 
 **Adquisición y análisis de señales para la técnica de ruido neutrónico**
 
