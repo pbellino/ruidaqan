@@ -677,3 +677,9 @@ Los botones a la derecha son:
 
 **Cerrar**
     Cierra la ventana del programa.
+
+Resultados
+----------
+
+TODO
+
