@@ -178,7 +178,7 @@ jobs:
           name: executables-windows
           path: dist/*.zip
 
-  # ── 5. Publicar en TestPyPI ──────────────────────────────────────────────
+  # ── 5. Publicar en PyPI ──────────────────────────────────────────────
   publish-pypi:
     name: Publicar en TestPyPI
     needs: build-wheel
@@ -195,8 +195,9 @@ jobs:
 
       - name: Publicar en TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
+          # Para publicar en TestPyPI
+          #     with:
+          # repository-url: https://test.pypi.org/legacy/
 
   # ── 6. GitHub Release ────────────────────────────────────────────────────
   release:
