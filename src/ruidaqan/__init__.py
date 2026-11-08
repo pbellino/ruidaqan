@@ -30,9 +30,12 @@ if os.name == "nt":
 
 if not __commit__:
     try:
+        # Se consulta el repositorio donde está el paquete y no el del
+        # directorio de trabajo (que puede ser otro repositorio)
         __commit__ = subprocess.check_output(
             ['git', 'rev-parse', '--short', 'HEAD'],
-            stderr=subprocess.DEVNULL
+            stderr=subprocess.DEVNULL,
+            cwd=os.path.dirname(os.path.abspath(__file__)),
         ).decode('ascii').strip()
     except Exception:
         __commit__ = "desconocido"
