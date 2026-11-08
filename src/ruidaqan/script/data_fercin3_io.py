@@ -13,8 +13,9 @@ import importlib.resources
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
-from .fit_models import (ajuste_apsd, ajuste_cpsd, ajuste_lineal,
-                         weighted_average)
+from .fit_models import (ajuste_apsd, ajuste_apsd_ponderado, ajuste_cpsd,
+                         ajuste_cpsd_ponderado, ajuste_lineal, model_apsd,
+                         model_cpsd, weighted_average)
 
 
 class _ProcesamientoEspectral():
@@ -61,7 +62,7 @@ class _ProcesamientoEspectral():
     # ------------------------------------------------------------------
     # Espectros
     # ------------------------------------------------------------------
-    def get_spectrums(self, N_fft=None, N_overlap=None):
+    def get_spectrums(self, N_fft=None, N_overlap=None, segmento=None):
         """
         Espectros sin normalizar ni corregidos con función transferencia
 
@@ -76,6 +77,9 @@ class _ProcesamientoEspectral():
                 Puntos para calcular la FFT en cada bloque
             N_overlap: int
                 Cantidad de puntos para el solapamiento de bloques
+            segmento: slice, opcional
+                Porción de la señal a utilizar (se usa para estimar
+                incertezas por lotes). Por defecto se usa la señal completa.
 
         Returns
         -------
@@ -91,6 +95,10 @@ class _ProcesamientoEspectral():
         self.N_overlap = N_overlap
 
         AC_volts = self._ac_volts()
+        if segmento is not None:
+            AC_volts = [AC[segmento] for AC in AC_volts]
+        # Cantidad de muestras usadas (para los grados de libertad)
+        self._n_muestras = len(AC_volts[0])
 
         spectrums = []
         for AC in AC_volts:
@@ -107,6 +115,23 @@ class _ProcesamientoEspectral():
         # Se convierten
         self.f = np.asarray(f_spectrums)
         return self.spectrums, self.f
+
+    def segmentos_equivalentes(self):
+        """
+        Número equivalente de segmentos independientes del estimador de
+        Welch (ventana Hann), teniendo en cuenta el solapamiento:
+
+            n_eff = K / (1 + 2 sum_{j=1}^{K-1} (1 - j/K) rho(j)^2)
+
+        con rho(j) la correlación de la ventana consigo misma desplazada j
+        pasos [Welch (1967), IEEE Trans. Audio Electroacoust. 15(2), 70-73;
+        Percival & Walden (1993), Spectral Analysis for Physical
+        Applications, sec. 6.17]. Sin solapamiento n_eff = K.
+        """
+        if self.N_fft is None:
+            raise ValueError("Faltan estimar los espectros")
+        return segmentos_equivalentes(self._n_muestras, self.N_fft,
+                                      self.N_overlap)
 
     def get_normalized_spectrums(self, reactor_name, N_fft=None,
                                 N_overlap=None, freqs_to_remove=[50, 100, 150],
@@ -372,7 +397,7 @@ class _ProcesamientoEspectral():
     # ------------------------------------------------------------------
     # Ajustes
     # ------------------------------------------------------------------
-    def fit_spectrums(self, intervals, plot=False):
+    def fit_spectrums(self, intervals, plot=False, ponderado=False):
         """
         Ajuste de los espectros
 
@@ -382,6 +407,22 @@ class _ProcesamientoEspectral():
             en el orden [NPSD1, NPSD2, CPSD12]
         plot: bool
             True si se quiere graficar. False por default
+        ponderado: bool
+            False (default): mínimos cuadrados sin pesos (comportamiento
+            original).
+            True: mínimos cuadrados pesados con la varianza del estimador de
+            Welch, iterando los pesos con el modelo ajustado:
+                var(NPSD)     = NPSD^2 / n_eff
+                var(Re NCPSD) = (NPSD1 NPSD2 + Re(NCPSD)^2) / (2 n_eff)
+            [Bendat & Piersol, Random Data, 4th ed. (2010), sec. 8.5].
+            Para la NCPSD se usan las NPSD ajustadas, por lo que en ese caso
+            deben estar los tres espectros.
+
+        Notas
+        -----
+        La incerteza que informa el ajuste (pesado o no) no tiene en cuenta
+        la correlación entre bins vecinos que introduce la ventana, y la
+        subestima. Para una incerteza confiable usar incerteza_por_lotes().
         """
 
         if self.norm_spectrums is None:
@@ -390,21 +431,38 @@ class _ProcesamientoEspectral():
         _ttle = ["NPSD1", "NPSD2", "Re(NCPSD12)"]
         _ylab = [i + " [1 / Hz]" for i in _ttle]
 
+        n_eff = self.segmentos_equivalentes() if ponderado else None
+
         self.fit_results = []
         self.fitted_data = []
         for i, (spe, inter) in enumerate(zip(self.norm_spectrums, intervals)):
             ind = (self.f >= inter[0]) & (self.f <= inter[1])
             if i != 2:
                 _dat = spe[ind]
-                _res = ajuste_apsd(self.f[ind], _dat)
+                if ponderado:
+                    _res = ajuste_apsd_ponderado(self.f[ind], _dat, n_eff)
+                else:
+                    _res = ajuste_apsd(self.f[ind], _dat)
             else:
                 _dat = np.real(spe[ind])
-                _res = ajuste_cpsd(self.f[ind], _dat)
+                if ponderado:
+                    _apsds = [model_apsd(self.f[ind],
+                                         **self.fit_results[k].params.valuesdict())
+                              for k in (0, 1)]
+                    _res = ajuste_cpsd_ponderado(self.f[ind], _dat, *_apsds,
+                                                 n_eff)
+                else:
+                    _res = ajuste_cpsd(self.f[ind], _dat)
             self.fit_results.append(_res)
             self.fitted_data.append([self.f[ind], _dat])
 
             if plot:
-                best_fit = _dat + _res.residual
+                if ponderado:
+                    _p = _res.params.valuesdict()
+                    best_fit = (model_apsd(self.f[ind], **_p) if i != 2
+                                else model_cpsd(self.f[ind], **_p))
+                else:
+                    best_fit = _dat + _res.residual
                 fig, (ax0, ax1) = plt.subplots(2, sharex=True,
                                gridspec_kw={'height_ratios': [3,1]},)
                 ax0.errorbar(self.f, np.real(spe), fmt='k.', elinewidth=2,
@@ -412,7 +470,7 @@ class _ProcesamientoEspectral():
                 ax0.plot(self.f[ind], best_fit, 'r', zorder=3, label='fit')
                 ax0.set_ylabel(_ylab[i])
 
-                ax1.plot(self.f[ind], _res.residual, 'k.')
+                ax1.plot(self.f[ind], best_fit - _dat, 'k.')
                 ax1.set_xlabel('f [Hz]')
                 ax1.set_ylabel(r'Residuos [1/Hz]')
                 ax0.set_title(f"Ajuste de {_ttle[i]}")
@@ -494,6 +552,126 @@ class _ProcesamientoEspectral():
                     "efi_over_beta2": efi_over_beta2,
                     }
             self.parametros_cineticos.append(_pars)
+
+    def incerteza_por_lotes(self, reactor, reactor_name, intervals,
+                            n_lotes=10, N_fft=None, N_overlap=None,
+                            freqs_to_remove=[50, 100, 150],
+                            freqs_to_remove_tr=[50, 100, 150],
+                            ponderado=False):
+        """
+        Incerteza de alfa y de la potencia estimada por lotes de historias.
+
+        La señal se divide en n_lotes tramos consecutivos, se repite todo el
+        procesamiento (espectros, normalización, ajuste, parámetros) en cada
+        uno y se toma
+
+            u(x) = std(x_lotes) / sqrt(n_lotes)
+
+        como incerteza estándar del valor obtenido con la señal completa. A
+        diferencia de la incerteza del ajuste, no depende de suponer residuos
+        independientes ni de un modelo para la varianza del espectro.
+
+        No modifica los resultados ya calculados (espectros, ajustes,
+        parámetros cinéticos), que se restauran al terminar.
+
+        Parameters
+        ----------
+            reactor: reactor class
+                Constantes del reactor (ver calcula_parametros_cineticos)
+            reactor_name: str
+                Carpeta de las funciones transferencia
+            intervals: list of tuples
+                Intervalos de ajuste (ver fit_spectrums)
+            n_lotes: int
+                Cantidad de lotes. Cada lote debería contener al menos ~5
+                segmentos de N_fft puntos.
+            N_fft, N_overlap: int
+                Si no se especifican se usan los de get_spectrums()
+
+        Returns
+        -------
+            self.incertezas_lotes: list of dict
+                Para cada espectro [NPSD1, NPSD2, NCPSD]:
+                {'alfa': u_alfa, 'potencia': u_P,
+                 'alfa_lotes': array, 'potencia_lotes': array}
+        """
+        if N_fft is None:
+            N_fft = self.N_fft
+        if N_overlap is None:
+            N_overlap = self.N_overlap
+        if (N_fft is None) or (N_overlap is None):
+            raise ValueError("Faltan especificar N_fft o N_overlap")
+        if n_lotes < 2:
+            raise ValueError("Se necesitan al menos 2 lotes")
+
+        n_total = len(self._ac_volts()[0])
+        n_por_lote = n_total // n_lotes
+        segs_por_lote = (n_por_lote - N_overlap) // (N_fft - N_overlap)
+        if segs_por_lote < 5:
+            warnings.warn(f"Cada lote tiene sólo {segs_por_lote} segmentos de "
+                          f"{N_fft} puntos: el ajuste por lote puede ser "
+                          "inestable. Conviene usar menos lotes.",
+                          stacklevel=2)
+
+        # Se guarda el estado para restaurarlo al final
+        _attrs = ["spectrums", "f", "norm_spectrums", "fit_results",
+                  "fitted_data", "parametros_cineticos", "N_fft",
+                  "N_overlap", "_n_muestras"]
+        _estado = {a: getattr(self, a) for a in _attrs if hasattr(self, a)}
+
+        alfas, potencias = [], []
+        try:
+            for j in range(n_lotes):
+                seg = slice(j * n_por_lote, (j + 1) * n_por_lote)
+                self.get_spectrums(N_fft, N_overlap, segmento=seg)
+                self.get_normalized_spectrums(
+                    reactor_name, freqs_to_remove=freqs_to_remove,
+                    freqs_to_remove_tr=freqs_to_remove_tr)
+                self.fit_spectrums(intervals, ponderado=ponderado)
+                self.calcula_parametros_cineticos(reactor)
+                alfas.append([unumpy.nominal_values(p["alfa"]).item()
+                              for p in self.parametros_cineticos])
+                potencias.append([unumpy.nominal_values(p["potencia"]).item()
+                                  for p in self.parametros_cineticos])
+        finally:
+            for a, v in _estado.items():
+                setattr(self, a, v)
+
+        alfas, potencias = np.asarray(alfas), np.asarray(potencias)
+        self.incertezas_lotes = []
+        for k in range(alfas.shape[1]):
+            self.incertezas_lotes.append({
+                "alfa": np.std(alfas[:, k], ddof=1) / np.sqrt(n_lotes),
+                "potencia": np.std(potencias[:, k], ddof=1) / np.sqrt(n_lotes),
+                "alfa_lotes": alfas[:, k],
+                "potencia_lotes": potencias[:, k],
+            })
+        return self.incertezas_lotes
+
+
+def segmentos_equivalentes(n_muestras, n_fft, n_overlap, window="hann"):
+    """
+    Número equivalente de segmentos independientes del estimador de Welch.
+
+        n_eff = K / (1 + 2 sum_{j=1}^{K-1} (1 - j/K) rho(j)^2)
+
+    con K la cantidad de segmentos y rho(j) la correlación normalizada de la
+    ventana con ella misma desplazada j pasos de (n_fft - n_overlap) muestras
+    [Welch (1967); Percival & Walden (1993), sec. 6.17].
+    """
+    paso = n_fft - n_overlap
+    K = (n_muestras - n_overlap) // paso
+    w = signal.get_window(window, n_fft)
+    w2 = np.sum(w**2)
+    suma = 0.0
+    for j in range(1, K):
+        desp = j * paso
+        if desp >= n_fft:
+            break
+        rho = np.sum(w[:n_fft - desp] * w[desp:]) / w2
+        suma += (1 - j / K) * rho**2
+    return K / (1 + 2 * suma)
+
 
 class HDF5FileProcessing(_ProcesamientoEspectral):
     """

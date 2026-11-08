@@ -86,6 +86,47 @@ def ajuste_cpsd(freq, psd, std_psd=None):
     return result
 
 
+def ajuste_apsd_ponderado(freq, psd, n_eff, n_iter=3):
+    """
+    Ajuste de una NPSD pesado con la varianza del estimador de Welch
+
+        var(S_k) = S(f_k)^2 / n_eff
+
+    donde S es el modelo ajustado y n_eff el número equivalente de segmentos
+    independientes. Se parte del ajuste sin pesos y se itera n_iter veces
+    recalculando los pesos con el modelo (los pesos no se calculan con los
+    datos para no sesgar el ajuste).
+    """
+    result = ajuste_apsd(freq, psd)
+    for _ in range(n_iter):
+        model = model_apsd(freq, **result.params.valuesdict())
+        sigma = np.abs(model) / np.sqrt(n_eff)
+        result = ajuste_apsd(freq, psd, std_psd=sigma)
+    return result
+
+
+def ajuste_cpsd_ponderado(freq, re_cpsd, apsd1, apsd2, n_eff, n_iter=3):
+    """
+    Ajuste de Re(NCPSD) pesado con la varianza del estimador de Welch
+
+        var(Re S12) = (S11 S22 + Re(S12)^2 - Im(S12)^2) / (2 n_eff)
+
+    [Bendat & Piersol, Random Data, 4th ed. (2010), sec. 8.5], con
+    Im(S12) ~ 0. S11 y S22 son los modelos ajustados de las NPSD evaluados en
+    freq, y S12 el modelo de la NCPSD (iterado n_iter veces).
+
+    Notar que cuando la coherencia es baja la varianza está dominada por
+    S11 S22 y no por |S12|^2: pesar con |S12| subestima fuertemente la
+    varianza a alta frecuencia.
+    """
+    result = ajuste_cpsd(freq, re_cpsd)
+    for _ in range(n_iter):
+        model = model_cpsd(freq, **result.params.valuesdict())
+        sigma = np.sqrt((apsd1 * apsd2 + model**2) / (2 * n_eff))
+        result = ajuste_cpsd(freq, re_cpsd, std_psd=sigma)
+    return result
+
+
 def model_apsd(freq, alfa, amplitud, constante):
     return amplitud / ( 1 + (2*np.pi*freq/alfa)**2) + constante
 
