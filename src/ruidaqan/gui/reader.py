@@ -90,6 +90,8 @@ class SignalReader(QtCore.QThread):
 
     # Signal with read data
     incoming_data = QtCore.pyqtSignal(object)
+    # Señal con el mensaje de error si la adquisición se interrumpe
+    acquisition_error = QtCore.pyqtSignal(str)
 
     def __init__(self, sample_rate, sample_size, channels, ranges, **kargs):
         super().__init__()
@@ -130,7 +132,11 @@ class SignalReader(QtCore.QThread):
         """ Start thread for data acuisition. Called by QThread.start() """
 
         self.is_running = True
-        self.create_task()
+        if not self.create_task():
+            self.is_running = False
+            self.acquisition_error.emit(
+                "No se pudo configurar la tarea de adquisición en la placa.")
+            return None
 
         while self.is_running:
             if not self.is_paused:
@@ -148,8 +154,12 @@ class SignalReader(QtCore.QThread):
                                  number_of_samples_per_channel=self.sample_size
                                 )
                     self.num_histories += 1
-                    # Emit signal with the data
-                    self.incoming_data.emit(self.input)
+                    # Se emite una COPIA: el buffer self.input se reutiliza
+                    # en la próxima lectura, y el slot que recibe los datos
+                    # corre en el hilo del GUI (conexión encolada). Si se
+                    # emitiera self.input, una lectura posterior podría
+                    # sobrescribirlo antes de que el GUI lo copie.
+                    self.incoming_data.emit(self.input.copy())
                     # Print data to screen
                     # pprint.pprint(self.input.T)
                     print("Total data acquired:"
@@ -157,6 +167,9 @@ class SignalReader(QtCore.QThread):
                 except Exception as e:
                     print("Error with read_many_sample")
                     print(e)
+                    self.acquisition_error.emit(
+                        "La adquisición se interrumpió después de "
+                        f"{self.num_histories} historias.\n\n{e}")
                     break
             if self.num_histories == self.max_histories:
                 # Se finaliza la adquisición al completar todas las historias
@@ -167,11 +180,12 @@ class SignalReader(QtCore.QThread):
         return None
 
     def create_task(self):
+        """ Configura e inicia la tarea. Devuelve False si falla """
         try:
             self.task = nidaqmx.Task("Reader Task")
         except OSError:
             print("DAQ is not connected, task could not be created")
-            return
+            return False
 
         try:
             for ch, rg in zip(self.input_channels, self.input_ranges):
@@ -184,7 +198,8 @@ class SignalReader(QtCore.QThread):
         except Exception as e:
             print("DAQ is not connected, channel could not be added")
             print(e)
-            return
+            self.task.close()
+            return False
 
         # Timing definition
         self.task.timing.cfg_samp_clk_timing(
@@ -196,6 +211,7 @@ class SignalReader(QtCore.QThread):
             self.reader = AnalogMultiChannelReader(self.task.in_stream)
         elif self.reading_type == "int16":
             self.reader = AnalogUnscaledReader(self.task.in_stream)
+        return True
 
     def restart(self):
         print("Restarting the task")

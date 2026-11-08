@@ -81,6 +81,8 @@ class SignalReader(QtCore.QThread):
 
     # Signal with read data
     incoming_data = QtCore.pyqtSignal(object)
+    # Señal de error (misma interfaz que reader.SignalReader)
+    acquisition_error = QtCore.pyqtSignal(str)
 
     def __init__(self, sample_rate, sample_size, channels, *args, **kargs):
         super().__init__()
@@ -124,7 +126,7 @@ class SignalReader(QtCore.QThread):
                     # Canal 0 saturado
                     # self.input[0, :] = 32767
                 # Emit signal with the data
-                self.incoming_data.emit(self.input)
+                self.incoming_data.emit(self.input.copy())
                 # Write data to file
                 # self.writer.write_data(self.input)
                 # Print data to screen

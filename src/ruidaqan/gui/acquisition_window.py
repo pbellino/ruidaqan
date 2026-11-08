@@ -24,6 +24,11 @@ else:
     from .reader import SignalReader, GetDevicesInfo
 
 
+def mostrar_error_daq(parent, mensaje):
+    """ Avisa que la adquisición se interrumpió por un error de la placa """
+    QMessageBox.critical(parent, "Error en la adquisición", mensaje)
+
+
 class RangeAdjustmentWindow(QMainWindow):
     """
     TODO
@@ -189,6 +194,8 @@ class RangeAdjustmentWindow(QMainWindow):
                 reading_type="int16",
                 terminal_cfg="RSE",
         )
+        self.read_thread.acquisition_error.connect(
+            lambda msg: mostrar_error_daq(self, msg))
 
 
     @pyqtSlot()
@@ -463,6 +470,8 @@ class BackgroundWindow(QMainWindow):
                 reading_type="int16",
                 terminal_cfg="RSE",
         )
+        self.read_thread.acquisition_error.connect(
+            lambda msg: mostrar_error_daq(self, msg))
 
 
     def _createMenu(self):
@@ -766,6 +775,8 @@ class AcquisitionWindow(QMainWindow):
                 terminal_cfg="RSE",
                 max_histories=self.tot_hist,
         )
+        self.read_thread.acquisition_error.connect(
+            lambda msg: mostrar_error_daq(self, msg))
 
 
     def init_cip_win(self):
