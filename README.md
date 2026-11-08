@@ -145,6 +145,22 @@ fit_results.fit_Ip_vs_I(plot=True)
 fit_results.average_parameters(plot=True)
 ```
 
+Ajuste pesado e incerteza por lotes (opcionales, no cambian el comportamiento por defecto):
+```python
+rui.fit_spectrums(intervalos, ponderado=True)   # pesos de la varianza de Welch
+rui.calcula_parametros_cineticos(REACTOR)
+
+# Repite el procesamiento en 10 tramos de la señal y devuelve
+# std(lotes)/sqrt(10) para alfa y la potencia de cada espectro
+u = rui.incerteza_por_lotes(REACTOR, "RA3", intervalos, n_lotes=10)
+print(u[2]["potencia"])   # incerteza de la potencia con la NCPSD [W]
+```
+
+La incerteza que informa el ajuste supone residuos independientes y subestima
+la dispersión real (en una simulación con los parámetros por defecto, 1.5 %
+informado contra 5.3 % real para la potencia). La incerteza por lotes no
+depende de esa hipótesis.
+
 ---
 
 ## Funciones de transferencia

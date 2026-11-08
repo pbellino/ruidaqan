@@ -1,5 +1,10 @@
 # tests/fixtures/
 
+> Los tests de `tests/test_sintetico.py` no necesitan estos archivos: generan
+> mediciones sintéticas de espectro conocido (ver `tests/sintetico.py`) y
+> corren en el CI. Los archivos de abajo sólo hacen falta para los tests con
+> mediciones reales.
+
 Este directorio contiene archivos de datos reales usados por los tests.
 **No están versionados** (ver `.gitignore`).
 
