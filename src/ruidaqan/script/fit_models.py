@@ -1,8 +1,10 @@
-#! /usr/bin/env pythn3
+#! /usr/bin/env python3
+
+import warnings
 
 import numpy as np
 from lmfit import Minimizer, Parameters, report_fit
-from uncertainties import correlated_values
+from uncertainties import correlated_values, ufloat
 
 
 def ajuste_apsd(freq, psd, std_psd=None):
@@ -23,7 +25,7 @@ def ajuste_apsd(freq, psd, std_psd=None):
             return model
         if sigma is None:
             return model - data
-        return (model - daata) / sigma
+        return (model - data) / sigma
 
     # Se definen los parámetros del ajuste
     params = Parameters()
@@ -115,7 +117,18 @@ def ajuste_lineal(x, y, y_sig, *args, **kargs):
     """
 
     if any(y_sig==0):
-        p, cov = np.polyfit(x, y, deg=1, cov='unscaled')
+        # Sin incertezas: ajuste no pesado. La covarianza se escala con la
+        # dispersión de los residuos (cov=True); con cov='unscaled' se
+        # supondría sigma = 1 en las unidades de y.
+        # numpy necesita al menos 4 puntos para escalar la covarianza.
+        if len(x) > 3:
+            p, cov = np.polyfit(x, y, deg=1, cov=True)
+        else:
+            warnings.warn("Ajuste lineal sin incertezas y con menos de 4 "
+                          "puntos: no se puede estimar la covarianza de los "
+                          "parámetros.", stacklevel=2)
+            p = np.polyfit(x, y, deg=1)
+            cov = np.full((2, 2), np.nan)
         # Mejor ajuste evaluado en x
         y_fit = np.polyval(p, x)
         # Valor r2 del ajuste
@@ -127,7 +140,10 @@ def ajuste_lineal(x, y, y_sig, *args, **kargs):
         # Valor r2 del ajuste
         r_squared = rsquared(y, y_fit, y_sig)
     # Convierto a tipo ufloat con errores correlacionados
-    a, b = correlated_values(p, cov, tags=('a', 'b'))
+    if np.isnan(cov).any():
+        a, b = ufloat(p[0], np.nan, 'a'), ufloat(p[1], np.nan, 'b')
+    else:
+        a, b = correlated_values(p, cov, tags=('a', 'b'))
 
     return a, b, r_squared, cov, y_fit
 

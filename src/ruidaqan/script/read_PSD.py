@@ -275,7 +275,7 @@ def ajuste_apsd(freq, psd, std_psd=None):
             return model
         if sigma is None:
             return model - data
-        return (model - daata) / sigma
+        return (model - data) / sigma
 
     # Se definen los parámetros del ajuste
     params = Parameters()
