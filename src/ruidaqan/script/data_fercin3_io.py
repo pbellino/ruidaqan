@@ -5,23 +5,497 @@ import numpy as np
 from numpy.polynomial.polynomial import polyval
 import tables as tb
 import os
-import sys
 import pickle
+import warnings
 from scipy import signal
 from uncertainties import ufloat, unumpy, correlated_values
 import importlib.resources
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
-try:
-    from .fit_models import (ajuste_apsd, ajuste_cpsd, ajuste_lineal,
-                               weighted_average)
-except ImportError:
-    from fit_models import (ajuste_apsd, ajuste_cpsd, ajuste_lineal,
-                               weighted_average)
+from .fit_models import (ajuste_apsd, ajuste_cpsd, ajuste_lineal,
+                         weighted_average)
 
 
-class HDF5FileProcessing():
+class _ProcesamientoEspectral():
+    """
+    Base común para el procesamiento de mediciones (HDF5 y .RUI).
+
+    Las subclases sólo definen cómo se lee el archivo y tres métodos:
+
+        _ac_volts()                -> lista con las señales AC en voltios
+        _ganancias_ac()            -> lista con las ganancias AC (ufloat)
+        _tension_normalizacion(i)  -> tensión DC media sin fondo de la cadena i
+
+    El resto (espectros, corrección por función transferencia, normalización,
+    ajuste y parámetros cinéticos) es idéntico para ambos formatos.
+    """
+
+    def __init__(self, file_name):
+        self.file_name = file_name
+        self.spectrums = None
+        self.norm_spectrums = None
+        self.N_fft = None
+        self.N_overlap = None
+        self.fit_results = None
+
+        self._read_file(self.file_name)
+
+        self.TRANSFERS_FOLDER = str(importlib.resources.files("ruidaqan") / "transferencias")
+
+    # ------------------------------------------------------------------
+    # Métodos a definir en cada formato
+    # ------------------------------------------------------------------
+    def _read_file(self, file_name):
+        raise NotImplementedError
+
+    def _ac_volts(self):
+        raise NotImplementedError
+
+    def _ganancias_ac(self):
+        raise NotImplementedError
+
+    def _tension_normalizacion(self, i):
+        raise NotImplementedError
+
+    # ------------------------------------------------------------------
+    # Espectros
+    # ------------------------------------------------------------------
+    def get_spectrums(self, N_fft=None, N_overlap=None):
+        """
+        Espectros sin normalizar ni corregidos con función transferencia
+
+        Son los valores que se guardan en los archivos .PSD con fercin3/5
+
+        Se estima el espectro con el estimador de Welch utilizando N_fft
+        puntos y N_overlap puntos de solapamiento.
+
+        Parameters
+        ----------
+            N_fft: int
+                Puntos para calcular la FFT en cada bloque
+            N_overlap: int
+                Cantidad de puntos para el solapamiento de bloques
+
+        Returns
+        -------
+            self.spectrums: lists of numpy arrays
+                Lista con los espectros [APSD1, APSD2, CPSD]
+            self.f: numpy array
+                Vector con las frecuencias asociada a los espectros
+        """
+        if (N_fft is None) or (N_overlap is None):
+            raise ValueError("Faltan especificar N_fft o N_overlap")
+
+        self.N_fft = N_fft
+        self.N_overlap = N_overlap
+
+        AC_volts = self._ac_volts()
+
+        spectrums = []
+        for AC in AC_volts:
+            # Estimación de las APSD
+            f_spectrums, _spec = signal.welch(AC, fs=1/self.dt,
+                                      noverlap=N_overlap, nperseg=N_fft)
+            spectrums.append(_spec)
+        if self.n_det == 2:
+            # Estimación de la CPSD
+            _, _spec = signal.csd(AC_volts[0], AC_volts[1], fs=1/self.dt,
+                                  noverlap=N_overlap, nperseg=N_fft)
+            spectrums.append(_spec)
+        self.spectrums = spectrums
+        # Se convierten
+        self.f = np.asarray(f_spectrums)
+        return self.spectrums, self.f
+
+    def get_normalized_spectrums(self, reactor_name, N_fft=None,
+                                N_overlap=None, freqs_to_remove=[50, 100, 150],
+                                freqs_to_remove_tr=[50, 100, 150]):
+        """
+        Calcula los espectros normalizados con el método de Welch.
+
+        Se les quita las frencuencia de línea y sus dos armónicos.
+        Están corregidos por la función transferencia.
+
+        Si no se especifica N_fft y N_overlap se usan los espectros estimados
+        con .get_spectrum(). Si se especifican, se vuelven a calcular.
+
+        Parameters
+        ----------
+            N_fft: int
+                Puntos para calcular la FFT en cada bloque
+            N_overlap: int
+                Cantidad de puntos para el solapamiento de bloques
+            reactor_name: string
+                Identificación del reactor (para leer transferencias)
+            freqs_to_remove: list of floats
+                Frecuencias que serán eliminadas del espectro medido
+            freqs_to_remove_tr: list of floats
+                Frecuencias que serán eliminadas de las transferencias
+
+        Returns
+        -------
+            self.spectrums: listr of numpy arrays
+                Lista con los espectros [NPSD1, NPSD1, NCPSD12]
+                Los NPSD son reales, la NCPSD es compleja
+            self.f: numpy array
+                Frecuencias asociadas a los espectros
+        """
+
+        # Si no se calcularon los espectros previamente, se los calcula
+        if self.spectrums is None:
+            self.get_spectrums(N_fft, N_overlap)
+        else:
+            # Si se especifican los valores
+            if N_fft or N_overlap:
+                self.get_spectrums(N_fft, N_overlap)
+        # Nombres de las funciones transferencia que voy a leer
+        _tr_names = self._get_transfer_name(reactor_name)
+
+        # Lectura de las funciones transferencia
+        _trans = []
+        for _tr_name in _tr_names:
+            try:
+                H2_dB, ReH, ImH = self._get_transfer_function(_tr_name,
+                                                freqs_to_remove_tr)
+            except IOError:
+                _tr_name = os.path.join('..', _tr_name)
+                H2_dB, ReH, ImH = self._get_transfer_function(_tr_name,
+                                                freqs_to_remove_tr)
+            print(f"Se lee la función transferencia de {_tr_name}")
+            # Módulo cuadrado de la función transferencia
+            H2 = 10**(H2_dB / 10)
+            _trans.append([H2, ReH, ImH])
+
+        # En algunos casos del RA1 no coinciden los tamaños entre los
+        # espectros y las funciones transferencia. Se recortan todos (incluido
+        # el vector de frecuencias) al mínimo común.
+        _min = min([len(self.f)] + [len(tr[0]) for tr in _trans])
+        if any(len(tr[0]) != len(self.f) for tr in _trans):
+            msg = ("El tamaño de la función transferencia no coincide con el "
+                   f"del espectro medido ({len(self.f)} puntos). Se toma el "
+                   f"mínimo entre ambos: {_min} puntos (hasta "
+                   f"{self.f[_min - 1]:.2f} Hz)")
+            warnings.warn(msg, stacklevel=2)
+            self.f = self.f[:_min]
+            self.spectrums = [s[:_min] for s in self.spectrums]
+            _trans = [[x[:_min] for x in tr] for tr in _trans]
+
+        norm_spec = []
+        for i, (H2, _, _) in enumerate(_trans):
+            # Espectro APSD
+            APSD = self.spectrums[i]
+            # Corrección por función transferencia
+            APSD_tr = APSD / H2
+            # Normalizo
+            NAPSD_tr = APSD_tr / self._tension_normalizacion(i)**2
+            # Quito frecuencias de línea
+            NAPSD_tr = self._remove_utility_freq(
+                                    self.f, NAPSD_tr, freqs_to_remove)
+            # Los espectros tienen incertezas debido a la propagación, pero las
+            # descarto por ahora:
+            NAPSD_tr = unumpy.nominal_values(NAPSD_tr)
+            norm_spec.append(NAPSD_tr)
+        if len(_tr_names) == 2:
+            # --- Corrección para la CPSD
+            ReCPSD = np.real(self.spectrums[2])
+            ImCPSD = np.imag(self.spectrums[2])
+            # Funciones transferencia leidas anteriormente
+            H2_1, ReH_1, ImH_1 = _trans[0]
+            H2_2, ReH_2, ImH_2 = _trans[1]
+            # Corrección de la CPSD por función transferencia
+            # (scipy.signal.csd estima conj(X1) X2, por lo que la CPSD medida
+            # es conj(H1) H2 CPSD y se corrige multiplicando por
+            # H1 conj(H2) / (|H1|^2 |H2|^2))
+            _c1 = ReH_1 * ReH_2 + ImH_1 * ImH_2
+            _c2 = ImH_1 * ReH_2 - ReH_1 * ImH_2
+            ReCPSD_tr = (_c1 * ReCPSD - _c2 * ImCPSD) / (H2_1 * H2_2)
+            ImCPSD_tr = (_c1 * ImCPSD + _c2 * ReCPSD) / (H2_1 * H2_2)
+            # Normalizo con valor medio (sin fondo)
+            fac_norm = (self._tension_normalizacion(0)
+                        * self._tension_normalizacion(1))
+            ReNCPSD_tr = ReCPSD_tr / fac_norm
+            ImNCPSD_tr = ImCPSD_tr / fac_norm
+            # Quito frecuencias de línea
+            ReNCPSD_tr = self._remove_utility_freq(self.f, ReNCPSD_tr,
+                                                  freqs_to_remove)
+            ImNCPSD_tr = self._remove_utility_freq(self.f, ImNCPSD_tr,
+                                                  freqs_to_remove)
+            # Los espectros tienen incertezas debido a la propagación, pero las
+            # descarto por ahora:
+            ReNCPSD_tr = unumpy.nominal_values(ReNCPSD_tr)
+            ImNCPSD_tr = unumpy.nominal_values(ImNCPSD_tr)
+            # Guardo el espectro complejo
+            norm_spec.append(ReNCPSD_tr + 1j * ImNCPSD_tr)
+        self.norm_spectrums = norm_spec
+        return self.norm_spectrums, self.f
+
+    def _get_transfer_name(self, reactor_name):
+        """
+        Get names of transfer functions
+        """
+        if reactor_name:
+            sub_folder = reactor_name
+        else:
+            sub_folder = ""
+
+        path_file = []
+        for i, K in enumerate(self._ganancias_ac()):
+            K_over_100 = np.round(K.n / 100)
+            if i !=3:
+                file_name = "TR{:.0f}{:.0f}A{}.PSD".format(
+                            K_over_100, self.BW, i+1)
+                path_file.append(os.path.join(self.TRANSFERS_FOLDER,
+                                 sub_folder, file_name))
+        return path_file
+
+    def _get_transfer_function(self, file_name, freqs_to_remove=[50, 100, 150]):
+        """
+        Función para leer archivos .PSD con las funciones de transferencia
+        producidas por el programa TRA.EXE.
+
+        Se quitan también las frecuencias de línea.
+
+        Parameters
+        ----------
+            file_name : string
+               Nombre del archivo con extensión PSD de la función transferencia
+
+        Returns
+        -------
+            H2_dB : numpy array
+                Módulo cuadrado de la función transferencia. Expresado en dB
+                10*log10(H2)
+            ReH : numpy array
+                Parte real de la función transferencia
+            ImH : numpy array
+                Parte imaginaria de la función transferencia
+
+        """
+
+        # TODO: Se podría poner en los comentarios de los archivos la
+        # identificación del reactor (al menos). Para evitar confusiones.
+        # Preguntar.
+
+        SKIP_HEADER = 12
+        # Lectura de los datos
+        # Frecuencia [Hz]   Re(CPSD)    Im(CPSD)    APSD1[dB]    APSD2[dB]
+        _data = np.loadtxt(file_name, skiprows=SKIP_HEADER)
+        # Frecuencia [Hz]
+        freq = _data[:, 0]
+        # Re(CPSD)
+        _ReCPSD = _data[:, 1]
+        # Im(CPSD)
+        _ImCPSD = _data[:, 2]
+        # APSD1 [dB]
+        _APSD1_dB = _data[:, 3]
+        # APSD2 [dB]
+        _APSD2_dB = _data[:, 4]
+
+        # Módulo cuadrado de H(f)
+        H2_dB = _APSD2_dB - _APSD1_dB
+        # Parte real e imaginaria de H(f)
+        _APSD1 = 10**(_APSD1_dB / 10)
+        ReH = _ReCPSD / _APSD1
+        ImH = _ImCPSD / _APSD1
+        # Se quitan frecuencias de línea
+        H2_dB = self._remove_utility_freq(freq, H2_dB, freqs_to_remove)
+        ReH = self._remove_utility_freq(freq, ReH, freqs_to_remove)
+        ImH = self._remove_utility_freq(freq, ImH, freqs_to_remove)
+        return H2_dB, ReH, ImH
+
+    def _remove_utility_freq(self, frequency, spectrum, freqs_to_remove):
+        """
+        Removes the utility frequencies from the spectrum
+
+        Values of 'spectrum' at those freqs (+/- 1Hz) are replaced with those
+        of its neighbours (Angel's approach).
+
+        Parameters
+        ----------
+            frequency : numpy array
+                Vector with frequencies
+            spectrum : numpy array
+                Vector with the spectrum (should be same size of frequency)
+            freqs_to_remove : double or array
+                Frequency/ies to be removed
+
+        Returns
+        -------
+            new_spectrum : numpy array
+                Spectrum without the freqs_to_remove
+
+        """
+
+        # Force list
+        if not isinstance(freqs_to_remove, list):
+            freqs_to_remove = [freqs_to_remove]
+
+        new_spectrum = np.copy(spectrum)
+
+        for freqs in freqs_to_remove:
+            indx_to_remove = (frequency > freqs-1) & (frequency < freqs + 1)
+            # Closest value to (freqs - 1Hz)
+            value_to_assign = new_spectrum[frequency <= freqs-1][-1]
+            new_spectrum[indx_to_remove] = value_to_assign
+
+        return new_spectrum
+
+    def plot_spectrums(self, normalizados=True, *args, **kargs):
+        if normalizados:
+            if self.norm_spectrums is None:
+                raise NameError("Faltan estimar los espectros normalizados")
+            _datas = self.norm_spectrums
+            _labels = ["NPSD1", "NPSD2", "Re(NCPSD12)"]
+            _units = "[1 / Hz]"
+        else:
+            if self.spectrums is None:
+                raise NameError("Faltan estimar los espectros")
+            _datas = self.spectrums
+            _labels = ["PSD1", "PSD2", "Re(CPSD12)"]
+            _units = "[V$^2$ / Hz]"
+
+        figs, ax = plt.subplots(1, 1)
+
+        for i, data in enumerate(_datas):
+            if i == 2:
+                data = np.real(data)
+            ax.plot(self.f, data, '.-', label=_labels[i])
+        ax.set_xlabel("Frecuencia [Hz]")
+        ax.set_ylabel("Espectro " + _units)
+        ax.legend()
+        ax.set_title(f"Archivo leido: {self.file_name}")
+        figs.tight_layout()
+
+        plt.show()
+
+    # ------------------------------------------------------------------
+    # Ajustes
+    # ------------------------------------------------------------------
+    def fit_spectrums(self, intervals, plot=False):
+        """
+        Ajuste de los espectros
+
+        intervals: list of tuples
+            Lista con los límitesde los intervalos para el ajuste
+            [(f_min, f_max), (f_min, f_max), ...]
+            en el orden [NPSD1, NPSD2, CPSD12]
+        plot: bool
+            True si se quiere graficar. False por default
+        """
+
+        if self.norm_spectrums is None:
+            raise NameError("Faltan estimar los espectros normalizados")
+
+        _ttle = ["NPSD1", "NPSD2", "Re(NCPSD12)"]
+        _ylab = [i + " [1 / Hz]" for i in _ttle]
+
+        self.fit_results = []
+        self.fitted_data = []
+        for i, (spe, inter) in enumerate(zip(self.norm_spectrums, intervals)):
+            ind = (self.f >= inter[0]) & (self.f <= inter[1])
+            if i != 2:
+                _dat = spe[ind]
+                _res = ajuste_apsd(self.f[ind], _dat)
+            else:
+                _dat = np.real(spe[ind])
+                _res = ajuste_cpsd(self.f[ind], _dat)
+            self.fit_results.append(_res)
+            self.fitted_data.append([self.f[ind], _dat])
+
+            if plot:
+                best_fit = _dat + _res.residual
+                fig, (ax0, ax1) = plt.subplots(2, sharex=True,
+                               gridspec_kw={'height_ratios': [3,1]},)
+                ax0.errorbar(self.f, np.real(spe), fmt='k.', elinewidth=2,
+                             label='Medición')
+                ax0.plot(self.f[ind], best_fit, 'r', zorder=3, label='fit')
+                ax0.set_ylabel(_ylab[i])
+
+                ax1.plot(self.f[ind], _res.residual, 'k.')
+                ax1.set_xlabel('f [Hz]')
+                ax1.set_ylabel(r'Residuos [1/Hz]')
+                ax0.set_title(f"Ajuste de {_ttle[i]}")
+                fig.subplots_adjust(hspace=0.1)
+
+        if plot: plt.show()
+
+    def calcula_parametros_cineticos(self, reactor, **kwargs):
+        """
+        Calcula parámetros cinéticos en base al ajuste espectral
+
+        Parameters
+        ----------
+            reactor: reactor class
+                Clase importada del archivo "constantes_reactores.py"
+
+        Returns
+        -------
+            self.parametros_cineticos: dic
+                Diccionario con los parámetros cinéticos estimados. Los keys
+                son 'alfa', 'potencia', 'fq' y 'efi_over_beta2'. Los últimos
+                dos son None en caso de ajustar una NCPSD
+        """
+
+        if self.fit_results is None:
+            raise NameError("Faltan hacer el ajuste de los espectros")
+
+        # Constantes cinéticas
+        DIVEN = reactor.FACTOR_DIVEN
+        BETA = reactor.BETA_EFECTIVO
+        FORMA = reactor.FACTOR_FORMA_L
+        EFISION = reactor.ENERGIA_FISION
+        BENNETT = reactor.FACTOR_BENNETT
+
+        self.parametros_cineticos = []
+        # Asocio con sus incertezas
+        for i, res in enumerate(self.fit_results):
+            # Valores estimados
+            par_val = [res.params[s].value for s in res.var_names]
+            if i != 2:
+                #  Cálculo con NAPSD
+                if "covar" in dir(res):
+                    # Se obtiene la matríz de covarianza
+                    alfa, amplitud, constante =  \
+                      correlated_values(par_val, res.covar, tags=res.var_names)
+                else:
+                    # No se obtiene matriz de covarianza
+                    alfa, amplitud, constante = par_val
+                    print(
+                    "No se pudo estimar la matríz de covaarianza del ajuste")
+                fq = constante * self.I[i] / 2
+                efi_over_beta2 = amplitud * BENNETT / (1 - BETA) / FORMA \
+                       / DIVEN / constante
+            else:
+                # Calculo con NCPSD
+                if "covar" in dir(res):
+                    # Se obtiene la matríz de covarianza
+                    alfa, amplitud = correlated_values(par_val, res.covar,
+                                                       tags=res.var_names)
+                else:
+                    # No se obtiene matriz de covarianza
+                    alfa, amplitud = par_val
+                    print(
+                    "No se pudo estimar la matríz de covaarianza del ajuste")
+                constante = None
+                fq = None
+                efi_over_beta2 = None
+            # Cálculo de la potencia
+            potencia = 2 * EFISION * DIVEN * (1 - BETA) * FORMA / BETA**2 \
+                                                                    / amplitud
+
+            # Salida
+            _pars = {
+                    "amplitud": amplitud,
+                    "constante": constante,
+                    "alfa": alfa,
+                    "potencia": potencia,
+                    "fq": fq,
+                    "efi_over_beta2": efi_over_beta2,
+                    }
+            self.parametros_cineticos.append(_pars)
+
+class HDF5FileProcessing(_ProcesamientoEspectral):
     """
     Procesamiento de los archivos en formato HDF5 generados en la adquisición
     del programa.
@@ -34,14 +508,6 @@ class HDF5FileProcessing():
             Nombre del archivo en formato hdf5
 
     """
-
-    def __init__(self, file_name):
-        self.file_name = file_name
-
-        self._read_file(self.file_name)
-
-        self.TRANSFERS_FOLDER = str(importlib.resources.files("ruidaqan") / "transferencias")
-
 
     def _read_file(self, file_name):
         with tb.open_file(file_name, mode="r") as f:
@@ -144,6 +610,14 @@ class HDF5FileProcessing():
                 mean_Ip, std_Ip = weighted_average(Ip_DC_mag, 1 / Ip_DC_std**2)
                 self.Ip = ufloat(mean_Ip, std_Ip)
 
+    def _ac_volts(self):
+        return self.AC_volts
+
+    def _ganancias_ac(self):
+        return self.AC_gains
+
+    def _tension_normalizacion(self, i):
+        return self.DC_volt_avg_sf[i]
 
     def get_temporal_signals(self):
         """ Calcula las AC en voltaje. Convierte dependiendo ADC """
@@ -158,439 +632,7 @@ class HDF5FileProcessing():
         return time_vec, self.AC_volts, I_DC
 
 
-    def get_spectrums(self, N_fft=None, N_overlap=None):
-        """
-        Espectros sin normalizar ni corregidos con función transferencia
-
-        Son los valores que se guardan en los archivos .PSD con fercin3/5
-
-        Se estima el espectro con el estimador de Welch utilizando N_fft
-        puntos y N_overlap puntos de solapamiento.
-
-        Returns
-        -------
-            self.spectrums: lists of numpy arrays
-                Lista con los espectros [APSD1, APSD2, CPSD]
-            self.f: numpy array
-                Vector con las frecuencias asociada a los espectros
-        """
-        if (N_fft is None) or (N_overlap is None):
-            raise ValueError("Faltan especificar N_fft o N_overlap")
-
-        self.N_fft = N_fft
-        self.N_overlap = N_overlap
-
-        spectrums = []
-        for AC in self.AC_volts:
-            # Estimación de las APSD
-            f_spectrums, _spec = signal.welch(AC, fs=1/self.dt,
-                                      noverlap=N_overlap, nperseg=N_fft)
-            spectrums.append(_spec)
-        if self.n_det == 2:
-            # Estimación de la CPSD
-            _, _spec = signal.csd(self.AC_volts[0], self.AC_volts[1], fs=1/self.dt,
-                                  noverlap=N_overlap, nperseg=N_fft)
-            spectrums.append(_spec)
-        self.spectrums = spectrums
-        # Se convierten
-        self.f = np.asarray(f_spectrums)
-        return self.spectrums, self.f
-
-
-    def get_normalized_spectrums(self, reactor_name, N_fft=None,
-                                N_overlap=None, freqs_to_remove=[50, 100, 150],
-                                freqs_to_remove_tr=[50, 100, 150]):
-        """
-        Calcula los espectros normalizados con el método de Welch.
-
-        Se les quita las frencuencia de línea y sus dos armónicos.
-        Están corregidos por la función transferencia.
-
-        Si no se especifica N_fft y N_overlap se usan los espectros estimados
-        con .get_spectrum(). Si se especifican, se vuelven a calcular.
-
-        Parameters
-        ----------
-            N_fft: int
-                Puntos para calcular la FFT en cada bloque
-            N_overlap: int
-                Cantidad de puntos para el solapamiento de bloques
-            reactor_name: string
-                Identificación del reactor (para leer transferencias)
-            freqs_to_remove: list of floats
-                Frecuencias que serán eliminadas del espectro medido
-            freqs_to_remove: list of floats
-                Frecuencias que serán eliminadas de las transferencias
-
-        Returns
-        -------
-            self.spectrums: listr of numpy arrays
-                Lista con los espectros [NPSD1, NPSD1, NCPSD12]
-                Los NPSD son reales, la NCPSD es compleja
-            self.f: numpy array
-                Frecuencias asociadas a los espectros
-        """
-
-        # Si no se calcularon los espectros previamente, se los calcula
-        if not hasattr(self, 'spectrums'):
-            self.get_spectrums(N_fft, N_overlap)
-        else:
-            # Si se especifican los valores
-            if N_fft or N_overlap:
-                self.get_spectrums(N_fft, N_overlap)
-        # Nombres de las funciones transferencia que voy a leer
-        _tr_names = self._get_transfer_name(reactor_name)
-
-        norm_spec = []
-        _trans = []
-        for i, _tr_name in enumerate(_tr_names):
-            # Lectura de las funciones transferencia
-            try:
-                H2_dB, ReH, ImH = self._get_transfer_function(_tr_name,
-                                                freqs_to_remove_tr)
-            except IOError:
-                _tr_name = os.path.join('..', _tr_name)
-                H2_dB, ReH, ImH = self._get_transfer_function(_tr_name,
-                                                freqs_to_remove_tr)
-
-            # Módulo cuadrado de la función transferencia
-            H2 = 10**(H2_dB / 10)
-            _trans.append([H2, ReH, ImH])
-            print(f"Se lee la función transferencia de {_tr_name}")
-            # Espectro APSD
-            APSD = self.spectrums[i]
-            # En algunos casos del RA1 no coinciden los tamaños entre APSD y
-            # la función tansferencia
-            len_s, len_h = len(APSD), len(H2)
-            if len_s != len_h:
-                _min = min(len_s, len_h)
-                f = f[:_min]
-                APSD = APSD[:_min]
-                H2 = H2[:_min]
-                print(80*'!')
-                msg = "Advertencia: el tamaño de la función transferencia\n"
-                msg += "no coincide con el tamaño del espectro medido \n"
-                msg += "Se toma el mínimo entre ambos: {}"
-                print(msg.format(_min))
-                print(80*'!')
-            # Corrección por función transferencia
-            APSD_tr = APSD / H2
-            # Normalizo 
-            NAPSD_tr = APSD_tr / self.DC_volt_avg_sf[i]**2
-            # Quito frecuencias de línea
-            NAPSD_tr = self._remove_utility_freq(
-                                    self.f, NAPSD_tr, freqs_to_remove)
-            # Los espectros tienen incertezas debido a la propagación, pero las
-            # descarto por ahora:
-            NAPSD_tr = unumpy.nominal_values(NAPSD_tr)
-            norm_spec.append(NAPSD_tr)
-        if len(_tr_names) == 2:
-            # --- Corrección para la CPSD
-            # Espectros sin corregir
-            APSD1 = self.spectrums[0]
-            APSD2 = self.spectrums[1]
-            ReCPSD = np.real(self.spectrums[2])
-            ImCPSD = np.imag(self.spectrums[2])
-            # Funciones transferencia leidas anteriormente
-            H2_1, ReH_1, ImH_1 = _trans[0]
-            H2_2, ReH_2, ImH_2 = _trans[1]
-            # Corrección de la CPSD por función transferencia
-            _c1 = ReH_1 * ReH_2 + ImH_1 * ImH_2
-            _c2 = ImH_1 * ReH_2 - ReH_1 * ImH_2
-            ReCPSD_tr = (_c1 * ReCPSD - _c2 * ImCPSD) / (H2_1 * H2_2)
-            ImCPSD_tr = (_c1 * ImCPSD + _c2 * ReCPSD) / (H2_1 * H2_2)
-            # Normalizo con valor medio
-            fac_norm = (self.DC_volt_avg_sf[0] * self.DC_volt_avg_sf[1])
-            ReNCPSD_tr = ReCPSD_tr / fac_norm
-            ImNCPSD_tr = ImCPSD_tr / fac_norm
-            # Quito frecuencias de línea
-            ReNCPSD_tr = self._remove_utility_freq(self.f, ReNCPSD_tr,
-                                                  freqs_to_remove)
-            ImNCPSD_tr = self._remove_utility_freq(self.f, ImNCPSD_tr,
-                                                  freqs_to_remove)
-            # Los espectros tienen incertezas debido a la propagación, pero las
-            # descarto por ahora:
-            ReNCPSD_tr = unumpy.nominal_values(ReNCPSD_tr)
-            ImNCPSD_tr = unumpy.nominal_values(ImNCPSD_tr)
-            # Guardo el espectro complejo
-            norm_spec.append(ReNCPSD_tr + 1j * ImNCPSD_tr)
-        self.norm_spectrums = norm_spec
-        return self.norm_spectrums, self.f
-
-
-    def _get_transfer_name(self, reactor_name):
-        """
-        Get names of transfer functions
-        """
-        #FOLDER_NAME = "transferencias"
-        if reactor_name:
-            sub_folder = reactor_name
-        else:
-            sub_folder = ""
-
-        path_file = []
-        for i, K in enumerate(self.AC_gains):
-            K_over_100 = np.round(K.n / 100)
-            if i !=3:
-                file_name = "TR{:.0f}{:.0f}A{}.PSD".format(
-                            K_over_100, self.BW, i+1)
-                path_file.append(os.path.join(self.TRANSFERS_FOLDER,
-                                 sub_folder, file_name))
-        return path_file
-
-
-    def _get_transfer_function(self, file_name, freqs_to_remove=[50, 100, 150]):
-        """
-        Función para leer archivos .PSD con las funciones de transferencia
-        producidas por el programa TRA.EXE.
-
-        Se quitan también las frecuencias de línea.
-
-        Parameters
-        ----------
-            file_name : string
-               Nombre del archivo con extensión PSD de la función transferencia
-
-        Returns
-        -------
-            H2_dB : numpy array
-                Módulo cuadrado de la función transferencia. Expresado en dB
-                10*log10(H2)
-            ReH : numpy array
-                Parte real de la función transferencia
-            ImH : numpy array
-                Parte imaginaria de la función transferencia
-
-        """
-
-        # TODO: Se podría poner en los comentarios de los archivos la
-        # identificación del reactor (al menos). Para evitar confusiones.
-        # Preguntar.
-
-        SKIP_HEADER = 12
-        # Lectura de los datos
-        # Frecuencia [Hz]   Re(CPSD)    Im(CPSD)    APSD1[dB]    APSD2[dB]
-        _data = np.loadtxt(file_name, skiprows=SKIP_HEADER)
-        # Frecuencia [Hz]
-        freq = _data[:, 0]
-        # Re(CPSD)
-        _ReCPSD = _data[:, 1]
-        # Im(CPSD)
-        _ImCPSD = _data[:, 2]
-        # APSD1 [dB]
-        _APSD1_dB = _data[:, 3]
-        # APSD2 [dB]
-        _APSD2_dB = _data[:, 4]
-
-        # Módulo cuadrado de H(f)
-        H2_dB = _APSD2_dB - _APSD1_dB
-        # Parte real e imaginaria de H(f)
-        _APSD1 = 10**(_APSD1_dB / 10)
-        ReH = _ReCPSD / _APSD1
-        ImH = _ImCPSD / _APSD1
-        # Se quitan frecuencias de línea
-        H2_dB = self._remove_utility_freq(freq, H2_dB, freqs_to_remove)
-        ReH = self._remove_utility_freq(freq, ReH, freqs_to_remove)
-        ImH = self._remove_utility_freq(freq, ImH, freqs_to_remove)
-        return H2_dB, ReH, ImH
-
-
-    def _remove_utility_freq(self, frequency, spectrum, freqs_to_remove):
-        """
-        Removes the utility frequencies from the spectrum
-
-        Values of 'spectrum' at those freqs (+/- 1Hz) are replaced with those
-        of its neighbours (Angel's approach).
-
-        Parameters
-        ----------
-            frequency : numpy array
-                Vector with frequencies
-            spectrum : numpy array
-                Vector with the spectrum (should be same size of frequency)
-            freqs_to_remove : double or array
-                Frequency/ies to be removed
-
-        Returns
-        -------
-            new_spectrum : numpy array
-                Spectrum without the freqs_to_remove
-
-        """
-
-        # Force list
-        if not isinstance(freqs_to_remove, list):
-            freqs_to_remove = [freqs_to_remove]
-
-        new_spectrum = np.copy(spectrum)
-
-        for freqs in freqs_to_remove:
-            indx_to_remove = (frequency > freqs-1) & (frequency < freqs + 1)
-            # Closest value to (freqs - 1Hz)
-            value_to_assign = new_spectrum[frequency <= freqs-1][-1]
-            new_spectrum[indx_to_remove] = value_to_assign
-            # print("Aviso: se quitó la frecuencia {} Hz".format(freqs))
-
-        return new_spectrum
-
-
-    def plot_spectrums(self, normalizados=True, *args, **kargs):
-        if normalizados:
-            if self.norm_spectrums is None:
-                raise NameError("Faltan estimar los espectros normalizados")
-            _datas = self.norm_spectrums
-            _labels = ["NPSD1", "NPSD2", "Re(NCPSD12)"]
-            _units = "[1 / Hz]"
-        else:
-            if self.spectrums is None:
-                raise NameError("Faltan estimar los espectros")
-            _datas = self.spectrums
-            _labels = ["PSD1", "PSD2", "Re(CPSD12)"]
-            _units = "[V$^2$ / Hz]"
-
-        figs, ax = plt.subplots(1, 1)
-
-        for i, data in enumerate(_datas):
-            if i == 2:
-                data = np.real(data)
-            ax.plot(self.f, data, '.-', label=_labels[i])
-        ax.set_xlabel("Frecuencia [Hz]")
-        ax.set_ylabel("Espectro " + _units)
-        ax.legend()
-        ax.set_title(f"Archivo leido: {self.file_name}")
-        figs.tight_layout()
-
-        plt.show()
-
-
-    def fit_spectrums(self, intervals, **kargs):
-        """
-        Ajuste de los espectros
-
-        intervals: list of tuples
-            Lista con los límitesde los intervalos para el ajuste
-            [(f_min, f_max), (f_min, f_max), ...]
-            en el orden [NPSD1, NPSD2, CPSD12]
-        kargs:
-              plot: bool
-                True si se quiere graficar. False por default
-        """
-
-        if self.norm_spectrums is None:
-            raise NameError("Faltan estimar los espectros normalizados")
-
-        plot = kargs.get('plot', False)
-        _ttle = ["NPSD1", "NPSD2", "Re(NCPSD12)"]
-        _ylab = [i + " [1 / Hz]" for i in _ttle]
-
-        self.fit_results = []
-        self.fitted_data = []
-        for i, (spe, inter) in enumerate(zip(self.norm_spectrums, intervals)):
-            ind = (self.f >= inter[0]) & (self.f <= inter[1])
-            if i != 2:
-                _dat = spe[ind]
-                _res = ajuste_apsd(self.f[ind], _dat)
-            else:
-                _dat = np.real(spe[ind])
-                _res = ajuste_cpsd(self.f[ind], _dat)
-            self.fit_results.append(_res)
-            self.fitted_data.append([self.f[ind], _dat])
-
-            if plot:
-                best_fit = _dat + _res.residual
-                fig, (ax0, ax1) = plt.subplots(2, sharex=True,
-                               gridspec_kw={'height_ratios': [3,1]},)
-                ax0.errorbar(self.f, np.real(spe), fmt='k.', elinewidth=2,
-                             label='Medición')
-                ax0.plot(self.f[ind], best_fit, 'r', zorder=3, label='fit')
-                ax0.set_ylabel(_ylab[i])
-
-                ax1.plot(self.f[ind], _res.residual, 'k.')
-                ax1.set_xlabel('f [Hz]')
-                ax1.set_ylabel(r'Residuos [1/Hz]')
-                ax0.set_title(f"Ajuste de {_ttle[i]}")
-                fig.subplots_adjust(hspace=0.1)
-
-        if plot: plt.show()
-
-
-    def calcula_parametros_cineticos(self, reactor, **kwargs):
-        """
-        Calcula parámetros cinéticos en base al ajuste espectral
-
-        Parameters
-        ----------
-            reactor: reactor class
-                Clase importada del archivo "constantes_reactores.py"
-
-        Returns
-        -------
-            self.parametros_cineticos: dic
-                Diccionario con los parámetros cinéticos estimados. Los keys
-                son 'alfa', 'potencia', 'fq' y 'efi_over_beta2'. Los últimos
-                dos son None en caso de ajustar una NCPSD
-        """
-
-        if self.fit_results is None:
-            raise NameError("Faltan hacer el ajuste de los espectros")
-
-        # Constantes cinéticas
-        DIVEN = reactor.FACTOR_DIVEN
-        BETA = reactor.BETA_EFECTIVO
-        FORMA = reactor.FACTOR_FORMA_L
-        EFISION = reactor.ENERGIA_FISION
-        BENNETT = reactor.FACTOR_BENNETT
-
-        self.parametros_cineticos = []
-        # Asocio con sus incertezas
-        for i, res in enumerate(self.fit_results):
-            # Valores estimados
-            par_val = [res.params[s].value for s in res.var_names]
-            if i != 2:
-                #  Cálculo con NAPSD
-                if "covar" in dir(res):
-                    # Se obtiene la matríz de covarianza
-                    alfa, amplitud, constante =  \
-                      correlated_values(par_val, res.covar, tags=res.var_names)
-                else:
-                    # No se obtiene matriz de covarianza
-                    alfa, amplitud, constante = par_val
-                    print(
-                    "No se pudo estimar la matríz de covaarianza del ajuste")
-                fq = constante * self.I[i] / 2
-                efi_over_beta2 = amplitud * BENNETT / (1 - BETA) / FORMA \
-                       / DIVEN / constante
-            else:
-                # Calculo con NCPSD
-                if "covar" in dir(res):
-                    # Se obtiene la matríz de covarianza
-                    alfa, amplitud = correlated_values(par_val, res.covar,
-                                                       tags=res.var_names)
-                else:
-                    # No se obtiene matriz de covarianza
-                    alfa, amplitud = par_val
-                    print(
-                    "No se pudo estimar la matríz de covaarianza del ajuste")
-                constante = None
-                fq = None
-                efi_over_beta2 = None
-            # Cálculo de la potencia
-            potencia = 2 * EFISION * DIVEN * (1 - BETA) * FORMA / BETA**2 \
-                                                                    / amplitud
-
-            # Salida
-            _pars = {
-                    "amplitud": amplitud,
-                    "constante": constante,
-                    "alfa": alfa,
-                    "potencia": potencia,
-                    "fq": fq,
-                    "efi_over_beta2": efi_over_beta2,
-                    }
-            self.parametros_cineticos.append(_pars)
-
-
-class RUIFileProcessing():
+class RUIFileProcessing(_ProcesamientoEspectral):
     """
     Procesamiento de los archivos .RUI generados por el programa FERCIN3
 
@@ -600,7 +642,7 @@ class RUIFileProcessing():
     Parameters
     ----------
         file_name : str
-            Nombre del archivo en formato hdf5
+            Nombre del archivo .RUI
         resolution: int
             Resolución del ADC con que se adquirió. Si no se especifica, se la
             trata de estimar en base a los valores registrados (elige entre 12
@@ -609,21 +651,12 @@ class RUIFileProcessing():
     """
 
     def __init__(self, file_name, resolution=None):
-        self.file_name = file_name
-
-        self._read_file(self.file_name)
-
-        self.TRANSFERS_FOLDER = str(importlib.resources.files("ruidaqan") / "transferencias")
+        super().__init__(file_name)
 
         if resolution is None:
             self.ADC_resolution = self._get_resolution()
         else:
             self.ADC_resolution = resolution
-        self.norm_spectrums = None
-        self.N_fft = None
-        self.N_overlap = None
-        self.fit_results = None
-
 
     def _read_file(self, file_name):
         with open(file_name, 'r') as f:
@@ -635,7 +668,7 @@ class RUIFileProcessing():
             self.num_datos = int(float(f.readline().rstrip('\n')))
 
             tmp = [float(it) for it in f.readline().split()]
-            # dt 
+            # dt
             self.dt = tmp[0]
             # Band width
             self.BW = 1 / (2 * self.dt)
@@ -650,7 +683,7 @@ class RUIFileProcessing():
             if self.n_det == 2:
                 self.rango.append(f.readline().split()[0])
 
-            # ---- Detectors 
+            # ---- Detectors
             # Comment
             self.comment = [f.readline().strip('\n')]
             tmp = [float(it) for it in f.readline().split()]
@@ -694,6 +727,15 @@ class RUIFileProcessing():
         for i in range(self.n_det):
             self.I.append(self.DC_volts[i] / self.Z[i] - self.If[i])
 
+    def _ac_volts(self):
+        _, AC_volts, _ = self.get_temporal_signals()
+        return AC_volts
+
+    def _ganancias_ac(self):
+        return self.K
+
+    def _tension_normalizacion(self, i):
+        return self.DC_volts[i] - self.If[i] * self.Z[i]
 
     def _get_resolution(self):
         """ Guess between 12 and 16 bits resolution """
@@ -704,7 +746,6 @@ class RUIFileProcessing():
                 print(
                 "Resolución estimada de la ADC: 12 bits (podría estar mal)")
                 return 12
-
 
     def get_temporal_signals(self):
         """ Calcula las AC en voltaje. Convierte dependiendo ADC """
@@ -728,447 +769,16 @@ class RUIFileProcessing():
         time_vec = np.arange(0, len(AC_volts[0])) * self.dt
         return time_vec, AC_volts, None
 
-
-    def get_spectrums(self, N_fft=None, N_overlap=None):
+    def coeficientes_file(self):
         """
-        Espectros sin normalizar ni corregidos con función transferencia
-
-        Son los valores que se guardan en los archivos .PSD con fercin3/5
-
-        Los valores temporales del .RUI se transforman a voltaje, y se estima
-        el espectro con el estimador de Welch utilizando N_fft puntos y
-        N_overlap puntos de solapamiento.
-
-        Returns:
-            self.spectrums: lists of numpy arrays
-                Lista con los espectros [APSD1, APSD2, CPSD]
-            self.f: numpy array
-                Vector con las frecuencias asociada a los espectros
+        Ruta del archivo con los coeficientes de conversión int -> V que se
+        graba durante la adquisición: <carpeta>/<Sxx>-coeficientes_int_to_volt.pkl
+        donde Sxx es la serie (lo que precede al primer guion del nombre del
+        archivo, sin tener en cuenta la carpeta).
         """
-        if (N_fft is None) or (N_overlap is None):
-            raise ValueError("Faltan especificar N_fft o N_overlap")
-
-        self.N_fft = N_fft
-        self.N_overlap = N_overlap
-
-        VC_volts = []
-        for i in range(self.n_det):
-            VC_volts.append(self.DC_volts[i] - self.If[i] * self.Z[i])
-
-        _, AC_volts, _ = self.get_temporal_signals()
-
-        spectrums = []
-        for AC in AC_volts:
-            # Estimación de las APSD
-            f_spectrums, _spec = signal.welch(AC, fs=1/self.dt,
-                                      noverlap=N_overlap, nperseg=N_fft)
-            spectrums.append(_spec)
-        if self.n_det == 2:
-            # Estimación de la CPSD
-            _, _spec = signal.csd(AC_volts[0], AC_volts[1], fs=1/self.dt,
-                                  noverlap=N_overlap, nperseg=N_fft)
-            spectrums.append(_spec)
-        self.spectrums = spectrums
-        # Se convierten
-        self.f = np.asarray(f_spectrums)
-        return self.spectrums, self.f
-
-
-    def get_normalized_spectrums(self, reactor_name, N_fft=None,
-                                N_overlap=None, freqs_to_remove=[50, 100, 150],
-                                freqs_to_remove_tr=[50, 100, 150]):
-        """
-        Calcula los espectros normalizados con el método de Welch.
-
-        Se les quita las frencuencia de línea y sus dos armónicos.
-        Están corregidos por la función transferencia.
-
-        Si no se especifica N_fft y N_overlap se usan los espectros estimados
-        con .get_spectrum(). Si se especifican, se vuelven a calcular.
-
-        Parameters
-        ----------
-            N_fft: int
-                Puntos para calcular la FFT en cada bloque
-            N_overlap: int
-                Cantidad de puntos para el solapamiento de bloques
-            reactor_name: string
-                Identificación del reactor (para leer transferencias)
-            freqs_to_remove: list of floats
-                Frecuencias que serán eliminadas del espectro medido
-            freqs_to_remove: list of floats
-                Frecuencias que serán eliminadas de las transferencias
-
-        Returns
-        -------
-            self.spectrums: listr of numpy arrays
-                Lista con los espectros [NPSD1, NPSD1, NCPSD12]
-                Los NPSD son reales, la NCPSD es compleja
-            self.f: numpy array
-                Frecuencias asociadas a los espectros
-        """
-
-        # Si no se calcularon los espectros previamente, se los calcula
-        if not hasattr(self, 'spectrums'):
-            self.get_spectrums(N_fft, N_overlap)
-        else:
-            # Si se especifican los valores
-            if N_fft or N_overlap:
-                self.get_spectrums(N_fft, N_overlap)
-        # Nombres de las funciones transferencia que voy a leer
-        _tr_names = self._get_transfer_name(reactor_name)
-
-        norm_spec = []
-        _trans = []
-        for i, _tr_name in enumerate(_tr_names):
-            # Lectura de las funciones transferencia
-            try:
-                H2_dB, ReH, ImH = self._get_transfer_function(_tr_name,
-                                                freqs_to_remove_tr)
-            except IOError:
-                _tr_name = os.path.join('..', _tr_name)
-                H2_dB, ReH, ImH = self._get_transfer_function(_tr_name,
-                                                freqs_to_remove_tr)
-
-            # Módulo cuadrado de la función transferencia
-            H2 = 10**(H2_dB / 10)
-            _trans.append([H2, ReH, ImH])
-            print(f"Se lee la función transferencia de {_tr_name}")
-            # Espectro APSD
-            APSD = self.spectrums[i]
-            # En algunos casos del RA1 no coinciden los tamaños entre APSD y
-            # la función tansferencia
-            len_s, len_h = len(APSD), len(H2)
-            if len_s != len_h:
-                _min = min(len_s, len_h)
-                f = f[:_min]
-                APSD = APSD[:_min]
-                H2 = H2[:_min]
-                print(80*'!')
-                msg = "Advertencia: el tamaño de la función transferencia\n"
-                msg += "no coincide con el tamaño del espectro medido \n"
-                msg += "Se toma el mínimo entre ambos: {}"
-                print(msg.format(_min))
-                print(80*'!')
-            # Corrección por función transferencia
-            APSD_tr = APSD / H2
-            # Normalizo 
-            V_sin_fondo = self.DC_volts[i] - self.If[i] * self.Z[i]
-            NAPSD_tr = APSD_tr / V_sin_fondo**2
-            # Quito frecuencias de línea
-            NAPSD_tr = self._remove_utility_freq(
-                                    self.f, NAPSD_tr, freqs_to_remove)
-            # Los espectros tienen incertezas debido a la propagación, pero las
-            # descarto por ahora:
-            NAPSD_tr = unumpy.nominal_values(NAPSD_tr)
-            norm_spec.append(NAPSD_tr)
-        if len(_tr_names) == 2:
-            # --- Corrección para la CPSD
-            # Espectros sin corregir
-            APSD1 = self.spectrums[0]
-            APSD2 = self.spectrums[1]
-            ReCPSD = np.real(self.spectrums[2])
-            ImCPSD = np.imag(self.spectrums[2])
-            # Funciones transferencia leidas anteriormente
-            H2_1, ReH_1, ImH_1 = _trans[0]
-            H2_2, ReH_2, ImH_2 = _trans[1]
-            # Corrección de la CPSD por función transferencia
-            _c1 = ReH_1 * ReH_2 + ImH_1 * ImH_2
-            _c2 = ImH_1 * ReH_2 - ReH_1 * ImH_2
-            ReCPSD_tr = (_c1 * ReCPSD - _c2 * ImCPSD) / (H2_1 * H2_2)
-            ImCPSD_tr = (_c1 * ImCPSD + _c2 * ReCPSD) / (H2_1 * H2_2)
-            # Normalizo con valor medio
-            # Resto el fondo al voltaje medio
-            V1_sf = self.DC_volts[0] - self.If[0] * self.Z[0]
-            V2_sf = self.DC_volts[1] - self.If[1] * self.Z[1]
-            ReNCPSD_tr = ReCPSD_tr / (V1_sf * V2_sf)
-            ImNCPSD_tr = ImCPSD_tr / (V1_sf * V2_sf)
-            # Quito frecuencias de línea
-            ReNCPSD_tr = self._remove_utility_freq(self.f, ReNCPSD_tr,
-                                                  freqs_to_remove)
-            ImNCPSD_tr = self._remove_utility_freq(self.f, ImNCPSD_tr,
-                                                  freqs_to_remove)
-            # Los espectros tienen incertezas debido a la propagación, pero las
-            # descarto por ahora:
-            ReNCPSD_tr = unumpy.nominal_values(ReNCPSD_tr)
-            ImNCPSD_tr = unumpy.nominal_values(ImNCPSD_tr)
-            # Guardo el espectro complejo
-            norm_spec.append(ReNCPSD_tr + 1j * ImNCPSD_tr)
-        self.norm_spectrums = norm_spec
-        return self.norm_spectrums, self.f
-
-
-    def _get_transfer_name(self, reactor_name):
-        """
-        Get names of transfer functions
-        """
-        # FOLDER_NAME = "transferencias"
-        if reactor_name:
-            sub_folder = reactor_name
-        else:
-            sub_folder = ""
-
-        path_file = []
-        for i, K in enumerate(self.K):
-            K_over_100 = np.round(K.n / 100)
-            if i !=3:
-                file_name = "TR{:.0f}{:.0f}A{}.PSD".format(
-                            K_over_100, self.BW, i+1)
-                path_file.append(os.path.join(self.TRANSFERS_FOLDER,
-                                 sub_folder, file_name))
-        return path_file
-
-
-    def _get_transfer_function(self, file_name, freqs_to_remove=[50, 100, 150]):
-        """
-        Función para leer archivos .PSD con las funciones de transferencia
-        producidas por el programa TRA.EXE.
-
-        Se quitan también las frecuencias de línea.
-
-        Parameters
-        ----------
-            file_name : string
-               Nombre del archivo con extensión PSD de la función transferencia
-
-        Returns
-        -------
-            H2_dB : numpy array
-                Módulo cuadrado de la función transferencia. Expresado en dB
-                10*log10(H2)
-            ReH : numpy array
-                Parte real de la función transferencia
-            ImH : numpy array
-                Parte imaginaria de la función transferencia
-
-        """
-
-        # TODO: Se podría poner en los comentarios de los archivos la
-        # identificación del reactor (al menos). Para evitar confusiones.
-        # Preguntar.
-
-        SKIP_HEADER = 12
-        # Lectura de los datos
-        # Frecuencia [Hz]   Re(CPSD)    Im(CPSD)    APSD1[dB]    APSD2[dB]
-        _data = np.loadtxt(file_name, skiprows=SKIP_HEADER)
-        # Frecuencia [Hz]
-        freq = _data[:, 0]
-        # Re(CPSD)
-        _ReCPSD = _data[:, 1]
-        # Im(CPSD)
-        _ImCPSD = _data[:, 2]
-        # APSD1 [dB]
-        _APSD1_dB = _data[:, 3]
-        # APSD2 [dB]
-        _APSD2_dB = _data[:, 4]
-
-        # Módulo cuadrado de H(f)
-        H2_dB = _APSD2_dB - _APSD1_dB
-        # Parte real e imaginaria de H(f)
-        _APSD1 = 10**(_APSD1_dB / 10)
-        ReH = _ReCPSD / _APSD1
-        ImH = _ImCPSD / _APSD1
-        # Se quitan frecuencias de línea
-        H2_dB = self._remove_utility_freq(freq, H2_dB, freqs_to_remove)
-        ReH = self._remove_utility_freq(freq, ReH, freqs_to_remove)
-        ImH = self._remove_utility_freq(freq, ImH, freqs_to_remove)
-        return H2_dB, ReH, ImH
-
-
-    def _remove_utility_freq(self, frequency, spectrum, freqs_to_remove):
-        """
-        Removes the utility frequencies from the spectrum
-
-        Values of 'spectrum' at those freqs (+/- 1Hz) are replaced with those
-        of its neighbours (Angel's approach).
-
-        Parameters
-        ----------
-            frequency : numpy array
-                Vector with frequencies
-            spectrum : numpy array
-                Vector with the spectrum (should be same size of frequency)
-            freqs_to_remove : double or array
-                Frequency/ies to be removed
-
-        Returns
-        -------
-            new_spectrum : numpy array
-                Spectrum without the freqs_to_remove
-
-        """
-
-        # Force list
-        if not isinstance(freqs_to_remove, list):
-            freqs_to_remove = [freqs_to_remove]
-
-        new_spectrum = np.copy(spectrum)
-
-        for freqs in freqs_to_remove:
-            indx_to_remove = (frequency > freqs-1) & (frequency < freqs + 1)
-            # Closest value to (freqs - 1Hz)
-            value_to_assign = new_spectrum[frequency <= freqs-1][-1]
-            new_spectrum[indx_to_remove] = value_to_assign
-            # print("Aviso: se quitó la frecuencia {} Hz".format(freqs))
-
-        return new_spectrum
-
-
-    def plot_spectrums(self, normalizados=True, *args, **kargs):
-        if normalizados:
-            if self.norm_spectrums is None:
-                raise NameError("Faltan estimar los espectros normalizados")
-            _datas = self.norm_spectrums
-            _labels = ["NPSD1", "NPSD2", "Re(NCPSD12)"]
-            _units = "[1 / Hz]"
-        else:
-            if self.spectrums is None:
-                raise NameError("Faltan estimar los espectros")
-            _datas = self.spectrums
-            _labels = ["PSD1", "PSD2", "Re(CPSD12)"]
-            _units = "[V$^2$ / Hz]"
-
-        figs, ax = plt.subplots(1, 1)
-
-        for i, data in enumerate(_datas):
-            if i == 2:
-                data = np.real(data)
-            ax.plot(self.f, data, '.-', label=_labels[i])
-        ax.set_xlabel("Frecuencia [Hz]")
-        ax.set_ylabel("Espectro " + _units)
-        ax.legend()
-        ax.set_title(f"Archivo leido: {self.file_name}")
-        figs.tight_layout()
-
-        plt.show()
-
-
-    def fit_spectrums(self, intervals, **kargs):
-        """
-        Ajuste de los espectros
-
-        intervals: list of tuples
-            Lista con los límitesde los intervalos para el ajuste
-            [(f_min, f_max), (f_min, f_max), ...]
-            en el orden [NPSD1, NPSD2, CPSD12]
-        kargs:
-              plot: bool
-                True si se quiere graficar. False por default
-        """
-
-        if self.norm_spectrums is None:
-            raise NameError("Faltan estimar los espectros normalizados")
-
-        plot = kargs.get('plot', False)
-        _ttle = ["NPSD1", "NPSD2", "Re(NCPSD12)"]
-        _ylab = [i + " [1 / Hz]" for i in _ttle]
-
-        self.fit_results = []
-        self.fitted_data = []
-        for i, (spe, inter) in enumerate(zip(self.norm_spectrums, intervals)):
-            ind = (self.f >= inter[0]) & (self.f <= inter[1])
-            if i != 2:
-                _dat = spe[ind]
-                _res = ajuste_apsd(self.f[ind], _dat)
-            else:
-                _dat = np.real(spe[ind])
-                _res = ajuste_cpsd(self.f[ind], _dat)
-            self.fit_results.append(_res)
-            self.fitted_data.append([self.f[ind], _dat])
-
-            if plot:
-                best_fit = _dat + _res.residual
-                fig, (ax0, ax1) = plt.subplots(2, sharex=True,
-                               gridspec_kw={'height_ratios': [3,1]},)
-                ax0.errorbar(self.f, np.real(spe), fmt='k.', elinewidth=2,
-                             label='Medición')
-                ax0.plot(self.f[ind], best_fit, 'r', zorder=3, label='fit')
-                ax0.set_ylabel(_ylab[i])
-
-                ax1.plot(self.f[ind], _res.residual, 'k.')
-                ax1.set_xlabel('f [Hz]')
-                ax1.set_ylabel(r'Residuos [1/Hz]')
-                ax0.set_title(f"Ajuste de {_ttle[i]}")
-                fig.subplots_adjust(hspace=0.1)
-
-        if plot: plt.show()
-
-
-    def calcula_parametros_cineticos(self, reactor, **kwargs):
-        """
-        Calcula parámetros cinéticos en base al ajuste espectral
-
-        Parameters
-        ----------
-            reactor: reactor class
-                Clase importada del archivo "constantes_reactores.py"
-
-        Returns
-        -------
-            self.parametros_cineticos: dic
-                Diccionario con los parámetros cinéticos estimados. Los keys
-                son 'alfa', 'potencia', 'fq' y 'efi_over_beta2'. Los últimos
-                dos son None en caso de ajustar una NCPSD
-        """
-
-        if self.fit_results is None:
-            raise NameError("Faltan hacer el ajuste de los espectros")
-
-        # Constantes cinéticas
-        DIVEN = reactor.FACTOR_DIVEN
-        BETA = reactor.BETA_EFECTIVO
-        FORMA = reactor.FACTOR_FORMA_L
-        EFISION = reactor.ENERGIA_FISION
-        BENNETT = reactor.FACTOR_BENNETT
-
-        self.parametros_cineticos = []
-        # Asocio con sus incertezas
-        for i, res in enumerate(self.fit_results):
-            # Valores estimados
-            par_val = [res.params[s].value for s in res.var_names]
-            if i != 2:
-                #  Cálculo con NAPSD
-                if "covar" in dir(res):
-                    # Se obtiene la matríz de covarianza
-                    alfa, amplitud, constante =  \
-                      correlated_values(par_val, res.covar, tags=res.var_names)
-                else:
-                    # No se obtiene matriz de covarianza
-                    alfa, amplitud, constante = par_val
-                    print(
-                    "No se pudo estimar la matríz de covaarianza del ajuste")
-                fq = constante * self.I[i] / 2
-                efi_over_beta2 = amplitud * BENNETT / (1 - BETA) / FORMA \
-                       / DIVEN / constante
-            else:
-                # Calculo con NCPSD
-                if "covar" in dir(res):
-                    # Se obtiene la matríz de covarianza
-                    alfa, amplitud = correlated_values(par_val, res.covar,
-                                                       tags=res.var_names)
-                else:
-                    # No se obtiene matriz de covarianza
-                    alfa, amplitud = par_val
-                    print(
-                    "No se pudo estimar la matríz de covaarianza del ajuste")
-                constante = None
-                fq = None
-                efi_over_beta2 = None
-            # Cálculo de la potencia
-            potencia = 2 * EFISION * DIVEN * (1 - BETA) * FORMA / BETA**2 \
-                                                                    / amplitud
-
-            # Salida
-            _pars = {
-                    "amplitud": amplitud,
-                    "constante": constante,
-                    "alfa": alfa,
-                    "potencia": potencia,
-                    "fq": fq,
-                    "efi_over_beta2": efi_over_beta2,
-                    }
-            self.parametros_cineticos.append(_pars)
-
+        carpeta, nombre = os.path.split(self.file_name)
+        serie = nombre.split('-')[0]
+        return os.path.join(carpeta, f"{serie}-coeficientes_int_to_volt.pkl")
 
     def raw_to_volt_NI(self, raw_data, volt_range):
         """
@@ -1200,14 +810,11 @@ class RUIFileProcessing():
                 Voltage converted
         """
 
+        coef_file = self.coeficientes_file()
         try:
             # Se trata de leer el archivo con los coeficientes
             # Archivo generado en el momento de la adquisición (con programa
             # nuevo)
-            data_folder = os.path.dirname(self.file_name)
-            name_c = self.file_name.split('-')[0] + \
-                                                "-coeficientes_int_to_volt.pkl"
-            coef_file = os.path.join(data_folder, name_c)
             with open(coef_file, 'rb') as f:
                 conversion = pickle.load(f)
             print("Se usan coenficientes de conversión a voltaje del",
@@ -1232,11 +839,16 @@ class RUIFileProcessing():
                         10.0: [-0.0026160260933094583, 0.0003222353136881715,
                                -2.702005492694728e-14, 7.308597046898186e-18],
                          }
-            print("Se usan coenficientes de conversión a voltaje genéricos")
+            warnings.warn(
+                f"No se encontró el archivo de coeficientes {coef_file}. Se "
+                "usan coeficientes de conversión a voltaje genéricos de la NI "
+                "USB-6353: si la medición se hizo con otra placa, la escala "
+                "de las AC (y por lo tanto la potencia) puede ser incorrecta.",
+                stacklevel=2)
         _volt_float = float(volt_range)
         if _volt_float not in conversion.keys():
-            raise KeyError(f"The range {volt_range} not available for the",
-                           f"NI6353 board")
+            raise KeyError(f"The range {volt_range} not available for the "
+                           "NI6353 board")
         else:
             volt_data = 0.0
             for k, c in enumerate(conversion[_volt_float]):
@@ -1718,116 +1330,3 @@ class FitResults():
             ax.set_xlim(10, 10e3)
 
             plt.show()
-
-
-if __name__ == "__main__":
-    sys.path.append(parent)
-
-    ##########################################################################
-    # Prueba de clase HDF5FileProcessing
-    ##########################################################################
-
-    if False:
-        from constantes.constantes_reactores import RA3 as REACTOR
-
-        file_name = "S01-N1-1.h5"
-        folder = os.path.join(parent, "gui")
-        file_path = os.path.join(folder, file_name)
-
-        rui = HDF5FileProcessing(file_path)
-
-        print(f"Fecha: {rui.date}")
-        print(f"Hora: {rui.hour}")
-        print(f"Resolucion: {rui.resolucion_DAC}")
-        print(f"Sensibilidades: {rui.sensibilidades}")
-        print(f"DC {rui.DC_volts}")
-        print(f"DC rangos {rui.DC_rangos}")
-        print(f"Offsets {rui.offsets}")
-        print(f"AC gains {rui.AC_gains}")
-        print(f"Corrientes fondo {rui.If}")
-        print(f"Corrientes DC {rui.I}")
-        print(f"Corrientes Ip {rui.Ip}")
-
-        # quit()
-        # Espectros sin normalizar
-        spect, fs = rui.get_spectrums(512, 0)
-        # Espectros normalizados y corregidos por función transferencia
-        norm_spect, fs = rui.get_normalized_spectrums("RA3",
-                                        freqs_to_remove=[50, 100, 150])
-
-        # Graficación de los espectros
-        # rui.plot_spectrums(normalizados=True)
-        # Intervalos para el ajuste
-        if rui.BW == 200:
-            intervalos = 2 * [(2.3, 178.9)] + [(2.3, 93)]
-        elif rui.BW == 40:
-            intervalos = 3 * [(2.8, 35.8)]
-
-        rui.fit_spectrums(intervalos, plot=True)
-
-        rui.calcula_parametros_cineticos(REACTOR)
-        print(80*'-')
-        for param in rui.parametros_cineticos:
-            for key, val in param.items():
-                if val:
-                    print(key, f"{val:.3e}")
-                else:
-                    print(key, f"{val}")
-            print(80*'-')
-    ##########################################################################
-    # Prueba de clase FitResults
-    ##########################################################################
-    if False:
-        #filename = "S98-fit_results.pkl"   # Dos detectores RA-3
-        filename = "S19-fit_results.pkl"  # Un detector RA-1
-        fit_results = FitResults(filename)
-
-        fit_results.fit_p_vs_I()
-        for fps in fit_results.fited_p_vs_I:
-            print(fps[0])
-        fit_results.fit_Ip_vs_I(plot=True)
-
-        fit_results.average_parameters(plot=True)
-
-    ##########################################################################
-    # Prueba de clase RUIFile
-    ##########################################################################
-
-    if True:
-        from constantes.constantes_reactores import RA3 as REACTOR
-
-        file_name = "S31-N3-1.RUI"
-        folder = os.path.join(parent, "datos")
-        file_path = os.path.join(folder, file_name)
-
-        rui = RUIFileProcessing(file_path)
-
-        print(f"Rangos utilizados: {rui.rango}")
-        print(f"Resolución del ADC: {rui.ADC_resolution}")
-        print(f"Corrientes: {rui.I}")
-
-        rui.get_temporal_signals()
-
-        # Espectros sin normalizar
-        spect, fs = rui.get_spectrums(512, 0)
-        # Espectros normalizados y corregidos por función transferencia
-        norm_spect, fs = rui.get_normalized_spectrums("RA1",
-                                        freqs_to_remove=[50, 100, 150])
-
-        # Graficación de los espectros
-        # rui.plot_spectrums(normalizados=True)
-        # Intervalos para el ajuste
-        rui.BW = round(rui.BW)
-        if rui.BW == 200:
-            intervalos = 2 * [(2.3, 178.9)] + [(2.3, 93)]
-        elif rui.BW == 40:
-            intervalos = 3 * [(2.8, 35.8)]
-
-        rui.fit_spectrums(intervalos, plot=True)
-
-        rui.calcula_parametros_cineticos(REACTOR)
-        print(80*'-')
-        for param in rui.parametros_cineticos:
-            for key, val in param.items():
-                print(key, val)
-            print(80*'-')
