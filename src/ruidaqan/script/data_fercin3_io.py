@@ -38,6 +38,7 @@ class _ProcesamientoEspectral():
         self.norm_spectrums = None
         self.N_fft = None
         self.N_overlap = None
+        self.window = "hann"
         self.fit_results = None
 
         self._read_file(self.file_name)
@@ -62,14 +63,15 @@ class _ProcesamientoEspectral():
     # ------------------------------------------------------------------
     # Espectros
     # ------------------------------------------------------------------
-    def get_spectrums(self, N_fft=None, N_overlap=None, segmento=None):
+    def get_spectrums(self, N_fft=None, N_overlap=None, segmento=None,
+                      window="hann"):
         """
         Espectros sin normalizar ni corregidos con función transferencia
 
         Son los valores que se guardan en los archivos .PSD con fercin3/5
 
         Se estima el espectro con el estimador de Welch utilizando N_fft
-        puntos y N_overlap puntos de solapamiento.
+        puntos, N_overlap puntos de solapamiento y la ventana window.
 
         Parameters
         ----------
@@ -80,6 +82,16 @@ class _ProcesamientoEspectral():
             segmento: slice, opcional
                 Porción de la señal a utilizar (se usa para estimar
                 incertezas por lotes). Por defecto se usa la señal completa.
+            window: str o tuple
+                Ventana de cada segmento, con la sintaxis de
+                scipy.signal.get_window. Por defecto 'hann' (comportamiento
+                original). Con 'boxcar' (rectangular) y sin solapamiento los
+                bins son prácticamente independientes, por lo que la
+                incerteza del ajuste pesado (fit_spectrums(ponderado=True))
+                es confiable; a cambio, la rectangular tiene más leakage
+                (lóbulos laterales que caen como 1/f^2): picos intensos, como
+                los de la frecuencia de línea, o derivas lentas de la señal
+                pueden contaminar bins alejados.
 
         Returns
         -------
@@ -91,8 +103,12 @@ class _ProcesamientoEspectral():
         if (N_fft is None) or (N_overlap is None):
             raise ValueError("Faltan especificar N_fft o N_overlap")
 
+        # Se valida la ventana antes de modificar el estado
+        signal.get_window(window, N_fft)
+
         self.N_fft = N_fft
         self.N_overlap = N_overlap
+        self.window = window
 
         AC_volts = self._ac_volts()
         if segmento is not None:
@@ -104,12 +120,14 @@ class _ProcesamientoEspectral():
         for AC in AC_volts:
             # Estimación de las APSD
             f_spectrums, _spec = signal.welch(AC, fs=1/self.dt,
-                                      noverlap=N_overlap, nperseg=N_fft)
+                                      noverlap=N_overlap, nperseg=N_fft,
+                                      window=window)
             spectrums.append(_spec)
         if self.n_det == 2:
             # Estimación de la CPSD
             _, _spec = signal.csd(AC_volts[0], AC_volts[1], fs=1/self.dt,
-                                  noverlap=N_overlap, nperseg=N_fft)
+                                  noverlap=N_overlap, nperseg=N_fft,
+                                  window=window)
             spectrums.append(_spec)
         self.spectrums = spectrums
         # Se convierten
@@ -119,7 +137,7 @@ class _ProcesamientoEspectral():
     def segmentos_equivalentes(self):
         """
         Número equivalente de segmentos independientes del estimador de
-        Welch (ventana Hann), teniendo en cuenta el solapamiento:
+        Welch, para la ventana y el solapamiento usados en get_spectrums():
 
             n_eff = K / (1 + 2 sum_{j=1}^{K-1} (1 - j/K) rho(j)^2)
 
@@ -131,19 +149,22 @@ class _ProcesamientoEspectral():
         if self.N_fft is None:
             raise ValueError("Faltan estimar los espectros")
         return segmentos_equivalentes(self._n_muestras, self.N_fft,
-                                      self.N_overlap)
+                                      self.N_overlap, window=self.window)
 
     def get_normalized_spectrums(self, reactor_name, N_fft=None,
                                 N_overlap=None, freqs_to_remove=[50, 100, 150],
-                                freqs_to_remove_tr=[50, 100, 150]):
+                                freqs_to_remove_tr=[50, 100, 150],
+                                window=None):
         """
         Calcula los espectros normalizados con el método de Welch.
 
         Se les quita las frencuencia de línea y sus dos armónicos.
         Están corregidos por la función transferencia.
 
-        Si no se especifica N_fft y N_overlap se usan los espectros estimados
-        con .get_spectrum(). Si se especifican, se vuelven a calcular.
+        Si no se especifica N_fft, N_overlap ni window se usan los espectros
+        estimados con .get_spectrum(). Si se especifica alguno, se vuelven a
+        calcular (lo que no se especifique se toma del cálculo anterior;
+        la ventana por defecto es 'hann').
 
         Parameters
         ----------
@@ -157,6 +178,8 @@ class _ProcesamientoEspectral():
                 Frecuencias que serán eliminadas del espectro medido
             freqs_to_remove_tr: list of floats
                 Frecuencias que serán eliminadas de las transferencias
+            window: str o tuple
+                Ventana (ver get_spectrums)
 
         Returns
         -------
@@ -169,11 +192,15 @@ class _ProcesamientoEspectral():
 
         # Si no se calcularon los espectros previamente, se los calcula
         if self.spectrums is None:
-            self.get_spectrums(N_fft, N_overlap)
+            self.get_spectrums(N_fft, N_overlap,
+                               window=window if window is not None else "hann")
         else:
             # Si se especifican los valores
-            if N_fft or N_overlap:
-                self.get_spectrums(N_fft, N_overlap)
+            if N_fft or N_overlap or (window is not None):
+                self.get_spectrums(
+                    N_fft if N_fft is not None else self.N_fft,
+                    N_overlap if N_overlap is not None else self.N_overlap,
+                    window=window if window is not None else self.window)
         # Nombres de las funciones transferencia que voy a leer
         _tr_names = self._get_transfer_name(reactor_name)
 
@@ -420,9 +447,15 @@ class _ProcesamientoEspectral():
 
         Notas
         -----
-        La incerteza que informa el ajuste (pesado o no) no tiene en cuenta
-        la correlación entre bins vecinos que introduce la ventana, y la
-        subestima. Para una incerteza confiable usar incerteza_por_lotes().
+        La incerteza que informa el ajuste supone bins independientes. Con la
+        ventana Hann (por defecto) bins vecinos están correlacionados y la
+        incerteza queda subestimada aun con ponderado=True (~30 % en una
+        simulación con los parámetros por defecto); sin pesos, la
+        subestimación es de un factor 2 a 3. Con ventana rectangular
+        (get_spectrums(..., window='boxcar')), sin solapamiento y
+        ponderado=True, la incerteza del ajuste resultó correcta en la misma
+        simulación. En cualquier caso, incerteza_por_lotes() no depende de
+        esas hipótesis.
         """
 
         if self.norm_spectrums is None:
@@ -557,7 +590,7 @@ class _ProcesamientoEspectral():
                             n_lotes=10, N_fft=None, N_overlap=None,
                             freqs_to_remove=[50, 100, 150],
                             freqs_to_remove_tr=[50, 100, 150],
-                            ponderado=False):
+                            ponderado=False, window=None):
         """
         Incerteza de alfa y de la potencia estimada por lotes de historias.
 
@@ -586,7 +619,9 @@ class _ProcesamientoEspectral():
                 Cantidad de lotes. Cada lote debería contener al menos ~5
                 segmentos de N_fft puntos.
             N_fft, N_overlap: int
-                Si no se especifican se usan los de get_spectrums()
+            window: str o tuple
+                Si no se especifican se usan los de get_spectrums(). Deberían
+                ser los mismos que se usaron para obtener el valor informado.
 
         Returns
         -------
@@ -599,6 +634,8 @@ class _ProcesamientoEspectral():
             N_fft = self.N_fft
         if N_overlap is None:
             N_overlap = self.N_overlap
+        if window is None:
+            window = self.window
         if (N_fft is None) or (N_overlap is None):
             raise ValueError("Faltan especificar N_fft o N_overlap")
         if n_lotes < 2:
@@ -616,14 +653,15 @@ class _ProcesamientoEspectral():
         # Se guarda el estado para restaurarlo al final
         _attrs = ["spectrums", "f", "norm_spectrums", "fit_results",
                   "fitted_data", "parametros_cineticos", "N_fft",
-                  "N_overlap", "_n_muestras"]
+                  "N_overlap", "window", "_n_muestras"]
         _estado = {a: getattr(self, a) for a in _attrs if hasattr(self, a)}
 
         alfas, potencias = [], []
         try:
             for j in range(n_lotes):
                 seg = slice(j * n_por_lote, (j + 1) * n_por_lote)
-                self.get_spectrums(N_fft, N_overlap, segmento=seg)
+                self.get_spectrums(N_fft, N_overlap, segmento=seg,
+                                   window=window)
                 self.get_normalized_spectrums(
                     reactor_name, freqs_to_remove=freqs_to_remove,
                     freqs_to_remove_tr=freqs_to_remove_tr)

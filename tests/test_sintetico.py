@@ -188,3 +188,75 @@ def test_ajuste_lineal_sin_incertezas_escala_covarianza():
     # de la real en este caso (los residuos tienen sigma = 0.5)
     _, cov_unscaled = np.polyfit(x, y, 1, cov="unscaled")
     assert a.s < 0.7 * np.sqrt(cov_unscaled[0, 0])
+
+
+# ---------------------------------------------------------------------------
+# Ventana
+# ---------------------------------------------------------------------------
+def test_ventana_por_defecto_es_hann(medicion_hdf5):
+    from scipy import signal
+    path, _ = medicion_hdf5
+    obj = HDF5FileProcessing(path)
+    spec_def, f = obj.get_spectrums(s.N_PUNTOS, 0)
+    spec_def = [np.copy(x) for x in spec_def]
+    assert obj.window == "hann"
+    _, ref = signal.welch(obj.AC_volts[0], fs=s.FS, nperseg=s.N_PUNTOS,
+                          noverlap=0, window="hann")
+    assert np.array_equal(spec_def[0], ref)
+
+
+def test_ventana_rectangular(medicion_hdf5, carpeta):
+    from scipy import signal
+    path, verdad = medicion_hdf5
+    obj = HDF5FileProcessing(path)
+    obj.TRANSFERS_FOLDER = str(carpeta / "transf")
+    spec, _ = obj.get_spectrums(s.N_PUNTOS, 0, window="boxcar")
+    assert obj.window == "boxcar"
+    _, ref = signal.csd(obj.AC_volts[0], obj.AC_volts[1], fs=s.FS,
+                        nperseg=s.N_PUNTOS, noverlap=0, window="boxcar")
+    assert np.array_equal(spec[2], ref)
+    assert obj.segmentos_equivalentes() == pytest.approx(100)
+
+    obj.get_normalized_spectrums("PLANA")
+    obj.fit_spectrums(INTERVALOS, ponderado=True)
+    obj.calcula_parametros_cineticos(RA3)
+    par = obj.parametros_cineticos
+    for k in range(3):
+        assert abs(relativo(par[k]["potencia"], verdad["P"])) < 0.20
+        assert abs(relativo(par[k]["alfa"], verdad["alfa"])) < 0.25
+
+    # Los lotes usan la misma ventana y la restauran
+    u = obj.incerteza_por_lotes(RA3, "PLANA", INTERVALOS, n_lotes=10,
+                                ponderado=True)
+    assert obj.window == "boxcar"
+    assert 0.02 < u[2]["potencia"] / verdad["P"] < 0.12
+
+
+def test_get_normalized_spectrums_recalcula_si_cambia_ventana(medicion_hdf5,
+                                                              carpeta):
+    path, _ = medicion_hdf5
+    obj = HDF5FileProcessing(path)
+    obj.TRANSFERS_FOLDER = str(carpeta / "transf")
+    obj.get_normalized_spectrums("PLANA", s.N_PUNTOS, 0)
+    hann = np.copy(obj.norm_spectrums[0])
+    obj.get_normalized_spectrums("PLANA", window="boxcar")
+    assert obj.window == "boxcar" and obj.N_fft == s.N_PUNTOS
+    assert not np.array_equal(hann, obj.norm_spectrums[0])
+
+
+def test_ventana_invalida_no_modifica_estado(medicion_hdf5):
+    path, _ = medicion_hdf5
+    obj = HDF5FileProcessing(path)
+    obj.get_spectrums(s.N_PUNTOS, 0)
+    with pytest.raises(ValueError):
+        obj.get_spectrums(s.N_PUNTOS, 0, window="no-existe")
+    assert obj.window == "hann"
+
+
+def test_segmentos_equivalentes_rectangular():
+    assert segmentos_equivalentes(51200, 512, 0, "boxcar") == pytest.approx(100)
+    # Rectangular con 50 %: rho(1) = 1/2
+    K = (51200 - 256) // 256
+    esperado = K / (1 + 2 * (1 - 1 / K) / 4)
+    assert (segmentos_equivalentes(51200, 512, 256, "boxcar")
+            == pytest.approx(esperado))
