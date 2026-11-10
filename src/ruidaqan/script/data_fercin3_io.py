@@ -7,7 +7,7 @@ import tables as tb
 import os
 import pickle
 import warnings
-from scipy import signal
+from scipy import signal, stats
 from uncertainties import ufloat, unumpy, correlated_values
 import importlib.resources
 import matplotlib.pyplot as plt
@@ -58,6 +58,15 @@ class _ProcesamientoEspectral():
         self.N_overlap = None
         self.window = "hann"
         self.fit_results = None
+        self.parametros_cineticos = None
+        self.test_lotes = None
+        # Opciones usadas en el último procesamiento (las reutilizan los
+        # lotes para repetir exactamente el mismo cálculo)
+        self._reactor_name = None
+        self._freqs_to_remove = [50, 100, 150]
+        self._freqs_to_remove_tr = [50, 100, 150]
+        self._intervals = None
+        self._ponderado = False
 
         self._read_file(self.file_name)
 
@@ -207,6 +216,10 @@ class _ProcesamientoEspectral():
             self.f: numpy array
                 Frecuencias asociadas a los espectros
         """
+
+        self._reactor_name = reactor_name
+        self._freqs_to_remove = list(freqs_to_remove)
+        self._freqs_to_remove_tr = list(freqs_to_remove_tr)
 
         # Si no se calcularon los espectros previamente, se los calcula
         if self.spectrums is None:
@@ -484,6 +497,10 @@ class _ProcesamientoEspectral():
         _ylab = [i + " [1 / Hz]" for i in _ttle]
 
         n_eff = self.segmentos_equivalentes() if ponderado else None
+        self._intervals = list(intervals)
+        self._ponderado = ponderado
+        # Un ajuste nuevo invalida el test anterior
+        self.test_lotes = None
 
         self.fit_results = []
         self.fitted_data = []
@@ -672,7 +689,9 @@ class _ProcesamientoEspectral():
         # Se guarda el estado para restaurarlo al final
         _attrs = ["spectrums", "f", "norm_spectrums", "fit_results",
                   "fitted_data", "parametros_cineticos", "N_fft",
-                  "N_overlap", "window", "_n_muestras"]
+                  "N_overlap", "window", "_n_muestras", "test_lotes",
+                  "_intervals", "_ponderado", "_reactor_name",
+                  "_freqs_to_remove", "_freqs_to_remove_tr"]
         _estado = {a: getattr(self, a) for a in _attrs if hasattr(self, a)}
 
         alfas, potencias = [], []
@@ -704,6 +723,111 @@ class _ProcesamientoEspectral():
                 "potencia_lotes": potencias[:, k],
             })
         return self.incertezas_lotes
+
+    def aplica_test_lotes(self, reactor, alfa_test=0.01, n_lotes=None):
+        """
+        Decide, para la potencia de cada espectro, si la incerteza del ajuste
+        describe la variabilidad real de la medición, con un test chi^2 sobre
+        la incerteza por lotes.
+
+        Se repite el procesamiento (mismas opciones que el último
+        get_normalized_spectrums + fit_spectrums) en J lotes consecutivos de
+        la señal. Si la incerteza del ajuste u_aj es correcta, cada lote es
+        una estimación independiente con varianza J u_aj^2 y
+
+            T = (J - 1) (u_lotes / u_aj)^2  ~  chi^2(J - 1)
+
+        con u_lotes = std(lotes) / sqrt(J). Si el valor p de la cola superior,
+        P(chi^2(J-1) >= T), es menor que alfa_test, se rechaza que el ajuste
+        describa la variabilidad (medición no estacionaria o modelo
+        insuficiente) y la incerteza informada de la potencia pasa a ser
+        u_lotes. Si no, se mantiene la del ajuste. Si T cae en la cola
+        inferior (u_lotes mucho menor que u_aj) se mantiene u_aj, que es lo
+        conservador, y sólo se indica en el resultado.
+
+        Sólo se testea la potencia. Validación con Monte Carlo (mediciones
+        estacionarias sintéticas, ventana rectangular, ajuste pesado,
+        intervalo 2.3-178.9 Hz, J = 10, 400 realizaciones, alfa_test = 0.01):
+
+            potencia NCPSD: T ~ chi^2(9) (KS p = 0.28), rechazos 1.2 %
+            potencia NPSD:  rechazos 1.5-3.0 % (levemente por encima)
+            al menos uno de los tres: 5.5 % de las mediciones
+            alfa: la varianza entre lotes supera sistemáticamente la que
+                  predice el ajuste (media de T 10.5-11.8 en lugar de 9;
+                  KS p < 0.01; rechazos 3.2-5.0 %). Lo mismo con J = 5. La
+                  hipótesis nula del test no se cumple para alfa, por lo que
+                  alfa mantiene siempre la incerteza del ajuste.
+
+        Un rechazo por azar no sesga el resultado: se informa u_lotes, que
+        también es una estimación válida de la incerteza (más ruidosa).
+
+        Con alfa_test = 0.05 la tasa real de rechazo para la potencia resultó
+        ~8 %; por eso el valor por defecto es 0.01. Con la ventana Hann la
+        incerteza del ajuste subestima la variabilidad aun en mediciones
+        estacionarias y el test rechaza a menudo.
+
+        Parameters
+        ----------
+            reactor: reactor class
+                Constantes del reactor (ver calcula_parametros_cineticos)
+            alfa_test: float
+                Nivel de significación del test (una cola)
+            n_lotes: int, opcional
+                Cantidad de lotes J. Por defecto min(10, K // 5), con K la
+                cantidad de segmentos de N_fft puntos, para que cada lote
+                tenga al menos 5 segmentos. Si J < 2 no se aplica el test.
+
+        Returns
+        -------
+            self.test_lotes: list of dict o None
+                Para cada espectro: {'J', 'u_ajuste', 'u_lotes', 'T', 'p',
+                'p_inferior', 'usa_lotes'}. Si usa_lotes es True,
+                self.parametros_cineticos[k]['potencia'] pasa a tener
+                incerteza u_lotes.
+        """
+        if self.parametros_cineticos is None:
+            raise NameError("Faltan calcular los parámetros cinéticos")
+        if not 0 < alfa_test < 1:
+            raise ValueError("alfa_test debe estar entre 0 y 1")
+
+        n_segmentos = len(self._ac_volts()[0]) // self.N_fft
+        if n_lotes is None:
+            n_lotes = min(10, n_segmentos // 5)
+        if n_lotes < 2:
+            warnings.warn("No hay suficientes datos para el test por lotes "
+                          f"({n_segmentos} segmentos): se mantiene la "
+                          "incerteza del ajuste.", stacklevel=2)
+            self.test_lotes = None
+            return None
+
+        lotes = self.incerteza_por_lotes(
+            reactor, self._reactor_name, self._intervals, n_lotes=n_lotes,
+            freqs_to_remove=self._freqs_to_remove,
+            freqs_to_remove_tr=self._freqs_to_remove_tr,
+            ponderado=self._ponderado, window=self.window)
+
+        J = n_lotes
+        test = []
+        for par, lot in zip(self.parametros_cineticos, lotes):
+            valor = par["potencia"]
+            u_aj = getattr(valor, "s", np.nan)
+            u_lot = lot["potencia"]
+            if not (np.isfinite(u_aj) and u_aj > 0 and np.isfinite(u_lot)):
+                test.append({"J": J, "u_ajuste": u_aj, "u_lotes": u_lot,
+                             "T": np.nan, "p": np.nan, "p_inferior": np.nan,
+                             "usa_lotes": False})
+                continue
+            T = (J - 1) * (u_lot / u_aj)**2
+            p_sup = float(stats.chi2.sf(T, J - 1))
+            usa_lotes = p_sup < alfa_test
+            test.append({"J": J, "u_ajuste": u_aj, "u_lotes": u_lot, "T": T,
+                         "p": p_sup,
+                         "p_inferior": float(stats.chi2.cdf(T, J - 1)),
+                         "usa_lotes": usa_lotes})
+            if usa_lotes:
+                par["potencia"] = ufloat(valor.n, u_lot, "potencia")
+        self.test_lotes = test
+        return self.test_lotes
 
 
 def segmentos_equivalentes(n_muestras, n_fft, n_overlap, window="hann"):
@@ -1094,6 +1218,41 @@ class RUIFileProcessing(_ProcesamientoEspectral):
             return volt_data
 
 
+# Columnas de los archivos S###-resultados_ajustes.pkl (una fila por
+# espectro). Las dos últimas se agregaron con el test por lotes: valor p del
+# test de la potencia e incerteza de la potencia usada ('ajuste', 'lotes' o
+# 'ajuste (sin test)'). Los archivos anteriores tienen sólo las 10 primeras.
+COLUMNAS_RESULTADOS = ["Nivel", "Medición", "BW", "Espectro", "Ip", "Ii",
+                       "Alfa", "Potencia", "fq", "efi/b2",
+                       "p lotes P", "Incerteza P"]
+N_COLUMNAS_ANTERIOR = 10
+
+
+def normaliza_resultados(data):
+    """
+    Lleva una tabla de resultados al formato actual (COLUMNAS_RESULTADOS).
+
+    Los archivos grabados antes del test por lotes tienen 10 columnas: se les
+    agregan las dos nuevas vacías (None). El valor p queda vacío y en
+    'Incerteza' no se indica nada, porque esas mediciones se procesaron sin
+    el test. Las tablas que ya tienen el formato actual no se modifican.
+    """
+    data = np.asarray(data, dtype=object)
+    n_col = len(COLUMNAS_RESULTADOS)
+    if data.size == 0:
+        return np.empty((0, n_col), dtype=object)
+    if data.ndim != 2:
+        raise ValueError("La tabla de resultados debe ser bidimensional")
+    if data.shape[1] == N_COLUMNAS_ANTERIOR:
+        vacias = np.full((data.shape[0], n_col - N_COLUMNAS_ANTERIOR), None,
+                         dtype=object)
+        return np.hstack([data, vacias])
+    if data.shape[1] == n_col:
+        return data
+    raise ValueError(f"La tabla de resultados tiene {data.shape[1]} columnas;"
+                     f" se esperaban {N_COLUMNAS_ANTERIOR} o {n_col}")
+
+
 class FitResults():
     """
     Entre otras cosas, esta clase selecciona qué mediciones se utilizan para
@@ -1112,11 +1271,10 @@ class FitResults():
                 raise IOError(
                 f"FileResults no pudo abrir el archivo {self.file_name_pkl}")
 
-        #self.data = np.asarray(self.data)
-        columns = ["Nivel", "Medición", "BW", "Espectro", "Ip", "Ii", "Alfa",
-                   "Potencia", "fq", "efi/b2"]
+        # Los archivos anteriores al test por lotes tienen menos columnas
+        self.data = normaliza_resultados(self.data)
         # Trabajo con una DataFrame de panda
-        df = pd.DataFrame(self.data, columns=columns)
+        df = pd.DataFrame(self.data, columns=COLUMNAS_RESULTADOS)
         if len(df.Espectro.unique()) == 3:
             self.n_det = 2
         else:

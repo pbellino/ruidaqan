@@ -18,8 +18,13 @@ from PyQt6.QtWidgets import (QVBoxLayout, QPushButton, QWidget, QTableView,
 from .ventanas_ayuda import VentanaAyuda, AboutWindow
 from .ScientificDoubleSpinBox import ScientificDoubleSpinBox
 from .appconfig import get_data_folder
-from ..script.data_fercin3_io import FitResults
+from ..script.data_fercin3_io import (FitResults, normaliza_resultados,
+                                      COLUMNAS_RESULTADOS)
 from ..script.fit_models import ajuste_lineal, weighted_average
+
+# Columna con la incerteza de la potencia usada en cada fila ('ajuste' o
+# 'lotes')
+COL_INCERTEZA = COLUMNAS_RESULTADOS.index("Incerteza P")
 
 
 class FittingTableModel(QtCore.QAbstractTableModel):
@@ -353,6 +358,9 @@ class TableModel(QtCore.QAbstractTableModel):
             # Formato para mostrar floats
             if index.column() in [4, 5, 8]:
                 return f"{value:.3E}"
+            elif index.column() == 10:
+                # Valor p del test por lotes
+                return f"{value:.2g}" if np.isfinite(value) else ""
             else:
                 return f"{value}"
             if index.column() in [6, 7, 8]:
@@ -363,6 +371,11 @@ class TableModel(QtCore.QAbstractTableModel):
             return int(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignCenter)
         if role == Qt.ItemDataRole.BackgroundRole:
             value = self._data[index.row()][index.column()]
+            # Se resaltan las mediciones en las que se usó la incerteza por
+            # lotes (el test rechazó la incerteza del ajuste)
+            if (index.column() == COL_INCERTEZA and isinstance(value, str)
+                    and value.startswith("lotes")):
+                return QtGui.QColor("#e6550d")
             if self._data[index.row()][0] % 2 == 0:
                 if value is None:
                     return QtGui.QColor(fondo_vacio)
@@ -421,7 +434,8 @@ class ShowSpectrumFittedValues(QMainWindow):
         if self.serie is not None: self.cargar_btn.setEnabled(False)
 
         self.header = ["Nivel", "Medición", "BW [Hz]", "Espectro", "Ip [A]",
-                       "Ii [A]", "alfa [1/s]", "p [W]", "fq [C]", "e/b2"]
+                       "Ii [A]", "alfa [1/s]", "p [W]", "fq [C]", "e/b2",
+                       "p lotes (P)", "Incerteza (P)"]
 
         # Connect the button.
         self.del_btn.clicked.connect(self.delete)
@@ -888,6 +902,8 @@ class ShowSpectrumFittedValues(QMainWindow):
             self.tableView.setColumnWidth(i, 80)
         for i in [4, 5, 6, 7, 8, 9]:
             self.tableView.setColumnWidth(i, 160)
+        self.tableView.setColumnWidth(10, 100)
+        self.tableView.setColumnWidth(COL_INCERTEZA, 130)
 
 
     def add_new_data(self, data):
@@ -905,8 +921,10 @@ class ShowSpectrumFittedValues(QMainWindow):
             dlg.setText(" ".join(_msg))
             button = dlg.exec()
         else:
-            # Se guardan los datos
-            self.model._data = np.concatenate((self.model._data, data), axis=0)
+            # Se guardan los datos (ambos en el formato actual de columnas)
+            self.model._data = np.concatenate(
+                (normaliza_resultados(self.model._data),
+                 normaliza_resultados(data)), axis=0)
             self.model.layoutChanged.emit()
             self.save()
             self._update_fit_widgets()
@@ -969,7 +987,10 @@ class ShowSpectrumFittedValues(QMainWindow):
     def load(self):
         try:
             with open(self.file_path, "rb") as f:
-                self.model._data = pickle.load(f)
+                # Los archivos anteriores al test por lotes tienen 10
+                # columnas: se completan con las nuevas vacías. Al grabar,
+                # el archivo queda en el formato nuevo.
+                self.model._data = normaliza_resultados(pickle.load(f))
             self.model.layoutChanged.emit()
             self._update_fit_widgets()
             self.lbl_openfile.setText(self.file_path)

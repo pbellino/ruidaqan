@@ -21,6 +21,14 @@ from .ventanas_ayuda import VentanaAyuda, AboutWindow
 from .appconfig import get_data_folder
 from ..constants import constantes_reactores as CONREAC
 from ..script.data_fercin3_io import RUIFileProcessing, HDF5FileProcessing
+from ..script.fit_models import model_apsd, model_cpsd
+
+# Nivel de significación del test por lotes (ver
+# _ProcesamientoEspectral.aplica_test_lotes). Con 0.01 la tasa de rechazo en
+# mediciones estacionarias simuladas es la nominal.
+ALFA_TEST_LOTES = 0.01
+# Ventanas disponibles para la estimación espectral (texto -> scipy)
+VENTANAS = {"Rectangular": "boxcar", "Hann": "hann"}
 
 
 class FitWindow(QMainWindow):
@@ -223,6 +231,14 @@ class FitWindow(QMainWindow):
         self.spinBox_overlap = QSpinBox(groupBox_getSpectrums)
         self.spinBox_overlap.setValue(0)
         self.spinBox_overlap.setMaximum(self.spinBox_Nfft.value()-1)
+        lbl_ventana_title = QLabel("Ventana:")
+        self.comboBox_ventana = QComboBox(groupBox_getSpectrums)
+        self.comboBox_ventana.addItems(list(VENTANAS))
+        self.comboBox_ventana.setCurrentText("Rectangular")
+        self.comboBox_ventana.setToolTip(
+            "Rectangular: con ajuste pesado, la incerteza del ajuste es "
+            "correcta en mediciones estacionarias.\n"
+            "Hann: la incerteza del ajuste subestima la variabilidad.")
         lbl_utility_freq = QLabel("Frecuencia de línea")
         self.spinBox_utility_freq = QDoubleSpinBox(groupBox_getSpectrums)
         self.spinBox_utility_freq.setSuffix(" Hz")
@@ -235,10 +251,12 @@ class FitWindow(QMainWindow):
         gridLayout_getSpectrums.addWidget(self.spinBox_Nfft, 0, 1, 1, 1)
         gridLayout_getSpectrums.addWidget(lbl_overlap_title, 1, 0, 1, 1)
         gridLayout_getSpectrums.addWidget(self.spinBox_overlap, 1, 1, 1, 1)
-        gridLayout_getSpectrums.addWidget(lbl_utility_freq, 2, 0, 1, 1)
-        gridLayout_getSpectrums.addWidget(self.spinBox_utility_freq, 2, 1, 1,1)
-        gridLayout_getSpectrums.addWidget(self.pushButton_getSpectrums,3,0,1,2)
-        gridLayout_getSpectrums.setRowStretch(4, 1)
+        gridLayout_getSpectrums.addWidget(lbl_ventana_title, 2, 0, 1, 1)
+        gridLayout_getSpectrums.addWidget(self.comboBox_ventana, 2, 1, 1, 1)
+        gridLayout_getSpectrums.addWidget(lbl_utility_freq, 3, 0, 1, 1)
+        gridLayout_getSpectrums.addWidget(self.spinBox_utility_freq, 3, 1, 1,1)
+        gridLayout_getSpectrums.addWidget(self.pushButton_getSpectrums,4,0,1,2)
+        gridLayout_getSpectrums.setRowStretch(5, 1)
 
 
         # Group box for fit controls
@@ -253,6 +271,13 @@ class FitWindow(QMainWindow):
         lbl_f_to_title = QLabel("Hasta:")
         self.spinBox_f_to = QDoubleSpinBox(groupBox_fitcontrols)
         self.spinBox_f_to.setSuffix(" Hz")
+        self.checkBox_ponderado = QCheckBox("Ajuste pesado",
+                                            groupBox_fitcontrols)
+        self.checkBox_ponderado.setChecked(True)
+        self.checkBox_ponderado.setToolTip(
+            "Mínimos cuadrados pesados con la varianza del estimador de "
+            "Welch.\nSin pesos, la incerteza del ajuste no tiene sentido "
+            "estadístico.")
         self.pushButton_fit = QPushButton(groupBox_header)
         self.pushButton_fit.setText("Ajustar espectros")
 
@@ -262,8 +287,9 @@ class FitWindow(QMainWindow):
         gridLayout_fitcontrols.addWidget(self.spinBox_f_from, 1, 1, 1, 1)
         gridLayout_fitcontrols.addWidget(lbl_f_to_title, 2, 0, 1, 1)
         gridLayout_fitcontrols.addWidget(self.spinBox_f_to, 2, 1, 1, 1)
-        gridLayout_fitcontrols.addWidget(self.pushButton_fit, 3, 0, 1, 2)
-        gridLayout_fitcontrols.setRowStretch(4, 1)
+        gridLayout_fitcontrols.addWidget(self.checkBox_ponderado, 3, 0, 1, 2)
+        gridLayout_fitcontrols.addWidget(self.pushButton_fit, 4, 0, 1, 2)
+        gridLayout_fitcontrols.setRowStretch(5, 1)
 
         # Left layout
         verticalLayout_left.addWidget(groupBox_header)
@@ -305,10 +331,15 @@ class FitWindow(QMainWindow):
             self.lcds[key].setAlignment(Qt.AlignmentFlag.AlignCenter)
             gridLayout_results.addWidget(
                             self.lcds[key], pos[0] + 1, pos[1] + 1)
+        # Resultado del test por lotes
+        self.lbl_test_lotes = QLabel(groupBox_results)
+        self.lbl_test_lotes.setWordWrap(True)
+        self.lbl_test_lotes.setTextFormat(Qt.TextFormat.RichText)
+        gridLayout_results.addWidget(self.lbl_test_lotes, 4, 0, 1, 7)
         # Oculto NPSD2 y NCPSD
         [self.lbl_results[l].hide() for l in self._labels_spec[1:]]
         [self.lcds[f"{i}, {j}"].hide() for i in range(1, 3) for j in range(6)]
-        groupBox_results.setMinimumHeight(150)
+        groupBox_results.setMinimumHeight(170)
 
         # Botones grabar y cerrar
         self.btn_previos = QPushButton("Datos previos")
@@ -533,7 +564,9 @@ class FitWindow(QMainWindow):
                                          self.spinBox_Nfft.value(),
                                          self.spinBox_overlap.value(),
                                          freqs_to_remove = [uf, 2*uf, 3*uf],
-                                         freqs_to_remove_tr = [uf, 2*uf, 3*uf]
+                                         freqs_to_remove_tr = [uf, 2*uf, 3*uf],
+                                         window=VENTANAS[
+                                           self.comboBox_ventana.currentText()]
                                          )
 
         # Grafica los espectros y agrega regiones de selección
@@ -665,7 +698,9 @@ class FitWindow(QMainWindow):
         """ Ajusta todos los espectros a la vez """
         # Se leen las regiones para el ajuste
         intervalos = [r.getRegion() for r in self.regions]
-        self.time_file.fit_spectrums(intervalos, plot=False)
+        self.time_file.fit_spectrums(
+                        intervalos, plot=False,
+                        ponderado=self.checkBox_ponderado.isChecked())
 
         # Borro el ajuste anterior
         try:
@@ -685,7 +720,11 @@ class FitWindow(QMainWindow):
                 data = self.time_file.norm_spectrums[i][ind]
             else:
                 data = np.real(self.time_file.norm_spectrums[i][ind])
-            best_fit = data + self.time_file.fit_results[i].residual
+            # Se evalúa el modelo (con el ajuste pesado el residuo está
+            # dividido por la incerteza y no sirve para reconstruirlo)
+            _p = self.time_file.fit_results[i].params.valuesdict()
+            _f = self.time_file.f[ind]
+            best_fit = model_apsd(_f, **_p) if i != 2 else model_cpsd(_f, **_p)
             self._plots_bf.append(
                          p.plot(self.time_file.f[ind], best_fit,
                              pen=pg.mkPen(color='r', width=3))
@@ -693,6 +732,9 @@ class FitWindow(QMainWindow):
 
         # Calcula parámetros cinéticos
         self.time_file.calcula_parametros_cineticos(self.REACTOR_CLS)
+        # Test por lotes: decide si se informa la incerteza del ajuste o la
+        # de los lotes (modifica self.time_file.parametros_cineticos)
+        self._aplica_test_lotes()
         # Pueblo los resultados
         for i, par in enumerate(self.time_file.parametros_cineticos):
             for j, lab in enumerate(par.values()):
@@ -705,6 +747,44 @@ class FitWindow(QMainWindow):
 
         self.btn_grabar.setEnabled(True)
         self.tabs.setCurrentIndex(2)
+
+
+    def _aplica_test_lotes(self):
+        """ Aplica el test por lotes y muestra el resultado """
+        QGuiApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        try:
+            self.time_file.aplica_test_lotes(self.REACTOR_CLS,
+                                             alfa_test=ALFA_TEST_LOTES)
+            error = None
+        except Exception as e:
+            self.time_file.test_lotes = None
+            error = f"{type(e).__name__}: {e}"
+        finally:
+            QGuiApplication.restoreOverrideCursor()
+        self.lbl_test_lotes.setText(self._texto_test_lotes(error))
+
+    def _texto_test_lotes(self, error=None):
+        """ Texto con los valores p del test y la incerteza usada """
+        test = self.time_file.test_lotes
+        if error is not None:
+            return (f"<b>Test por lotes:</b> no se pudo aplicar ({error}). "
+                    "Se informa la incerteza del ajuste.")
+        if test is None:
+            return ("<b>Test por lotes:</b> no hay datos suficientes. "
+                    "Se informa la incerteza del ajuste.")
+        _lbls = ["NAPSD1", "NAPSD2", "NCPSD"]
+        partes = [f"{lbl}: p = {t['p']:.2g}" for lbl, t in zip(_lbls, test)]
+        con_lotes = [lbl for lbl, t in zip(_lbls, test) if t["usa_lotes"]]
+        texto = (f"<b>Test por lotes de la potencia</b> (J = {test[0]['J']}, "
+                 f"\u03B1<sub>test</sub> = {ALFA_TEST_LOTES}): "
+                 + " &nbsp;|&nbsp; ".join(partes))
+        if con_lotes:
+            texto += ("<br><span style='color:#e6550d'><b>Se informa la "
+                      "incerteza por lotes de P en: " + ", ".join(con_lotes)
+                      + "</b> (posible medición no estacionaria)</span>")
+        else:
+            texto += "<br>Se informa la incerteza del ajuste."
+        return texto
 
 
     @pyqtSlot()
@@ -788,10 +868,23 @@ class FitWindow(QMainWindow):
                           di['alfa'],
                           di['potencia'],
                           di['fq'],
-                          di['efi_over_beta2']
+                          di['efi_over_beta2'],
+                          *self._columnas_test_lotes(i),
                          ]
                         )
-        return np.asarray(_data)
+        return np.asarray(_data, dtype=object)
+
+
+    def _columnas_test_lotes(self, i):
+        """
+        Columnas del test por lotes para el espectro i:
+        [valor p del test de la potencia, incerteza de la potencia usada]
+        """
+        test = self.time_file.test_lotes
+        if test is None:
+            return [None, "ajuste (sin test)"]
+        t = test[i]
+        return [t["p"], "lotes" if t["usa_lotes"] else "ajuste"]
 
 
     @pyqtSlot()

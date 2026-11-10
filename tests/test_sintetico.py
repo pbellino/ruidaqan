@@ -307,3 +307,147 @@ def test_rui_grabado_por_ruidaqan_en_utf8(tmp_path):
     obj = RUIFileProcessing(str(path))
     assert obj.comment[0] == '"Cámara Número 1"'
     assert len(obj.AC_int[0]) == 4 * s.N_PUNTOS
+
+
+# ---------------------------------------------------------------------------
+# Test por lotes de la potencia
+# ---------------------------------------------------------------------------
+def _procesa_rectangular(path, carpeta):
+    obj = HDF5FileProcessing(str(path))
+    obj.TRANSFERS_FOLDER = str(carpeta / "transf")
+    obj.get_normalized_spectrums("PLANA", s.N_PUNTOS, 0, window="boxcar")
+    obj.fit_spectrums(INTERVALOS, ponderado=True)
+    obj.calcula_parametros_cineticos(RA3)
+    return obj
+
+
+def _escribe_no_estacionaria(path):
+    """Medición cuya amplitud de fluctuaciones cambia de un lote a otro."""
+    import tables as tb
+    s.escribe_hdf5(path, RA3, seed=4)
+    n = s.N_PUNTOS * s.HISTORIAS
+    orden = np.random.default_rng(0).permutation(10)
+    escala = np.repeat(np.linspace(0.8, 1.2, 10)[orden], n // 10)
+    with tb.open_file(str(path), "a") as h5:
+        for i in (1, 2):
+            ac = h5.get_node(f"/Cadena_{i}/AC")
+            attrs = {k: ac.attrs[k] for k in ac.attrs._v_attrnamesuser}
+            datos = np.round(ac.read() * escala).astype(np.int16)
+            ac.remove()
+            nuevo = h5.create_earray(f"/Cadena_{i}", "AC", obj=datos)
+            for k, v in attrs.items():
+                nuevo.attrs[k] = v
+
+
+def test_test_lotes_medicion_estacionaria(medicion_hdf5, carpeta):
+    path, _ = medicion_hdf5
+    obj = _procesa_rectangular(path, carpeta)
+    antes = [(p["alfa"].s, p["potencia"].s) for p in obj.parametros_cineticos]
+    test = obj.aplica_test_lotes(RA3)
+    assert len(test) == 3 and all(t["J"] == 10 for t in test)
+    for t, (ua, up), par in zip(test, antes, obj.parametros_cineticos):
+        assert 0 < t["p"] < 1
+        assert t["u_ajuste"] == pytest.approx(up)
+        # Medición estacionaria: con esta semilla no se rechaza
+        assert not t["usa_lotes"]
+        assert par["potencia"].s == pytest.approx(up)
+        # alfa nunca se modifica
+        assert par["alfa"].s == pytest.approx(ua)
+
+
+def test_test_lotes_medicion_no_estacionaria(carpeta, tmp_path):
+    path = tmp_path / "S001-N2-1.h5"
+    _escribe_no_estacionaria(path)
+    obj = _procesa_rectangular(path, carpeta)
+    alfas = [p["alfa"].s for p in obj.parametros_cineticos]
+    test = obj.aplica_test_lotes(RA3)
+    for t, par, ua in zip(test, obj.parametros_cineticos, alfas):
+        assert t["usa_lotes"] and t["p"] < 1e-3
+        assert t["u_lotes"] > 2 * t["u_ajuste"]
+        assert par["potencia"].s == pytest.approx(t["u_lotes"])
+        assert par["alfa"].s == pytest.approx(ua)
+
+
+def test_test_lotes_sin_datos_suficientes(tmp_path, carpeta):
+    path = tmp_path / "S003-N1-1.h5"
+    s.escribe_hdf5(path, RA3, historias=8, seed=5)
+    obj = HDF5FileProcessing(str(path))
+    obj.TRANSFERS_FOLDER = str(carpeta / "transf")
+    obj.get_normalized_spectrums("PLANA", s.N_PUNTOS, 0, window="boxcar")
+    obj.fit_spectrums(INTERVALOS, ponderado=True)
+    obj.calcula_parametros_cineticos(RA3)
+    with pytest.warns(UserWarning, match="suficientes datos"):
+        assert obj.aplica_test_lotes(RA3) is None
+    assert obj.test_lotes is None
+
+
+def test_ajuste_nuevo_invalida_test_lotes(medicion_hdf5, carpeta):
+    path, _ = medicion_hdf5
+    obj = _procesa_rectangular(path, carpeta)
+    obj.aplica_test_lotes(RA3)
+    assert obj.test_lotes is not None
+    obj.fit_spectrums(INTERVALOS, ponderado=True)
+    assert obj.test_lotes is None
+
+
+# ---------------------------------------------------------------------------
+# Compatibilidad de los archivos de resultados
+# ---------------------------------------------------------------------------
+def _filas_resultados(path, carpeta, nivel, con_test=True):
+    """Filas como las graba el GUI de procesamiento (una por espectro)."""
+    obj = _procesa_rectangular(path, carpeta)
+    test = obj.aplica_test_lotes(RA3) if con_test else None
+    filas = []
+    for i, (lbl, d) in enumerate(zip(["NPSD1", "NPSD2", "NCPSD"],
+                                     obj.parametros_cineticos)):
+        fila = [nivel, 1, round(obj.BW), lbl, obj.Ip,
+                obj.I[i] if i != 2 else None, d["alfa"], d["potencia"],
+                d["fq"], d["efi_over_beta2"]]
+        if con_test:
+            fila += [test[i]["p"],
+                     "lotes" if test[i]["usa_lotes"] else "ajuste"]
+        filas.append(fila)
+    return np.asarray(filas, dtype=object)
+
+
+def test_normaliza_resultados():
+    from ruidaqan.script.data_fercin3_io import (COLUMNAS_RESULTADOS,
+                                                 normaliza_resultados)
+    n = len(COLUMNAS_RESULTADOS)
+    vieja = np.full((3, 10), 1.0, dtype=object)
+    nueva = normaliza_resultados(vieja)
+    assert nueva.shape == (3, n)
+    assert all(x is None for x in nueva[:, 10:].ravel())
+    assert np.array_equal(nueva[:, :10], vieja)
+    actual = np.full((3, n), 2.0, dtype=object)
+    assert normaliza_resultados(actual) is not None
+    assert np.array_equal(normaliza_resultados(actual), actual)
+    assert normaliza_resultados([]).shape == (0, n)
+    with pytest.raises(ValueError):
+        normaliza_resultados(np.zeros((2, 11), dtype=object))
+
+
+@pytest.mark.parametrize("con_test", [False, True])
+def test_fitresults_lee_archivos_viejos_y_nuevos(carpeta, tmp_path, con_test):
+    """
+    Los S###-resultados_ajustes.pkl anteriores (10 columnas) y los nuevos
+    (con el test por lotes) se tienen que poder leer y promediar.
+    """
+    import pickle
+    from ruidaqan.script.data_fercin3_io import (COLUMNAS_RESULTADOS,
+                                                 FitResults)
+    filas = []
+    for nivel, potencia in ((1, 500), (2, 1000)):
+        path = tmp_path / f"S004-N{nivel}-1.h5"
+        s.escribe_hdf5(path, RA3, potencia=potencia, seed=20 + nivel)
+        filas.append(_filas_resultados(path, carpeta, nivel, con_test))
+    tabla = np.vstack(filas)
+    assert tabla.shape[1] == (len(COLUMNAS_RESULTADOS) if con_test else 10)
+    pkl = tmp_path / "S004-resultados_ajustes.pkl"
+    with open(pkl, "wb") as f:
+        pickle.dump(tabla, f)
+    fr = FitResults(str(pkl))
+    assert fr.data.shape == (6, len(COLUMNAS_RESULTADOS))
+    assert fr.n_det == 2
+    fr.average_parameters(plot=False)
+    assert fr.alfa_prom == pytest.approx(s.ALFA, rel=0.2)

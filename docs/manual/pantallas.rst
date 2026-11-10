@@ -631,6 +631,20 @@ cada bloque y finalmente se promedian).
 **Solapamiento**
     Cantidad de datos que se solaparán entre bloques consecutivos
 
+**Ventana**
+    Ventana que se aplica a cada bloque. Por defecto es **Rectangular**:
+    sin solapamiento, los puntos del espectro son prácticamente
+    independientes y, con el ajuste pesado, la incerteza que informa el
+    ajuste es correcta en mediciones estacionarias. Con **Hann** (la que se
+    usaba antes) bloques vecinos del espectro quedan correlacionados y la
+    incerteza del ajuste subestima la variabilidad real (~30 % en una
+    simulación con los parámetros por defecto).
+
+    Con la ventana rectangular, un pico angosto e intenso (por ejemplo, de
+    la frecuencia de línea) se desparrama sobre más puntos vecinos que con
+    Hann (*leakage*). En espectros suaves, como los del ruido de un reactor,
+    el efecto es despreciable.
+
 **Frecuencia de línea**
     Se utilizará para eliminar el pico en el espectro correspondiente a la
     frecuencia de línea y a sus dos primeros armónicos
@@ -651,12 +665,45 @@ Se pueden seleccionar los espectros individualmente o todo juntos, a través
 del combo-box **Espectros**. La selección también se puede hacer moviendo
 la zona de ajuste desde el mismo gráfico.
 
+**Ajuste pesado**
+    Activado por defecto. El ajuste se hace por mínimos cuadrados pesados con
+    la varianza del estimador de Welch: :math:`S^2/n` para las NPSD y
+    :math:`(S_{11} S_{22} + \mathrm{Re}(S_{12})^2)/(2n)` para la NCPSD, con
+    :math:`n` el número equivalente de bloques independientes. Sin pesos, la
+    incerteza que informa el ajuste no tiene sentido estadístico (subestima
+    la real en un factor 2 a 3).
+
+**Test por lotes de la potencia**
+    Después del ajuste se repite todo el procesamiento en :math:`J` tramos
+    consecutivos de la señal (:math:`J = 10` con 100 historias) y se calcula
+    la incerteza de la potencia a partir de la dispersión entre tramos,
+    :math:`u_\text{lotes}`. Si la incerteza del ajuste
+    :math:`u_\text{ajuste}` es correcta,
+
+    .. math::
+
+        T = (J - 1) \left(\frac{u_\text{lotes}}{u_\text{ajuste}}\right)^2
+        \sim \chi^2(J - 1)
+
+    Si el valor :math:`p` de la cola superior es menor que 0.01, se
+    considera que el ajuste no describe la variabilidad de la medición (por
+    ejemplo, porque no fue estacionaria) y **se informa la incerteza por
+    lotes**. En ese caso, la medición se marca en la ventana. Si no, se
+    informa la incerteza del ajuste. No hay que hacer nada manualmente;
+    conviene revisar las mediciones marcadas.
+
+    El test se aplica sólo a la potencia: en simulaciones con mediciones
+    estacionarias, para la potencia el estadístico sigue la distribución
+    :math:`\chi^2(J-1)` y la tasa de rechazo es la nominal, mientras que
+    para :math:`\alpha` la dispersión entre tramos supera sistemáticamente
+    la que predice el ajuste, por lo que el test no es válido.
+    :math:`\alpha` conserva siempre la incerteza del ajuste.
+
 
 Cuando se abre un archivo .h5, los pasos 1 a 4 se realizan automáticamente.
 
 Una vez realizado el ajuste, aparecerán los resultados en la parte inferior de 
-la ventanaUna vez realizado el ajuste, aparecerán los resultados en la parte 
-inferior de la ventana.
+la ventana, junto con los valores :math:`p` del test por lotes.
 
 Los botones a la derecha son:
 
@@ -680,6 +727,21 @@ Los botones a la derecha son:
 
 Resultados
 ----------
+
+La tabla de **Datos** tiene, además de los parámetros de cada espectro, dos
+columnas del test por lotes de la potencia:
+
+**p lotes (P)**
+    Valor :math:`p` del test.
+
+**Incerteza (P)**
+    ``ajuste`` o ``lotes``, según qué incerteza se informó para la potencia.
+    Las mediciones con ``lotes`` se resaltan en color.
+
+Los archivos ``SXXX-resultados_ajustes.pkl`` grabados con versiones
+anteriores (sin el test) se pueden abrir igual: esas dos columnas quedan
+vacías. Al grabar, el archivo pasa al formato nuevo, que las versiones
+anteriores del programa no pueden leer.
 
 TODO
 

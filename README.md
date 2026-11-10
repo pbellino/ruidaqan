@@ -161,6 +161,19 @@ la dispersión real (en una simulación con los parámetros por defecto, 1.5 %
 informado contra 5.3 % real para la potencia). La incerteza por lotes no
 depende de esa hipótesis.
 
+Método recomendado (el que usa el GUI por defecto): ventana rectangular, ajuste
+pesado y test por lotes de la potencia, que reemplaza la incerteza del ajuste
+por la de lotes cuando la medición no es estacionaria:
+```python
+rui.get_normalized_spectrums("RA3", 512, 0, window="boxcar")
+rui.fit_spectrums(intervalos, ponderado=True)
+rui.calcula_parametros_cineticos(REACTOR)
+test = rui.aplica_test_lotes(REACTOR)          # alfa_test = 0.01
+print(test[2]["p"], test[2]["usa_lotes"])      # NCPSD
+print(rui.parametros_cineticos[2]["potencia"]) # con la incerteza elegida
+```
+Ver `CHANGELOG.md` para el detalle de los cambios en los resultados.
+
 ---
 
 ## Funciones de transferencia
