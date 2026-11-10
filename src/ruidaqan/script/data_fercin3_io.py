@@ -13,6 +13,24 @@ import importlib.resources
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
+# Codificación de los archivos de texto .RUI, .PSD, .EST y .LIN.
+# Los que graba ruidaqan están en UTF-8. Los de los programas de DOS
+# (FERCIN, TRA) pueden tener comentarios con caracteres acentuados en cp850
+# (p. ej. 0xa3 = 'ú') que no son UTF-8 válido. Se usa UTF-8 si el archivo
+# lo es y, si no, cp850 (que define los 256 bytes, por lo que nunca falla).
+ENCODING_DOS = "cp850"
+
+
+def detecta_encoding(file_name):
+    """ 'utf-8' si el archivo es UTF-8 válido; si no, ENCODING_DOS """
+    with open(file_name, 'rb') as f:
+        datos = f.read()
+    try:
+        datos.decode('utf-8')
+        return 'utf-8'
+    except UnicodeDecodeError:
+        return ENCODING_DOS
+
 from .fit_models import (ajuste_apsd, ajuste_apsd_ponderado, ajuste_cpsd,
                          ajuste_cpsd_ponderado, ajuste_lineal, model_apsd,
                          model_cpsd, weighted_average)
@@ -332,7 +350,8 @@ class _ProcesamientoEspectral():
         SKIP_HEADER = 12
         # Lectura de los datos
         # Frecuencia [Hz]   Re(CPSD)    Im(CPSD)    APSD1[dB]    APSD2[dB]
-        _data = np.loadtxt(file_name, skiprows=SKIP_HEADER)
+        _data = np.loadtxt(file_name, skiprows=SKIP_HEADER,
+                           encoding=detecta_encoding(file_name))
         # Frecuencia [Hz]
         freq = _data[:, 0]
         # Re(CPSD)
@@ -875,7 +894,8 @@ class RUIFileProcessing(_ProcesamientoEspectral):
             self.ADC_resolution = resolution
 
     def _read_file(self, file_name):
-        with open(file_name, 'r') as f:
+        encoding = detecta_encoding(file_name)
+        with open(file_name, 'r', encoding=encoding) as f:
             # Date
             self.date = f.readline().rstrip('\n')
             # Hour
@@ -931,12 +951,14 @@ class RUIFileProcessing(_ProcesamientoEspectral):
             # AC data in int16 representation
             if self.n_det == 2:
                 skip_hdr = 16
-                rui_data = np.loadtxt(file_name, skiprows=skip_hdr)
+                rui_data = np.loadtxt(file_name, skiprows=skip_hdr,
+                                      encoding=encoding)
                 # AC data from CIC are alternated
                 self.AC_int = [rui_data[0:][::2], rui_data[1:][::2]]
             else:
                 skip_hdr = 12
-                rui_data = np.loadtxt(file_name, skiprows=skip_hdr)
+                rui_data = np.loadtxt(file_name, skiprows=skip_hdr,
+                                      encoding=encoding)
                 self.AC_int = [rui_data[0:]]
         # Calculo las corrientes DC de cada cadena
         self.I = []

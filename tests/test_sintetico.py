@@ -260,3 +260,50 @@ def test_segmentos_equivalentes_rectangular():
     esperado = K / (1 + 2 * (1 - 1 / K) / 4)
     assert (segmentos_equivalentes(51200, 512, 256, "boxcar")
             == pytest.approx(esperado))
+
+
+# ---------------------------------------------------------------------------
+# Codificación de archivos de DOS
+# ---------------------------------------------------------------------------
+def test_rui_con_comentario_en_codificacion_dos(tmp_path):
+    """
+    Los .RUI del FERCIN-3 pueden tener comentarios con caracteres de DOS
+    (cp850): antes daba UnicodeDecodeError al leerlos como UTF-8.
+    """
+    path = tmp_path / "S31-N1-1.RUI"
+    s.escribe_rui(path, RA3, historias=4)
+    datos = path.read_bytes()
+    # cp850: 0xa0 = 'á', 0xa3 = 'ú'
+    datos = datos.replace(b'"Cadena 1"', b'"C\xa0mara N\xa3mero 1"', 1)
+    path.write_bytes(datos)
+    obj = RUIFileProcessing(str(path))
+    assert obj.comment[0] == '"Cámara Número 1"'
+    assert len(obj.AC_int[0]) == 4 * s.N_PUNTOS
+
+
+def test_transferencia_con_encabezado_en_codificacion_dos(medicion_hdf5,
+                                                          tmp_path):
+    path, _ = medicion_hdf5
+    carpeta = s.escribe_transferencia_plana(tmp_path / "DOS")
+    for psd in carpeta.glob("*.PSD"):
+        psd.write_bytes(psd.read_bytes().replace(b'"Transf"',
+                                                 b'"Funci\xa2n"', 1))
+    obj = HDF5FileProcessing(path)
+    obj.TRANSFERS_FOLDER = str(tmp_path)
+    obj.get_normalized_spectrums("DOS", s.N_PUNTOS, 0)
+    assert len(obj.norm_spectrums) == 3
+
+
+def test_rui_grabado_por_ruidaqan_en_utf8(tmp_path):
+    """
+    Los .RUI que graba ruidaqan (gui/data_io.py) están en UTF-8: se tienen
+    que seguir leyendo igual que antes de agregar la lectura en cp850.
+    """
+    path = tmp_path / "S31-N1-1.RUI"
+    s.escribe_rui(path, RA3, historias=4)
+    datos = path.read_bytes()
+    datos = datos.replace(b'"Cadena 1"', '"Cámara Número 1"'.encode("utf-8"), 1)
+    path.write_bytes(datos)
+    obj = RUIFileProcessing(str(path))
+    assert obj.comment[0] == '"Cámara Número 1"'
+    assert len(obj.AC_int[0]) == 4 * s.N_PUNTOS

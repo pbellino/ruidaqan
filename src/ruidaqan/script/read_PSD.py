@@ -8,6 +8,24 @@ import seaborn as sns
 import uncertainties
 from uncertainties import ufloat
 import os
+
+# Codificación de los archivos de texto .RUI, .PSD, .EST y .LIN.
+# Los que graba ruidaqan están en UTF-8. Los de los programas de DOS
+# (FERCIN, TRA) pueden tener comentarios con caracteres acentuados en cp850
+# (p. ej. 0xa3 = 'ú') que no son UTF-8 válido. Se usa UTF-8 si el archivo
+# lo es y, si no, cp850 (que define los 256 bytes, por lo que nunca falla).
+ENCODING_DOS = "cp850"
+
+
+def detecta_encoding(file_name):
+    """ 'utf-8' si el archivo es UTF-8 válido; si no, ENCODING_DOS """
+    with open(file_name, 'rb') as f:
+        datos = f.read()
+    try:
+        datos.decode('utf-8')
+        return 'utf-8'
+    except UnicodeDecodeError:
+        return ENCODING_DOS
 sns.set()
 
 
@@ -125,7 +143,7 @@ def read_PSD_file(file_name):
 
 
     dicc = {}
-    with open(file_name, 'r') as f:
+    with open(file_name, 'r', encoding=detecta_encoding(file_name)) as f:
         # Fecha
         dicc["FECHA"] = f.readline().rstrip(' \n')
 
@@ -178,7 +196,8 @@ def read_PSD_file(file_name):
 
         # Lectura de los datos
         # Frecuencia [Hz]   Re(CPSD)    Im(CPSD)    APSD1[dB]    APSD2[dB]
-        _data = np.loadtxt(file_name, skiprows=SKIP_HEADER)
+        _data = np.loadtxt(file_name, skiprows=SKIP_HEADER,
+                       encoding=detecta_encoding(file_name))
         # Frecuencia [Hz]
         dicc["FREQ"] = _data[:, 0]
         # Re(CPSD)
@@ -407,7 +426,8 @@ def get_transfer_function(file_name, freqs_to_remove=[50, 100, 150]):
     SKIP_HEADER = 12
     # Lectura de los datos
     # Frecuencia [Hz]   Re(CPSD)    Im(CPSD)    APSD1[dB]    APSD2[dB]
-    _data = np.loadtxt(file_name, skiprows=SKIP_HEADER)
+    _data = np.loadtxt(file_name, skiprows=SKIP_HEADER,
+                       encoding=detecta_encoding(file_name))
     # Frecuencia [Hz]
     freq = _data[:, 0]
     # Re(CPSD)
