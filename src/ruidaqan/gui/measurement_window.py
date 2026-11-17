@@ -7,9 +7,10 @@ import os
 from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QLabel, QPushButton, QDialog, QDialogButtonBox,
-                             QCheckBox, QMenu, QMenuBar)
+                             QCheckBox, QMenu, QMenuBar, QMessageBox)
 from .parameters import GeneralParamTree, AdvancedParamTree, EspMedParamTree
 from .acquisition_window import AcquisitionWindow, RangeAdjustmentWindow
+from .data_io import FondoIncompatible
 from .ventanas_ayuda import VentanaAyuda
 from .oscilloscope_window import OscilloscopeWindow
 from .procesamiento_window import FitWindow
@@ -300,7 +301,15 @@ class MeasurementWindow(QMainWindow):
     def show_acq_win(self):
         if not self.acq_win_exist:
             self.cfg_esp.save_settings()
-            self.acq_win = AcquisitionWindow(self.file_path)
+            try:
+                self.acq_win = AcquisitionWindow(self.file_path)
+            except FondoIncompatible as e:
+                # No se abre la adquisición: el archivo de fondo no
+                # corresponde a la configuración actual
+                QMessageBox.warning(self, "Archivo de fondo incompatible",
+                                    str(e))
+                self.cfg_esp.set_whole_tree('writable')
+                return
             self.acq_win_exist = True
             self.acq_win.show()
             self.acq_win.acq_win_closed.connect(self.close_acq_win)

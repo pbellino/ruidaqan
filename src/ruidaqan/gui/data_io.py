@@ -157,16 +157,61 @@ def write_background(filename, mean_datas, std_datas):
             f.write(f"{mean:.6E}\t{std:.6E}\n")
 
 
+class FondoIncompatible(ValueError):
+    """ El archivo de fondo no corresponde a la configuración actual """
+
+
 def read_background(filename):
     """
     Lee archivo con las corrientes de fondo (nuevo formato)
+
+    Devuelve un array de dos dimensiones (una fila por cadena, con valor e
+    incerteza) o None si el archivo no existe. Con ndmin=2, un archivo de una
+    sola fila (un detector sin CIp) da shape (1, 2) y no (2,).
     """
     try:
-        fondo = np.loadtxt(filename, delimiter="\t", unpack=False)
+        fondo = np.loadtxt(filename, delimiter="\t", unpack=False, ndmin=2)
     except IOError:
         fondo = None
         print(f"No existe archivo {filename} con la corriente de fondo")
     return fondo
+
+
+def fondo_para_medicion(filename, n_det):
+    """
+    Corrientes de fondo para una medición con n_det cadenas.
+
+    El archivo SXXX-FONDOS tiene una fila por cadena de medición y, si se
+    adquirió la CIp durante la medición de fondo, una última fila para Ip.
+
+    Returns
+    -------
+        fondo: array (n_det + 1, 2)
+            Filas 0..n_det-1 para cada cadena y la última para Ip (nula si no
+            se midió). Si no existe el archivo, todas nulas.
+
+    Raises
+    ------
+        FondoIncompatible
+            Si el archivo no tiene n_det ni n_det + 1 filas de dos columnas
+            (p. ej. el fondo se midió con otra cantidad de cadenas).
+    """
+    fondo = read_background(filename)
+    if fondo is None:
+        return np.zeros((n_det + 1, 2))
+    filas = fondo.shape[0] if fondo.size else 0
+    if fondo.size and fondo.shape[1] == 2:
+        if filas == n_det:
+            return np.vstack([fondo, [[0.0, 0.0]]])
+        if filas == n_det + 1:
+            return fondo
+    raise FondoIncompatible(
+        f"El archivo de fondo {os.path.basename(filename)} tiene {filas} "
+        f"fila(s), pero la configuración actual tiene {n_det} cadena(s) de "
+        f"medición (se esperaban {n_det} o {n_det + 1} filas, contando la "
+        "de Ip).\n\nProbablemente el fondo se midió con otra configuración. "
+        "Volvé a medir el fondo con la configuración actual, o renombrá el "
+        "archivo para medir sin fondo (corrientes de fondo nulas).")
 
 
 class WriteHDF5File():
@@ -198,15 +243,11 @@ class WriteHDF5File():
         data_folder = os.path.dirname(filename)
         background_filename = os.path.join(data_folder,
                                                    f"S{self.serie:03d}-FONDOS")
-        # Lee el archivo con las corrienets de fondo
-        fondo = read_background(background_filename)
-        if fondo is None:
-            # Si no se midió fondo, pongo valores nulos para los detectores
-            fondo = self.n_det * [[0.0, 0.0]]
-        fondo = np.asarray(fondo)
-        # Si no se midió fondo de Ip, lo pongo nulo
-        if len(fondo) == self.n_det:
-            fondo = np.append(fondo, np.asarray([[0.0, 0.0]]), axis=0)
+        # Lee el archivo con las corrientes de fondo: una fila por cadena y
+        # la última para Ip (nula si no se midió). Se valida antes de crear
+        # el archivo HDF5; si no corresponde a la configuración actual se
+        # lanza FondoIncompatible.
+        fondo = fondo_para_medicion(background_filename, self.n_det)
 
         # Se abre el archivo donde se escribirán los datos
         h5file = tb.open_file(self.filename, mode='w')
