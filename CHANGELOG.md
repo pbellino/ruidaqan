@@ -68,6 +68,12 @@
   segunda llamada fallaba. El resultado ahora está en `fited_Ip_vs_I`.
 - Incerteza de la Ip ingresada a mano con un solo valor: se grababa
   sigma^2 en lugar de sigma.
+- Procesamiento y resultados abiertos solos (`ruidaqan p`, `ruidaqan r`)
+  arrancaban siempre en la carpeta de trabajo, aunque se hubiera abierto un
+  archivo de otra carpeta. Ahora recuerdan la última carpeta desde la que se
+  abrió un archivo (`carpeta_lectura` en `config.json`); la carpeta de
+  trabajo de la adquisición sólo cambia desde el menú de la ventana
+  principal. Cancelar el diálogo de abrir ya no deja la carpeta vacía.
 
 ### Para desarrolladores
 

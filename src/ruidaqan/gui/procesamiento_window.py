@@ -18,7 +18,7 @@ import pyqtgraph as pg
 from .resultados_window import ShowSpectrumFittedValues
 from .plotter import PlotProcessing
 from .ventanas_ayuda import VentanaAyuda, AboutWindow
-from .appconfig import get_data_folder
+from .appconfig import get_data_folder, set_carpeta_lectura
 from ..constants import constantes_reactores as CONREAC
 from ..script.data_fercin3_io import RUIFileProcessing, HDF5FileProcessing
 from ..script.fit_models import model_apsd, model_cpsd
@@ -39,11 +39,16 @@ class FitWindow(QMainWindow):
     fit_win_closed = pyqtSignal()
 
 
-    def __init__(self, file_name=None, from_acquisition=False):
+    def __init__(self, file_name=None, from_acquisition=False, folder=None):
+        """
+        folder: carpeta inicial del diálogo para abrir archivos. Por defecto,
+                la carpeta de trabajo de la adquisición.
+        """
         super().__init__()
 
         # Carpeta donde se leerán y gardarán datos por default
-        self.data_folder = str(get_data_folder())
+        self.data_folder = str(folder) if folder is not None \
+                                       else str(get_data_folder())
 
         self.time_filename = file_name
         self.from_acquisition = from_acquisition
@@ -400,12 +405,19 @@ class FitWindow(QMainWindow):
     def get_time_file(self):
         """ Lee el archivo temporal .RUI o .h5 """
         if not self.from_acquisition:
-            self.time_filename = QFileDialog.getOpenFileName(self,
+            time_filename = QFileDialog.getOpenFileName(self,
                                      'Abrir archivo', self.data_folder,
                                      'Archivo temporal (*.RUI *.h5)')[0]
-            # Se graba la carpeta seleccionada
-            self.data_folder = os.path.dirname(self.time_filename)
-        if len(self.time_filename) != 0:
+            if not time_filename:
+                # Se canceló el diálogo: no cambia nada
+                return
+            self.time_filename = time_filename
+            # Se recuerda la carpeta para la próxima vez
+            set_carpeta_lectura(os.path.dirname(self.time_filename))
+        if self.time_filename:
+            # Los resultados se graban junto al archivo procesado
+            self.data_folder = os.path.dirname(
+                                       os.path.abspath(self.time_filename))
             try:
                 # Intenta abrir como HDF5
                 self.time_file = HDF5FileProcessing(self.time_filename)

@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (QVBoxLayout, QPushButton, QWidget, QTableView,
 
 from .ventanas_ayuda import VentanaAyuda, AboutWindow
 from .ScientificDoubleSpinBox import ScientificDoubleSpinBox
-from .appconfig import get_data_folder
+from .appconfig import get_data_folder, set_carpeta_lectura
 from ..script.data_fercin3_io import (FitResults, normaliza_resultados,
                                       COLUMNAS_RESULTADOS)
 from ..script.fit_models import ajuste_lineal, weighted_average
@@ -844,8 +844,9 @@ class ShowSpectrumFittedValues(QMainWindow):
         self.file_path = file_path
         # Guardo el nombre del archivo
         self.file_name = os.path.split(self.file_path)[-1]
-        # Guardo la carpeta abierta
+        # Guardo la carpeta abierta (y la recuerdo para la próxima vez)
         self.data_folder = os.path.dirname(self.file_path)
+        set_carpeta_lectura(self.data_folder)
         return True
 
 

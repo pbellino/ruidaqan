@@ -72,7 +72,16 @@ Botones y menú
     Abre la pantalla para la medición de ruido neutrónico
 
 **Menú**
-    TODO
+    *Cambiar carpeta de trabajo*: elige la carpeta donde se graban las
+    mediciones, el fondo y los archivos de coeficientes. Queda guardada
+    para las próximas veces que se abra el programa.
+
+    Las ventanas de procesamiento y de resultados abiertas solas
+    (``ruidaqan p``, ``ruidaqan r``) arrancan, en cambio, en la última
+    carpeta desde la que se abrió un archivo en ellas; abrir un archivo de
+    otra carpeta no cambia la carpeta de trabajo de la adquisición.
+
+    *Exit*: cierra el programa.
 
 **Cfg. Avanzada**
     Permite abrir la ventana de configuración avanzada

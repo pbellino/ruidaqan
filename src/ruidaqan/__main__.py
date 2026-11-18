@@ -7,6 +7,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow
 from ruidaqan.gui.ruidaq_main import MainWindow
 from ruidaqan.gui.procesamiento_window import FitWindow
 from ruidaqan.gui.resultados_window import ShowSpectrumFittedValues
+from ruidaqan.gui.appconfig import get_carpeta_lectura
 
 def main() -> None:
     app = QApplication(sys.argv)
@@ -20,9 +21,11 @@ def main() -> None:
         if sys.argv[1] in ["adquisición", 'a']:
             win = MainWindow()
         elif sys.argv[1] in ["procesamiento", 'p']:
-            win = FitWindow()
+            # Abiertas solas, arrancan en la última carpeta desde la que se
+            # abrió un archivo (no cambia la carpeta de la adquisición)
+            win = FitWindow(folder=get_carpeta_lectura())
         elif sys.argv[1] in ["resultados", 'r']:
-            win = ShowSpectrumFittedValues()
+            win = ShowSpectrumFittedValues(folder=str(get_carpeta_lectura()))
         else:
             print(msg)
             raise ValueError("Argumento erróneo")

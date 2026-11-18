@@ -1,9 +1,16 @@
 """
 Configuración de la aplicación.
 
-Reemplaza a config.py. La carpeta de trabajo del usuario se guarda en:
+Reemplaza a config.py. La configuración se guarda en:
   - Linux:   ~/.local/share/ruidaqan/config.json
   - Windows: C:\\Users\\usuario\\AppData\\Local\\ruidaqan\\config.json
+
+Se guardan dos carpetas:
+  - data_folder: carpeta de trabajo, donde la adquisición graba las
+    mediciones. Sólo cambia desde el menú de la ventana principal.
+  - carpeta_lectura: última carpeta desde la que se abrió un archivo en las
+    ventanas de procesamiento o de resultados. Es la carpeta inicial de esas
+    ventanas cuando se abren solas (ruidaqan p, ruidaqan r).
 """
 
 import json
@@ -101,3 +108,35 @@ def ask_data_folder(parent=None):
     )
     return folder
 
+
+
+def get_carpeta_lectura(parent=None):
+    """
+    Carpeta inicial de las ventanas de procesamiento y de resultados abiertas
+    solas: la última desde la que se abrió un archivo, o la carpeta de
+    trabajo si todavía no se abrió ninguno (o si ya no existe).
+
+    Returns
+    -------
+    Path
+    """
+    folder = _load().get("carpeta_lectura")
+    if folder and Path(folder).is_dir():
+        return Path(folder)
+    return get_data_folder(parent)
+
+
+def set_carpeta_lectura(folder):
+    """
+    Guarda la carpeta desde la que se abrió un archivo para leer. No cambia
+    la carpeta de trabajo de la adquisición.
+    """
+    if not folder:
+        return
+    cfg = _load()
+    cfg["carpeta_lectura"] = str(folder)
+    try:
+        _save(cfg)
+    except OSError:
+        # No poder recordar la carpeta no debe impedir abrir el archivo
+        pass
