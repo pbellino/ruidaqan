@@ -197,11 +197,10 @@ class FittingView(QWidget):
         self.num_param = self.model._data.shape[1] - 1
 
         s1 = pg.ScatterPlotItem(size=10)
-        _x = unumpy.nominal_values(self.model._data[:, 0])
-        if _x.size > 0:
-            if isinstance(_x[0], type(ufloat(0, 0))):
-                _x = unumpy.nominal_values(_x)
-            beam = max(_x) * 0.01
+        _x = np.asarray(unumpy.nominal_values(self.model._data[:, 0]),
+                        dtype=float)
+        if np.isfinite(_x).any():
+            beam = np.nanmax(_x) * 0.01
         else:
             beam = 0
         _y1 = unumpy.nominal_values(self.model._data[:, 1])
@@ -245,6 +244,9 @@ class FittingView(QWidget):
         self.plot.showGrid(True, True)
 
         dat_fit = self.model._data
+        # Se borran los resultados anteriores: si no hay puntos suficientes
+        # para el ajuste no deben quedar los de otros datos
+        self._limpia_resultados()
         # Ajusta, grafica y muestra valores del ajuste
         if dat_fit.size > 0:
             if self.num_param == 1:
@@ -254,51 +256,58 @@ class FittingView(QWidget):
                 y_n = unumpy.nominal_values(dat_fit[:, 1])
                 y_s = unumpy.std_devs(dat_fit[:, 1])
                 if self.fit == "constant":
-                    mean_y, std_y = weighted_average(y_n,  1 / y_s**2)
                     self.lbl_results["a "].setVisible(False)
                     self.lbl_results["b "].setVisible(False)
                     self.lbl_results["r<sup>2</sup> "].setVisible(False)
-                    self.lcds["1, 1"].setText(f"{ufloat(mean_y, std_y)}")
                     self.groupBox_results.setTitle(
                             "Resultados del ajuste y = a ")
+                    if x.size < 1:
+                        return
+                    mean_y, std_y = weighted_average(y_n,  1 / y_s**2)
+                    self.lcds["1, 1"].setText(f"{ufloat(mean_y, std_y)}")
                     self.plot.plot(x, np.ones_like(x)*mean_y, pen={'color':'r',
                               'width':1, "style": QtCore.Qt.PenStyle.DashLine})
                 else:
-                    self.a, b, r_sq, _, y_fit = ajuste_lineal(x, y_n, y_s)
-                    self.lcds["1, 1"].setText(f"{self.a}")
-                    self.lcds["1, 2"].setText(f"{b}")
-                    self.lcds["1, 3"].setText(f"{r_sq:.6f}")
                     self.groupBox_results.setTitle(
                             "Resultados del ajuste y = a x + b ")
+                    # Una recta necesita al menos dos valores distintos de x
+                    if np.unique(x).size < 2:
+                        return
+                    self.a, self.b, r_sq, _, y_fit = ajuste_lineal(x, y_n, y_s)
+                    self.lcds["1, 1"].setText(f"{self.a}")
+                    self.lcds["1, 2"].setText(f"{self.b}")
+                    self.lcds["1, 3"].setText(f"{r_sq:.6f}")
                     self.plot.plot(x, y_fit, pen={'color': 'r', 'width':1,
                         "style": QtCore.Qt.PenStyle.DashLine})
             elif self.num_param == 2:
-                _tmp = dat_fit[:,[0, 1]]
-                dat_fit_1 = _tmp[~(unumpy.isnan(_tmp).any(axis=1))]
-                x1 = unumpy.nominal_values(dat_fit_1[:, 0])
-                y1_n = unumpy.nominal_values(dat_fit_1[:, 1])
-                y1_s = unumpy.std_devs(dat_fit_1[:, 1])
-                _tmp = dat_fit[:,[0, 2]]
-                dat_fit_2 = _tmp[~(unumpy.isnan(_tmp).any(axis=1))]
-                y2_n = unumpy.nominal_values(dat_fit_2[:, 1])
-                y2_s = unumpy.std_devs(dat_fit_2[:, 1])
-                # Por simplicidad asumo que si tengo dos parámetros sólo me
-                # interesa el promedio de ellos (uno para cada detector)
-                mean_1, std_1 = weighted_average(y1_n,  1 / y1_s**2)
-                mean_2, std_2 = weighted_average(y2_n,  1 / y2_s**2)
                 # Oculto los que no uso
                 self.lbl_results["a "].setVisible(False)
                 self.lbl_results["b "].setVisible(False)
                 self.lbl_results["r<sup>2</sup> "].setVisible(False)
-                # Escribo los resultados
-                self.lcds["1, 1"].setText(f"{ufloat(mean_1, std_1)}")
-                self.lcds["2, 1"].setText(f"{ufloat(mean_2, std_2)}")
                 self.groupBox_results.setTitle("Resultados del ajuste y = a ")
-                # Grafico los resultados
-                self.plot.plot(x1, np.ones_like(x1)*mean_1, pen={'color':'r',
+                # Por simplicidad asumo que si tengo dos parámetros sólo me
+                # interesa el promedio de ellos (uno para cada detector)
+                for col, fila, color in ((1, 1, 'r'), (2, 2, 'b')):
+                    _tmp = dat_fit[:, [0, col]]
+                    _dat = _tmp[~(unumpy.isnan(_tmp).any(axis=1))]
+                    if _dat.shape[0] < 1:
+                        continue
+                    x = unumpy.nominal_values(_dat[:, 0])
+                    y_n = unumpy.nominal_values(_dat[:, 1])
+                    y_s = unumpy.std_devs(_dat[:, 1])
+                    mean, std = weighted_average(y_n,  1 / y_s**2)
+                    # Escribo los resultados
+                    self.lcds[f"{fila}, 1"].setText(f"{ufloat(mean, std)}")
+                    # Grafico los resultados
+                    self.plot.plot(x, np.ones_like(x)*mean, pen={'color':color,
                               'width':1, "style": QtCore.Qt.PenStyle.DashLine})
-                self.plot.plot(x1, np.ones_like(x1)*mean_2, pen={'color':'b',
-                              'width':1, "style": QtCore.Qt.PenStyle.DashLine})
+
+
+    def _limpia_resultados(self):
+        """ Borra los resultados del ajuste mostrados """
+        self.a, self.b = None, None
+        for lcd in self.lcds.values():
+            lcd.setText("")
 
 
     def show_fitted_data(self, values, best_fit):
@@ -424,6 +433,8 @@ class ShowSpectrumFittedValues(QMainWindow):
         """
         super().__init__()
         self.serie = serie
+        # Tabla tal como está grabada en el archivo (None: no hay archivo)
+        self._datos_grabados = None
 
         # Carpeta donde se leerán y gardarán datos poe default
         self.data_folder = folder if folder is not None else str(get_data_folder())
@@ -498,85 +509,63 @@ class ShowSpectrumFittedValues(QMainWindow):
     @pyqtSlot(float)
     def prediccion_pot_I(self, new_value):
         """
-        Predice potencia o corrientes en base a coeficientes de calibración
-        """
-        old_p = self.dsp_pot.value()
-        old_I1 = self.dsp_I1.value()
-        try:
-            old_I2 = self.dsp_I2.value()
-        except: pass
-        old_Ip = self.dsp_Ip.value()
+        Predice potencia o corrientes en base a los ajustes lineales
 
-        fp = self.p_Ip_fit.a if hasattr(self.p_Ip_fit, 'a') else None
-        f1 = self.p_I1_fit.a if hasattr(self.p_I1_fit, 'a') else None
-        f2 = self.p_I2_fit.a if hasattr(self.p_I2_fit, 'a') else None
-        if self.sender() == self.dsp_pot:
-            # Si cambio la potencia
-            if fp:
-                # Cambio Ip
-                new_Ip = new_value / fp
-                self.dsp_Ip.setValue(new_Ip.n)
-            if f1:
-                # Cambio I1
-                new_I1 = new_value / f1
-                self.dsp_I1.setValue(new_I1.n)
-            if f2:
-                # CAmbio I2
-                new_I2 = new_value / f2
-                self.dsp_I2.setValue(new_I2.n)
-        elif self.sender() == self.dsp_Ip:
-            # Si cambio Ip
-            if fp:
-                # Cambio potencia
-                new_p = new_value * fp
-                self.dsp_pot.setValue(new_p.n)
-            if fp and f1:
-                # Cambio I1
-                new_I1 = new_value * fp / f1
-                self.dsp_I1.setValue(new_I1.n)
-            if fp and f2:
-                # Cambio I2
-                new_I2 = new_value * fp / f2
-                self.dsp_I2.setValue(new_I2.n)
-        elif self.sender() == self.dsp_I1:
-            # Si cambio I1
-            if f1:
-                # Cambio potencia
-                new_p = new_value * f1
-                self.dsp_pot.setValue(new_p.n)
-            if f1 and fp:
-                # Cambio Ip
-                new_Ip = new_value * f1 / fp
-                self.dsp_Ip.setValue(new_Ip.n)
-            if f1 and f2:
-                # Cambio I2
-                new_I2 = new_value * f1 / f2
-                self.dsp_I2.setValue(new_I2.n)
-        elif self.sender() == self.dsp_I2:
-            # Si cambio I2
-            if f2:
-                # Cambio potencia
-                new_p = new_value * f2
-                self.dsp_pot.setValue(new_p.n)
-            if f2 and fp:
-                # Cambio Ip
-                new_Ip = new_value * f2 / fp
-                self.dsp_Ip.setValue(new_Ip.n)
-            if f2 and f1:
-                # Cambio I1
-                new_I1 = new_value * f2 / f1
-                self.dsp_I1.setValue(new_I1.n)
+            p = a_i * I_i + b_i     (i = 1, 2, p)
+
+        Con el valor modificado se calcula la potencia (con el ajuste de esa
+        corriente) y con ella el resto de las corrientes: I_j = (p - b_j)/a_j.
+        Se usan los valores centrales de a y b. Las casillas sin ajuste
+        disponible no se modifican.
+        """
+        emisor = self.sender()
+        corrientes = [(self.dsp_I1, self.p_I1_fit),
+                      (self.dsp_I2, self.p_I2_fit),
+                      (self.dsp_Ip, self.p_Ip_fit)]
+        if emisor is self.dsp_pot:
+            pot = new_value
+        else:
+            for dsp, ajuste in corrientes:
+                if emisor is dsp:
+                    break
+            else:
+                return
+            if ajuste.a is None:
+                return
+            pot = ajuste.a.n * new_value + ajuste.b.n
+            self._fija_valor(self.dsp_pot, pot)
+
+        for dsp, ajuste in corrientes:
+            if dsp is emisor or ajuste.a is None or ajuste.a.n == 0:
+                continue
+            self._fija_valor(dsp, (pot - ajuste.b.n) / ajuste.a.n)
+
+
+    @staticmethod
+    def _fija_valor(dsp, valor):
+        """
+        Cambia el valor de una casilla sin emitir valueChanged, para que las
+        predicciones no se disparen en cadena
+        """
+        dsp.blockSignals(True)
+        dsp.setValue(valor)
+        dsp.blockSignals(False)
 
 
     @pyqtSlot()
     def cargar_archivo(self):
+        # Si hay borrados sin grabar, se pregunta antes de abrir otro archivo
+        if not self._confirma_cambios():
+            return
         if self.serie is not None:
             # Nombre del archivo con los datos
             self.file_name = f"S{self.serie:03d}-resultados_ajustes.pkl"
             self.file_path = os.path.join(self.data_folder, self.file_name)
         else:
             # Abre diálogo para cargar el archivo
-            self.load_file()
+            if not self.load_file():
+                # Se canceló el diálogo: queda el archivo que estaba abierto
+                return
 
         self.model = TableModel(header=self.header)
 
@@ -591,98 +580,61 @@ class ShowSpectrumFittedValues(QMainWindow):
     def _update_fit_widgets(self):
         """
         Actualiza los widgets con valores y gráficos del ajuste
+
+        Se usa la tabla que se muestra (con los borrados todavía sin grabar).
+        Todos los pares (corriente, potencia, parámetro) se arman por
+        medición (Nivel, Medición), ver FitResults.
         """
-        self.fit_res = FitResults(self.file_path)
+        self.fit_res = FitResults(data=self.model._data)
+        fr = self.fit_res
+        dos_det = fr.n_det == 2
 
-        if self.fit_res.n_det == 1:
-            # oculto tabs
-            self.tabs_corrientes.setTabVisible(1, False)
-            self.tabs_corrientes.setTabVisible(4, False)
-            self.tabs_parametros.setTabVisible(2, False)
-            # Saco I2 de las predicciones
-            try:
-                self.estimaciones_layout.removeRow(self.dsp_I2)
-                # Cuando no existe, da error
-            except: pass
-        else:
-            # Muestro al segundo detector
-            self.lbl_resumen["NAPSD2"].show()
-            [self.lcds[f"1, {j}"].show() for j in range(3)]
+        # Tabs, resumen y predicciones del detector 2 (se muestran u ocultan
+        # en ambos sentidos: en la misma ventana se pueden abrir archivos
+        # con uno y con dos detectores)
+        self.tabs_corrientes.setTabVisible(1, dos_det)
+        self.tabs_corrientes.setTabVisible(4, dos_det)
+        self.tabs_parametros.setTabVisible(2, dos_det)
+        self.estimaciones_layout.setRowVisible(self.dsp_I2, dos_det)
+        self.lbl_resumen["NAPSD2"].setVisible(dos_det)
+        for j in range(3):
+            self.lcds[f"1, {j}"].setVisible(dos_det)
 
-        # Si hay sólo un nivel, no hago ajustes lineales
-        if len(set(self.model._data[:, 0])) > 1:
-            # Se actualiza todo
-            self.fit_res.fit_p_vs_I(plot=False)
-            self.fit_res.fit_Ip_vs_I(plot=False)
+        def _par(x, y):
+            return np.vstack([np.asarray(x, dtype=object),
+                              np.asarray(y, dtype=object)]).T
 
-            # Potencias usadas para los ajustes (de NCPSD)
-            _p_uarr = unumpy.uarray(self.fit_res._pot_mag,
-                                    self.fit_res._pot_std)
-            _dat_p_I1 = np.vstack([self.fit_res.Is[0].to_numpy(), _p_uarr]).T
-            self.p_I1_fit.update_data(_dat_p_I1)
-            if self.fit_res.n_det == 2:
-                _dat_p_I2 = np.vstack(
-                                    [self.fit_res.Is[1].to_numpy(), _p_uarr]).T
-                self.p_I2_fit.update_data(_dat_p_I2)
-                _dat_Ip_I2 = np.vstack(
-                                    [self.fit_res.Is[1].to_numpy(),
-                                     self.fit_res.Is[2].to_numpy()]
-                                    ).T
-                self.Ip_I2_fit.update_data(_dat_Ip_I2)
+        vacio = np.empty((0, 2), dtype=object)
+        # Potencia de referencia: NCPSD con dos detectores, NPSD1 con uno
+        _pot = fr.pote if dos_det else fr.pote_1
+        I1, I2, Ip = (I.to_numpy() for I in fr.Is)
 
-            _dat_p_Ip = np.vstack([self.fit_res.Is[2].to_numpy(), _p_uarr]).T
-            self.p_Ip_fit.update_data(_dat_p_Ip)
-            _dat_Ip_I1 = np.vstack(
-                                    [self.fit_res.Is[0].to_numpy(),
-                                     self.fit_res.Is[2].to_numpy()]
-                                    ).T
-            self.Ip_I1_fit.update_data(_dat_Ip_I1)
-        #else:
-        #    data = np.empty((0,0))
-        #    self.Ip_I1_fit.data_orig = np.copy(data)
-        #    self.Ip_I1_fit.model._data = data
-        #    self.Ip_I1_fit.model.layoutChanged.emit()
-        #    #self.Ip_I1_fit._update_plot_fit()
+        # Ajustes lineales (si hay un solo nivel, FittingView no ajusta)
+        self.p_I1_fit.update_data(_par(I1, _pot))
+        self.p_Ip_fit.update_data(_par(Ip, _pot))
+        self.Ip_I1_fit.update_data(_par(I1, Ip))
+        self.p_I2_fit.update_data(_par(I2, _pot) if dos_det else vacio)
+        self.Ip_I2_fit.update_data(_par(I2, Ip) if dos_det else vacio)
 
         # De acá en más se actualiza siempre
-        self.fit_res.average_parameters(plot=False)
+        fr.average_parameters(plot=False)
 
+        # Alfas en función de la potencia media de cada nivel
+        _alfa = fr.alfa if dos_det else fr.alfa_1
+        self.alfa_fit.update_data(_par(fr.P_nivel.to_numpy(), _alfa))
 
-        # Alfas
-        _alfas = self.fit_res.alfa_bylevel.apply(np.asarray)
-        _pot = self.fit_res.pote_bylevel.apply(np.asarray)
-        _p, _a = 2 * [np.asarray([])]
-        for p, a in zip(_pot, _alfas):
-            _p = np.hstack([_p, p * np.ones_like(a)])
-            _a = np.hstack([_a, a])
-        self.alfa_fit.update_data(np.vstack([_p, _a]).T)
-
-        # fqs y efis
-        _fq1 = self.fit_res.fq_1_bylevel.apply(np.asarray)
-        _fq2 = self.fit_res.fq_2_bylevel.apply(np.asarray)
-        _ef1 = self.fit_res.efi_1_bylevel.apply(np.asarray)
-        _ef2 = self.fit_res.efi_2_bylevel.apply(np.asarray)
-        _p, _f1, _f2, _e1, _e2 = 5 * [np.asarray([])]
-        if self.fit_res.n_det == 2:
-            for p, f1, f2, e1, e2 in zip(_pot, _fq1, _fq2, _ef1, _ef2):
-                _p = np.hstack([_p, p * np.ones_like(f1)])
-                _f1 = np.hstack([_f1, f1])
-                _f2 = np.hstack([_f2, f2])
-                _e1 = np.hstack([_e1, e1])
-                _e2 = np.hstack([_e2, e2])
-            self.fq1_fit.update_data(np.vstack(
-                                     [self.fit_res.I_fq1.to_numpy(), _f1]).T)
-            self.fq2_fit.update_data(np.vstack(
-                                     [self.fit_res.I_fq2.to_numpy(), _f2]).T)
-            self.efi_fit.update_data(np.vstack([_p, _e1, _e2]).T)
+        # fqs y efis (mediciones de 200 Hz)
+        _p200 = fr.P_nivel_200.to_numpy()
+        self.fq1_fit.update_data(_par(fr.I_fq1, fr.fqs[0]))
+        if dos_det:
+            self.fq2_fit.update_data(_par(fr.I_fq2, fr.fqs[1]))
+            self.efi_fit.update_data(np.vstack(
+                    [np.asarray(_p200, dtype=object),
+                     np.asarray(fr.efi_b2s[0], dtype=object),
+                     np.asarray(fr.efi_b2s[1], dtype=object)]).T)
         else:
-            for p, f1, e1 in zip(_pot, _fq1, _ef1):
-                _p = np.hstack([_p, p * np.ones_like(f1)])
-                _f1 = np.hstack([_f1, f1])
-                _e1 = np.hstack([_e1, e1])
-            self.fq1_fit.update_data(np.vstack(
-                                     [self.fit_res.I_fq1, _f1]).T)
-            self.efi_fit.update_data(np.vstack([_p, _e1]).T)
+            self.fq2_fit.update_data(vacio)
+            self.efi_fit.update_data(_par(_p200, fr.efi_b2s[0]))
 
         self._copy_resumen()
 
@@ -881,19 +833,20 @@ class ShowSpectrumFittedValues(QMainWindow):
 
     @pyqtSlot()
     def load_file(self):
-        self.file_path = QFileDialog.getOpenFileName(self,
+        """
+        Pide el archivo a abrir. Devuelve False si se canceló el diálogo (no
+        se modifican ni el archivo ni la carpeta de trabajo).
+        """
+        file_path = QFileDialog.getOpenFileName(self,
                     "Abrir archivo", self.data_folder, "pkl files (*.pkl)")[0]
+        if not file_path:
+            return False
+        self.file_path = file_path
         # Guardo el nombre del archivo
         self.file_name = os.path.split(self.file_path)[-1]
         # Guardo la carpeta abierta
         self.data_folder = os.path.dirname(self.file_path)
-        if len(self.file_name) == 0:
-            dlg = QMessageBox(self)
-            dlg.setWindowTitle("Error")
-            dlg.setIcon(QMessageBox.Icon.Critical)
-            dlg.setText(f"No se especificó archivo para leer")
-            button = dlg.exec()
-            raise ValueError("No se especificó archivo para leer")
+        return True
 
 
     def set_column_width(self):
@@ -909,6 +862,11 @@ class ShowSpectrumFittedValues(QMainWindow):
     def add_new_data(self, data):
         """
         Método para agregar datos a la tabla
+
+        La medición nueva se graba enseguida en el archivo. Los borrados que
+        todavía no se grabaron siguen pendientes (se confirman al cerrar),
+        salvo los de esta misma medición: si se borró y se vuelve a grabar,
+        se reemplaza también en el archivo.
         """
         if self._measurement_exists(data):
             # No se guardan los datos
@@ -921,23 +879,32 @@ class ShowSpectrumFittedValues(QMainWindow):
             dlg.setText(" ".join(_msg))
             button = dlg.exec()
         else:
+            data = normaliza_resultados(data)
             # Se guardan los datos (ambos en el formato actual de columnas)
             self.model._data = np.concatenate(
-                (normaliza_resultados(self.model._data),
-                 normaliza_resultados(data)), axis=0)
+                (normaliza_resultados(self.model._data), data), axis=0)
+            # En el archivo: se quita la versión anterior de esta medición
+            # (si se había borrado de la tabla) y se agrega la nueva
+            disco = normaliza_resultados(
+                self._datos_grabados if self._datos_grabados is not None
+                else [])
+            nivel, medicion = data[0, 0], data[0, 1]
+            otra = ~((disco[:, 0] == nivel) & (disco[:, 1] == medicion))
+            self._graba(np.concatenate((disco[otra], data), axis=0))
             self.model.layoutChanged.emit()
-            self.save()
             self._update_fit_widgets()
+            self._actualiza_titulo()
             if self.empty_table: self.set_column_width()
 
 
     def _measurement_exists(self, data):
         """
-        Comprueba si el nivel y medición ya existen en los datos guardados
+        Comprueba si el nivel y medición ya existen en los datos mostrados
         """
         _new_level = data[:, 0][0]
         _new_meas = data[:, 1][0]
-        _niv_med = tuple(map(tuple, self.model._data[:, [0, 1]]))
+        _tabla = normaliza_resultados(self.model._data)
+        _niv_med = tuple(map(tuple, _tabla[:, [0, 1]]))
         if (_new_level, _new_meas) in _niv_med:
             return True
         else:
@@ -946,42 +913,93 @@ class ShowSpectrumFittedValues(QMainWindow):
 
     def delete(self):
         """
-        Borra datos seleccionado
-        """
-        indexes = self.tableView.selectedIndexes()
-        if indexes:
-            # Selecciono un elemento por cada fila
-            ind_to_remove = [indexes[i] for i in range(0, len(indexes),
-                                                len(self.model._data[0]))]
+        Borra las filas seleccionadas de la tabla
 
-            for ind in sorted(ind_to_remove, reverse=True):
-                #del self.model._data[ind.row()]
-                self.model._data = np.delete(self.model._data, (ind.row()),
-                                             axis=0)
-            self.model.layoutChanged.emit()
-            self.tableView.clearSelection()
-            # No conviene que se grabe la tabla si se borran datos
-            self.save()
-            self._update_fit_widgets()
+        Los borrados no se graban en el archivo hasta cerrar la ventana (o
+        abrir otro archivo), y se pide confirmación.
+        """
+        filas = sorted({ind.row() for ind in
+                        self.tableView.selectionModel().selectedRows()})
+        if not filas:
+            return
+        self.model._data = np.delete(self.model._data, filas, axis=0)
+        self.model.layoutChanged.emit()
+        self.tableView.clearSelection()
+        self._update_fit_widgets()
+        self._actualiza_titulo()
         # Si se borraron todos los datos
         if self.model.columnCount(0)==0: self.empty_table=True
 
 
+    def _filas_borradas(self):
+        """ Cantidad de filas grabadas en el archivo que no están en la tabla """
+        if not hasattr(self, "model") or self._datos_grabados is None:
+            return 0
+        return len(self._datos_grabados) - len(self.model._data)
+
+
+    def _actualiza_titulo(self):
+        """ Marca con * el título si hay borrados sin grabar """
+        titulo = "Resultados de las mediciones"
+        if self._filas_borradas() > 0:
+            titulo += " *"
+        self.setWindowTitle(titulo)
+
+
+    def _confirma_cambios(self):
+        """
+        Si hay borrados sin grabar, pregunta si se graban.
+
+        Devuelve False si el usuario cancela (no se debe cerrar la ventana ni
+        abrir otro archivo).
+        """
+        n = self._filas_borradas()
+        if n <= 0:
+            return True
+        resp = QMessageBox.question(
+                self, "Borrados sin grabar",
+                f"Se borraron {n} fila(s) de la tabla que todavía no se "
+                f"grabaron en el archivo\n{self.file_path}\n\n"
+                "¿Grabar los cambios? Si no se graban, las filas se "
+                "conservan en el archivo.",
+                QMessageBox.StandardButton.Save
+                | QMessageBox.StandardButton.Discard
+                | QMessageBox.StandardButton.Cancel,
+                QMessageBox.StandardButton.Save)
+        if resp == QMessageBox.StandardButton.Save:
+            self.save()
+            return True
+        if resp == QMessageBox.StandardButton.Discard:
+            # Se descartan los borrados
+            self.model._data = normaliza_resultados(self._datos_grabados)
+            self.model.layoutChanged.emit()
+            return True
+        return False
+
+
     def end_measurement(self):
-        self.prev_win_closed.emit()
+        # closeEvent emite prev_win_closed
         self.close()
 
 
     def closeEvent(self, event):
+        if not self._confirma_cambios():
+            event.ignore()
+            return
         self.prev_win_closed.emit()
         event.accept()
-        if self.serie is not None:
-            self.save()
 
 
     def save(self):
+        """ Graba la tabla mostrada en el archivo """
+        self._graba(self.model._data)
+
+
+    def _graba(self, datos):
         with open(self.file_path, 'wb') as f:
-            pickle.dump(self.model._data, f)
+            pickle.dump(datos, f)
+        self._datos_grabados = np.copy(datos)
+        self._actualiza_titulo()
 
 
     def load(self):
@@ -991,8 +1009,12 @@ class ShowSpectrumFittedValues(QMainWindow):
                 # columnas: se completan con las nuevas vacías. Al grabar,
                 # el archivo queda en el formato nuevo.
                 self.model._data = normaliza_resultados(pickle.load(f))
+            # Copia de lo que está en el archivo, para saber si hay borrados
+            # sin grabar
+            self._datos_grabados = np.copy(self.model._data)
             self.model.layoutChanged.emit()
             self._update_fit_widgets()
+            self._actualiza_titulo()
             self.lbl_openfile.setText(self.file_path)
             self.tabs_view.setEnabled(True)
             self.tabs_view.setEnabled(True)

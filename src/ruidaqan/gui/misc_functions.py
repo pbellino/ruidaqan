@@ -37,6 +37,9 @@ def weighted_average(data, weights):
 
     var(data) = var(data) * mean(weights**2) / mean(weights)**2 / n
     std(data) = sqrt(var(data))
+
+    Se debe usar weights = 1 / sigma**2. Con un solo dato la incerteza es la
+    del dato: var = 1 / weights = sigma**2.
     """
     if len(data) != len(weights):
         raise ValueError("Los datos y los pesos no tienen el mismo tamaño")
@@ -45,7 +48,7 @@ def weighted_average(data, weights):
     if len(data) > 1:
         _var = np.var(data, ddof=1) * np.mean(weights**2) / np.mean(weights)**2 / len(data)
     else:
-        _var = 1 / weights[0]**2
+        _var = 1 / weights[0]
     std_data = np.sqrt(_var)
     return mean_data, std_data
 

@@ -743,5 +743,25 @@ anteriores (sin el test) se pueden abrir igual: esas dos columnas quedan
 vacías. Al grabar, el archivo pasa al formato nuevo, que las versiones
 anteriores del programa no pueden leer.
 
+**Borrar** quita de la tabla las filas seleccionadas y recalcula los
+ajustes, pero no modifica el archivo: el título de la ventana muestra un
+``*`` mientras haya borrados sin grabar. Al cerrar la ventana (o al abrir
+otro archivo) se pregunta si se graban (*Save*), se descartan (*Discard*,
+las filas quedan en el archivo) o se cancela el cierre. Las mediciones
+nuevas que llegan con **Grabar datos** se graban enseguida; si se borró una
+medición y se la vuelve a grabar, se reemplaza también en el archivo.
+
+Los ajustes y promedios se arman por medición (nivel y número de medición):
+si se borra el espectro de una medición, esa medición no se usa en los
+ajustes que lo necesitan y el resto no se ve afectado. Un ajuste lineal
+necesita mediciones en al menos dos niveles distintos.
+
+**Predicciones**
+    Se usan los ajustes lineales :math:`p = a_i I_i + b_i`. Al cambiar una
+    corriente se calcula la potencia con su ajuste y, con esa potencia, el
+    resto de las corrientes: :math:`I_j = (p - b_j)/a_j`. La ordenada
+    :math:`b` de cada ajuste se muestra en su pestaña y debería ser
+    compatible con cero.
+
 TODO
 

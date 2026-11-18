@@ -45,6 +45,29 @@
   espectro, `__commit__` desde otro repositorio.
 - La curva de ajuste del gráfico se calcula con el modelo (con el ajuste
   pesado el residuo está dividido por la incerteza).
+- **Núcleo**: las constantes del núcleo indicado en el .h5 no se aplicaban
+  nunca: RA-6 N016 y RP-10 N008 se procesaban con las constantes de N011
+  y N007. La potencia quedaba +4.7 % alta en RA-6 N016 y −5.1 % baja en
+  RP-10 N008. Las series de esos núcleos se deben reprocesar.
+- **Resultados**: corrientes, potencias y parámetros se emparejaban por su
+  posición en el archivo. Al borrar una fila de una sola medición los
+  ajustes p vs I mezclaban mediciones o la serie dejaba de poder abrirse, y
+  si el archivo no estaba ordenado por nivel los gráficos de fq vs I
+  quedaban desapareados. Ahora se emparejan por (Nivel, Medición).
+- Resultados: los borrados se graban al cerrar la ventana (o al abrir otro
+  archivo), después de pedir confirmación. Antes se grababan enseguida.
+- Resultados: las predicciones usan la ordenada del ajuste
+  (p = a I + b) y ya no se disparan en cadena entre las casillas.
+- Resultados: con un solo nivel, o al abrir otro archivo, quedaban los
+  ajustes y el resumen anteriores. Ya no se cierra la ventana al dejar un
+  ajuste sin puntos o con uno solo, ni se pierde la casilla de I2 al abrir
+  un archivo de un detector y después uno de dos.
+- "Grabar" con la ventana de resultados de otra serie abierta agregaba los
+  datos al archivo de esa otra serie.
+- `FitResults.fit_Ip_vs_I` reemplazaba el método por su resultado: una
+  segunda llamada fallaba. El resultado ahora está en `fited_Ip_vs_I`.
+- Incerteza de la Ip ingresada a mano con un solo valor: se grababa
+  sigma^2 en lugar de sigma.
 
 ### Para desarrolladores
 

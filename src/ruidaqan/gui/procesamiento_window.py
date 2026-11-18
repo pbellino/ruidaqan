@@ -454,6 +454,8 @@ class FitWindow(QMainWindow):
            self.checkbox_edit.setCheckState(Qt.CheckState.Unchecked)
        except AttributeError:
            self.checkbox_edit.setCheckState(Qt.CheckState.Checked)
+       # Constantes del núcleo indicado en el archivo
+       self._aplica_nucleo_archivo()
 
        self.pushButton_getSpectrums.setEnabled(True)
        # Grafica las señales temporales
@@ -506,22 +508,53 @@ class FitWindow(QMainWindow):
             self.REACTOR_CLS = self._REAC
             self._write_constants()
             self._default_constants = f"{self.reactor}"
-        # Fija el núcleo especificado en el archivo hdf5
-        try:
-            nucleo = self.time_file.nucleo
-            if nucleo != " ":
-                nucleo = 'N' + nucleo
-                self.comboBox_coreid.setCurrentText(self.time_file.nucleo)
-            else:
-                if nucleo not in core_list:
-                    msg = (f"El núcleo {nucleo} no posee constantes asociadas. "
-                           f"Se utilizan las constantes del {self.default_constants}."
-                            "\nModificar el archivo 'constantes_reactores.py' "
-                            "de ser necesario.")
-                    button = QMessageBox.information(self,
-                                              "Constantes no encontradas", msg)
-        except AttributeError:
-            pass
+
+
+    @staticmethod
+    def _nombre_nucleo(nucleo):
+        """
+        Nombre de la clase de constantes de un núcleo a partir de lo que se
+        escribió al medir: '16', '016', 'N016' y 'n16' -> 'N016'.
+        Devuelve None si no se especificó núcleo.
+        """
+        if nucleo is None:
+            return None
+        nucleo = str(nucleo).strip().upper()
+        if nucleo.startswith("N"):
+            nucleo = nucleo[1:].strip()
+        if not nucleo:
+            return None
+        return f"N{int(nucleo):03d}" if nucleo.isdigit() else f"N{nucleo}"
+
+
+    def _aplica_nucleo_archivo(self):
+        """
+        Selecciona las constantes del núcleo indicado en el archivo medido.
+
+        Se llama cada vez que se abre un archivo (aunque el reactor sea el
+        mismo que el del archivo anterior). Si el archivo no indica núcleo,
+        se usan las constantes por defecto (primer núcleo de la lista); si
+        indica uno sin constantes, se avisa y también se usan las de defecto.
+        """
+        core_list = [self.comboBox_coreid.itemText(i)
+                     for i in range(self.comboBox_coreid.count())]
+        if not core_list:
+            # El reactor no tiene constantes por núcleo
+            return
+        nucleo = self._nombre_nucleo(getattr(self.time_file, "nucleo", None))
+        if nucleo in core_list:
+            self.comboBox_coreid.setCurrentText(nucleo)
+        else:
+            self.comboBox_coreid.setCurrentIndex(0)
+            if nucleo is not None:
+                msg = (f"El núcleo {nucleo} no posee constantes asociadas. "
+                       f"Se utilizan las constantes del "
+                       f"{self._default_constants}.\nModificar el archivo "
+                       "'constantes_reactores.py' de ser necesario.")
+                QMessageBox.information(self, "Constantes no encontradas",
+                                        msg)
+        # setCurrentText no emite 'activated': se cargan las constantes acá
+        self.load_core()
 
 
     @pyqtSlot()
@@ -818,10 +851,18 @@ class FitWindow(QMainWindow):
     @pyqtSlot()
     def graba_resultados(self):
         _data = self._format_fitresults()
+        # Archivo de resultados de la serie del archivo procesado
+        file_pkl = f"S{self.serie:03d}-resultados_ajustes.pkl"
+        file_pkl_path = os.path.join(self.data_folder, file_pkl)
+        if self.prev_win_exist and not self._es_archivo_abierto(file_pkl_path):
+            # La ventana de resultados muestra otra serie (u otro archivo):
+            # se cierra para abrir la que corresponde. Si tiene borrados sin
+            # grabar se pregunta, y si se cancela no se graba nada.
+            if not self.prev_win.close():
+                return
+            self.prev_win_exist = False
         if not self.prev_win_exist:
             # Antes de mandar los datos me fijo si existe el archivo
-            file_pkl = f"S{self.serie:03d}-resultados_ajustes.pkl"
-            file_pkl_path = os.path.join(self.data_folder, file_pkl)
             if os.path.exists(file_pkl_path):
                 # Abro la ventana
                 self.prev_win = ShowSpectrumFittedValues(self.serie,
@@ -841,6 +882,19 @@ class FitWindow(QMainWindow):
         else:
             # Agrego los datos
             self.prev_win.add_new_data(_data)
+
+
+    def _es_archivo_abierto(self, file_pkl_path):
+        """
+        True si la ventana de resultados tiene abierto el archivo
+        file_pkl_path
+        """
+        abierto = getattr(self.prev_win, "file_path", None)
+        if not abierto or getattr(self.prev_win, "_datos_grabados",
+                                  None) is None:
+            return False
+        return (os.path.normcase(os.path.abspath(abierto))
+                == os.path.normcase(os.path.abspath(file_pkl_path)))
 
 
     def _get_info_from_filename(self):

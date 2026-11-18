@@ -1261,8 +1261,16 @@ class FitResults():
     """
 
 
-    def __init__(self, file_name_pkl=None):
-        if file_name_pkl:
+    def __init__(self, file_name_pkl=None, data=None):
+        """
+        file_name_pkl: archivo S###-resultados_ajustes.pkl a leer
+        data: tabla de resultados ya cargada (por ejemplo, la que se muestra
+              en la ventana de resultados, con los borrados aún sin grabar).
+              Si se da, no se lee el archivo.
+        """
+        if data is not None:
+            self.data = data
+        elif file_name_pkl:
             self.file_name_pkl = file_name_pkl
             try:
                 with open(self.file_name_pkl, "rb") as f:
@@ -1275,64 +1283,102 @@ class FitResults():
         self.data = normaliza_resultados(self.data)
         # Trabajo con una DataFrame de panda
         df = pd.DataFrame(self.data, columns=COLUMNAS_RESULTADOS)
-        if len(df.Espectro.unique()) == 3:
-            self.n_det = 2
-        else:
-            self.n_det = 1
+        espectros = set(df["Espectro"])
+        self.n_det = 2 if espectros & {"NPSD2", "NCPSD"} else 1
 
-        # Alfas calculados con detector 1 a 40Hz
-        self.alfa_1 = df[df["Espectro"]=="NPSD1"]["Alfa"]
-        # Alfas calculados con detector 2 a 40Hz
-        self.alfa_2 = df[df["Espectro"]=="NPSD2"]["Alfa"]
-        # Alfas calculados con CPSD a 40Hz
-        self.alfa = df[df["Espectro"]=="NCPSD"]["Alfa"]
+        # Una fila por medición (Nivel, Medición): las corrientes, potencias y
+        # parámetros de los distintos espectros quedan emparejados por la
+        # medición a la que pertenecen y no por su posición en el archivo.
+        # Si se borró el espectro de una medición, sus valores quedan como
+        # NaN y esa medición no se usa en los ajustes que los necesitan.
+        m = self._tabla_por_medicion(df)
+        self.mediciones = m
+        # Espectro con el que se calculan potencia y alfa de referencia:
+        # NCPSD si hay dos detectores, NPSD1 si hay uno
+        ref = "c" if self.n_det == 2 else "1"
+
+        # Alfas (NPSD1, NPSD2, NCPSD)
+        self.alfa_1, self.alfa_2, self.alfa = m["Alfa1"], m["Alfa2"], m["Alfac"]
         self.alfas = [self.alfa_1, self.alfa_2, self.alfa]
-
-        # Poetncias calculadas con detector 1
-        self.pote_1 = df[df["Espectro"]=="NPSD1"]["Potencia"]
-        # Poetncias calculadas con detector 2
-        self.pote_2 = df[df["Espectro"]=="NPSD2"]["Potencia"]
-        # Poetncias calculadas con CPSD
-        self.pote = df[df["Espectro"]=="NCPSD"]["Potencia"]
+        # Potencias (NPSD1, NPSD2, NCPSD)
+        self.pote_1, self.pote_2, self.pote = m["P1"], m["P2"], m["Pc"]
         self.potencias = [self.pote_1, self.pote_2, self.pote]
 
-        if self.n_det == 2:
-            self.pote_bylevel = df[df["Espectro"]=="NCPSD"].groupby(
-            "Nivel")["Potencia"].apply(unumpy.nominal_values).apply(np.mean)
-            self.alfa_bylevel = df[df["Espectro"]=="NCPSD"
-                                     ].groupby("Nivel")["Alfa"]
-        elif self.n_det == 1:
-            self.pote_bylevel = df[df["Espectro"]=="NPSD1"].groupby(
-            "Nivel")["Potencia"].apply(unumpy.nominal_values).apply(np.mean)
-            self.alfa_bylevel = df[df["Espectro"]=="NPSD1"
-                                     ].groupby("Nivel")["Alfa"]
+        # Potencia media de cada nivel (con el espectro de referencia), para
+        # graficar alfa, fq y e/b2 en función de la potencia
+        _p = pd.Series(unumpy.nominal_values(m["P" + ref].to_numpy()),
+                       index=m.index, dtype=float)
+        with warnings.catch_warnings():
+            # Nivel sin ninguna potencia válida: queda NaN
+            warnings.simplefilter("ignore", RuntimeWarning)
+            m["P_nivel"] = _p.groupby(m["Nivel"]).transform(
+                                                     lambda x: np.nanmean(x))
+        self.P_nivel = m["P_nivel"]
+        self.pote_bylevel = m.groupby("Nivel")["P_nivel"].first()
+        self.alfa_bylevel = m.groupby("Nivel")["Alfa" + ref]
 
-        # Fq
-        fq_1 = df[(df["Espectro"]=="NPSD1") & (df["BW"]==200)]["fq"]
-        fq_2 = df[(df["Espectro"]=="NPSD2") & (df["BW"]==200)]["fq"]
-        self.fqs = [fq_1, fq_2]
-        self.I_fq1 = df[(df["Espectro"]=="NPSD1") & (df["BW"]==200)]["Ii"]
-        self.I_fq2 = df[(df["Espectro"]=="NPSD2") & (df["BW"]==200)]["Ii"]
-
-        self.fq_1_bylevel = df[(df["Espectro"]=="NPSD1") &
-                                        (df["BW"]==200)].groupby("Nivel")["fq"]
-        self.fq_2_bylevel = df[(df["Espectro"]=="NPSD2") &
-                                        (df["BW"]==200)].groupby("Nivel")["fq"]
+        # fq y e/b2: sólo con las mediciones de 200 Hz
+        m200 = m[m["BW"] == 200]
+        self.fqs = [m200["fq1"], m200["fq2"]]
+        self.I_fq1 = m200["I1"]
+        self.I_fq2 = m200["I2"]
+        self.P_nivel_200 = m200["P_nivel"]
+        self.fq_1_bylevel = m200.groupby("Nivel")["fq1"]
+        self.fq_2_bylevel = m200.groupby("Nivel")["fq2"]
 
         # Eficiencia dividio beta cuadrado
-        efi_b2_1 = df[(df["Espectro"]=="NPSD1") & (df["BW"]==200)]["efi/b2"]
-        efi_b2_2 = df[(df["Espectro"]=="NPSD2") & (df["BW"]==200)]["efi/b2"]
-        self.efi_b2s = [efi_b2_1, efi_b2_2]
+        self.efi_b2s = [m200["efi1"], m200["efi2"]]
+        self.efi_1_bylevel = m200.groupby("Nivel")["efi1"]
+        self.efi_2_bylevel = m200.groupby("Nivel")["efi2"]
 
-        self.efi_1_bylevel = df[(df["Espectro"]=="NPSD1") &
-                                    (df["BW"]==200)].groupby("Nivel")["efi/b2"]
-        self.efi_2_bylevel = df[(df["Espectro"]=="NPSD2") &
-                                    (df["BW"]==200)].groupby("Nivel")["efi/b2"]
         # Corrientes
-        self.I1 = df[df["Espectro"]=="NPSD1"]["Ii"]
-        self.I2 = df[df["Espectro"]=="NPSD2"]["Ii"]
-        self.Ip = df[df["Espectro"]=="NPSD1"]["Ip"]
+        self.I1, self.I2, self.Ip = m["I1"], m["I2"], m["Ip"]
         self.Is = [self.I1, self.I2, self.Ip]
+
+
+    @staticmethod
+    def _tabla_por_medicion(df):
+        """
+        Reordena la tabla de resultados (una fila por espectro) en una tabla
+        con una fila por medición (Nivel, Medición), ordenada por nivel y
+        medición.
+
+        Columnas: Nivel, Medición, BW, Ip y, para cada espectro (sufijo 1:
+        NPSD1, 2: NPSD2, c: NCPSD), I (sólo 1 y 2), Alfa, P, fq y efi. Los
+        valores faltantes quedan como ufloat(nan, nan).
+        """
+        clave = ["Nivel", "Medición"]
+        nan = ufloat(np.nan, np.nan)
+
+        def _ufloat(v):
+            if v is None or (isinstance(v, float) and np.isnan(v)):
+                return nan
+            return v
+
+        # El BW es una propiedad del archivo: es el mismo para los espectros
+        # de una medición
+        tabla = df[clave + ["BW"]].drop_duplicates(clave).set_index(clave)
+        columnas = {"Ii": "I", "Ip": "Ip", "Alfa": "Alfa", "Potencia": "P",
+                    "fq": "fq", "efi/b2": "efi"}
+        for espectro, suf in (("NPSD1", "1"), ("NPSD2", "2"), ("NCPSD", "c")):
+            sel = df[df["Espectro"] == espectro].drop_duplicates(
+                                            clave, keep="last").set_index(clave)
+            for col, nombre in columnas.items():
+                tabla[nombre + suf] = sel[col].astype(object)
+        tabla = tabla.sort_index().reset_index()
+        for col in tabla.columns:
+            if col not in ("Nivel", "Medición", "BW"):
+                tabla[col] = tabla[col].astype(object).map(_ufloat)
+        # La corriente de la CIp es de la medición: se toma de cualquiera de
+        # sus espectros
+        ip = tabla["Ip1"].copy()
+        for alt in ("Ipc", "Ip2"):
+            falta = pd.Series([bool(np.isnan(unumpy.nominal_values(v)))
+                               for v in ip], index=ip.index, dtype=bool)
+            ip[falta] = tabla.loc[falta, alt]
+        tabla["Ip"] = ip
+        tabla = tabla.drop(columns=["Ip1", "Ip2", "Ipc", "Ic"])
+        return tabla
 
 
     def simulate_data_S19(self):
@@ -1469,68 +1515,80 @@ class FitResults():
             pickle.dump(df.to_numpy(), f)
 
 
+    def _datos_ajuste_lineal(self, x, x_s, y, y_s, limites):
+        """
+        Puntos válidos (sin NaN) de un ajuste lineal y = a x + b dentro de
+        los límites [x_min, x_max] (por defecto, todos los puntos válidos).
+        """
+        validos = np.isfinite(x) & np.isfinite(y)
+        if limites is None or len(limites) == 0:
+            ind = validos
+        else:
+            x_min, x_max = limites
+            ind = validos & (x >= x_min) & (x <= x_max)
+        return ind
+
+
     def fit_p_vs_I(self, limites=None, plot=True, *args, **kargs):
         """
         Se hacen todos los ajustes lineales de corrientes y potencias
 
         p vs I1, p vs I2, p vs Ip
 
+        Se usa la potencia calculada con la NCPSD si hay dos detectores, o
+        con la NPSD1 si hay uno. Las mediciones sin corriente o sin potencia
+        (por ejemplo, porque se borró el espectro) no se usan. Se necesitan
+        al menos dos puntos para cada ajuste.
+
+        self.fited_p_vs_I: [a, b, r2, cov, y_fit] para cada corriente, o [[]]
+        si no se pudo hacer el ajuste
         """
-        if not hasattr(self, '_I_mag'):
-            self._I_mag, self._I_std = self._split_pandas_ufloat(self.Is)
-        if not hasattr(self, '_pot_mag'):
-            self._pots_mag, self._pots_std = \
-                                      self._split_pandas_ufloat(self.potencias)
-            # Para saber qué potencia usar para el ajuste
-            # Si existe, tomo la calculada con NCPSD, de lo contrario con NPSD1
-            ind_spec = 2 if self._pots_mag[2].size > 0 else 0
-            # Selecciono la potencia para el ajuste
-            self._pot_mag = self._pots_mag[ind_spec]
-            self._pot_std = self._pots_std[ind_spec]
+        self._I_mag, self._I_std = self._split_pandas_ufloat(self.Is)
+        self._pots_mag, self._pots_std = \
+                                  self._split_pandas_ufloat(self.potencias)
+        # Para saber qué potencia usar para el ajuste
+        # Si existe, tomo la calculada con NCPSD, de lo contrario con NPSD1
+        ind_spec = 2 if self.n_det == 2 else 0
+        # Selecciono la potencia para el ajuste
+        self._pot_mag = self._pots_mag[ind_spec]
+        self._pot_std = self._pots_std[ind_spec]
         if limites is None:
-            limites = []
-            for curr in self._I_mag:
-                if curr.size > 0:
-                    limites.append([np.min(curr), np.max(curr)])
-                else:
-                    limites.append([])
+            limites = [None] * len(self._I_mag)
         labels = ["I$_1$ [A]", "I$_2$ [A]", "I$_p$ [A]"]
         # Ajustes lineales
         fited_p_vs_I = []
         for k, (cu, cu_s) in enumerate(zip(self._I_mag, self._I_std)):
-            # Ajustes
-            if cu.size > 0:
-                # Límites del ajuste
-                I1, I2 = limites[k]
-                ind = (cu >= I1) & (cu <= I2)
-                # Ajuste de p vs I
-                a, b, r_2, cov, y_fit = ajuste_lineal(
-                        cu[ind], self._pot_mag[ind], self._pot_std[ind])
-                fited_p_vs_I.append([a, b, r_2, cov, y_fit])
-                if plot:
-                    fig, ax = plt.subplots(1, 1)
-                    ax.errorbar(cu, self._pot_mag, xerr=cu_s,
-                                                yerr=self._pot_std, fmt='ok')
-                    ax.plot(cu[ind], y_fit, 'r-')
-                    ax.set_xscale('log')
-                    ax.set_yscale('log')
-                    ax.set_xlabel(labels[k])
-                    ax.set_ylabel("p [W]")
-                    # En el gráfico
-                    str_a = f"a = ${a:.2uL}$ W/A\n"
-                    str_b = f"b = ${b:.2uL}$ W/A\n"
-                    str_r2 = f"r$^2$ = ${r_2:1.5f}$"
-                    bbox_props = dict(boxstyle='Round', fc='w')
-                    ax.annotate(str_a + str_b + str_r2,
-                    xy=(0.4, 0.15), bbox=bbox_props,
-                    size=12, xycoords='axes fraction')
-                    fig.tight_layout()
-            else:
+            ind = self._datos_ajuste_lineal(cu, cu_s, self._pot_mag,
+                                            self._pot_std, limites[k])
+            if np.count_nonzero(ind) < 2:
                 # Para respetar el orden [f1, f2, fp]
                 fited_p_vs_I.append([[]])
-            # Graficos
-        self.fited_p_vs_I = np.asarray(fited_p_vs_I, dtype=object)
-        plt.show()
+                continue
+            # Ajuste de p vs I
+            a, b, r_2, cov, y_fit = ajuste_lineal(
+                    cu[ind], self._pot_mag[ind], self._pot_std[ind])
+            fited_p_vs_I.append([a, b, r_2, cov, y_fit])
+            if plot:
+                fig, ax = plt.subplots(1, 1)
+                ax.errorbar(cu, self._pot_mag, xerr=cu_s,
+                                            yerr=self._pot_std, fmt='ok')
+                ax.plot(cu[ind], y_fit, 'r-')
+                ax.set_xscale('log')
+                ax.set_yscale('log')
+                ax.set_xlabel(labels[k])
+                ax.set_ylabel("p [W]")
+                # En el gráfico
+                str_a = f"a = ${a:.2uL}$ W/A\n"
+                str_b = f"b = ${b:.2uL}$ W\n"
+                str_r2 = f"r$^2$ = ${r_2:1.5f}$"
+                bbox_props = dict(boxstyle='Round', fc='w')
+                ax.annotate(str_a + str_b + str_r2,
+                xy=(0.4, 0.15), bbox=bbox_props,
+                size=12, xycoords='axes fraction')
+                fig.tight_layout()
+        self.fited_p_vs_I = self._lista_a_array(fited_p_vs_I)
+        if plot:
+            plt.show()
 
 
     def fit_Ip_vs_I(self, limites=None, plot=True, *args, **kargs):
@@ -1539,53 +1597,59 @@ class FitResults():
 
         Ip vs I1, Ip vs I2
 
+        self.fited_Ip_vs_I: [a, b, r2, cov, y_fit] para cada corriente, o [[]]
+        si no se pudo hacer el ajuste
         """
-        if not hasattr(self, "_I_mag"):
-            self._I_mag, self._I_std = self._split_pandas_ufloat(self.Is)
+        self._I_mag, self._I_std = self._split_pandas_ufloat(self.Is)
         if limites is None:
-            limites = []
-            for curr in self._I_mag[:-1]:
-                if curr.size > 0:
-                    limites.append([np.min(curr), np.max(curr)])
-                else: limites.append([])
+            limites = [None] * (len(self._I_mag) - 1)
 
         labels = ["I$_1$ [A]", "I$_2$ [A]", "I$_p$ [A]"]
         # Ajustes lineales
-        fit_Ip_vs_I = []
+        fited_Ip_vs_I = []
         for k, (cu, cu_s) in enumerate(zip(self._I_mag[:-1], self._I_std[:-1])):
-            # Ajustes
-            if cu.size > 0:
-                # Límites del ajuste
-                I1, I2 = limites[k]
-                ind = (cu >= I1) & (cu <= I2)
-                # Ajuste de p vs I
-                a, b, r_2, cov, y_fit = ajuste_lineal(
-                        cu[ind], self._I_mag[2][ind], self._I_std[2][ind])
-                fit_Ip_vs_I.append([a, b, r_2, cov, y_fit])
-                if plot:
-                    fig, ax = plt.subplots(1, 1)
-                    ax.errorbar(cu, self._I_mag[2], xerr=cu_s,
-                                          yerr=self._I_std[2], fmt='ok')
-                    ax.plot(cu[ind], y_fit, 'r-')
-                    ax.set_xscale('log')
-                    ax.set_yscale('log')
-                    ax.set_xlabel(labels[k])
-                    ax.set_ylabel("I$_p$ [A]")
-                    # En el gráfico
-                    str_a = f"a = ${a:.2uL}$ \n"
-                    str_b = f"b = ${b:.2uL}$ \n"
-                    str_r2 = f"r$^2$ = ${r_2:1.5f}$"
-                    bbox_props = dict(boxstyle='Round', fc='w')
-                    ax.annotate(str_a + str_b + str_r2,
-                    xy=(0.4, 0.15), bbox=bbox_props,
-                    size=12, xycoords='axes fraction')
-                    fig.tight_layout()
-            else:
-                # Para respetar el orden 
-                fit_Ip_vs_I.append([[]])
-            # Graficos
-        self.fit_Ip_vs_I = np.asarray(fit_Ip_vs_I, dtype=object)
-        plt.show()
+            ind = self._datos_ajuste_lineal(cu, cu_s, self._I_mag[2],
+                                            self._I_std[2], limites[k])
+            if np.count_nonzero(ind) < 2:
+                # Para respetar el orden
+                fited_Ip_vs_I.append([[]])
+                continue
+            # Ajuste de Ip vs I
+            a, b, r_2, cov, y_fit = ajuste_lineal(
+                    cu[ind], self._I_mag[2][ind], self._I_std[2][ind])
+            fited_Ip_vs_I.append([a, b, r_2, cov, y_fit])
+            if plot:
+                fig, ax = plt.subplots(1, 1)
+                ax.errorbar(cu, self._I_mag[2], xerr=cu_s,
+                                      yerr=self._I_std[2], fmt='ok')
+                ax.plot(cu[ind], y_fit, 'r-')
+                ax.set_xscale('log')
+                ax.set_yscale('log')
+                ax.set_xlabel(labels[k])
+                ax.set_ylabel("I$_p$ [A]")
+                # En el gráfico
+                str_a = f"a = ${a:.2uL}$ \n"
+                str_b = f"b = ${b:.2uL}$ A\n"
+                str_r2 = f"r$^2$ = ${r_2:1.5f}$"
+                bbox_props = dict(boxstyle='Round', fc='w')
+                ax.annotate(str_a + str_b + str_r2,
+                xy=(0.4, 0.15), bbox=bbox_props,
+                size=12, xycoords='axes fraction')
+                fig.tight_layout()
+        # No usar el mismo nombre que el método: lo reemplazaría y una
+        # segunda llamada fallaría
+        self.fited_Ip_vs_I = self._lista_a_array(fited_Ip_vs_I)
+        if plot:
+            plt.show()
+
+
+    @staticmethod
+    def _lista_a_array(lista):
+        """ Array de objetos con un elemento (lista) por ajuste """
+        arr = np.empty(len(lista), dtype=object)
+        for k, item in enumerate(lista):
+            arr[k] = item
+        return arr
 
 
     def _split_pandas_ufloat(self, panda_serie):
@@ -1601,6 +1665,19 @@ class FitResults():
         return mag, std
 
 
+    @staticmethod
+    def _promedio_pesado(mag, std):
+        """
+        Promedio pesado (pesos 1/sigma^2) de los valores válidos (sin NaN y
+        con incerteza positiva). Devuelve (nan, nan) si no hay ninguno.
+        """
+        mag, std = np.asarray(mag, dtype=float), np.asarray(std, dtype=float)
+        ok = np.isfinite(mag) & np.isfinite(std) & (std > 0)
+        if not ok.any():
+            return np.nan, np.nan
+        return weighted_average(mag[ok], 1.0 / std[ok]**2)
+
+
     def average_parameters(self, plot=True):
         """
         Hace los promedios pesados de a, fq y e/b2
@@ -1613,25 +1690,25 @@ class FitResults():
         _alfas_mag, _alfas_std = self._split_pandas_ufloat(self.alfas)
         # Para saber qué alfas usar para el promedio
         # Si existen, tomo la calculada con NCPSD, de lo contrario con NPSD1
-        ind_spec = 2 if _alfas_mag[2].size > 0 else 0
+        ind_spec = 2 if self.n_det == 2 else 0
         # Selecciono la potencia para el ajuste
         self._alfa_mag = _alfas_mag[ind_spec]
         self._alfa_std = _alfas_std[ind_spec]
 
         self.alfa_prom, self.alfa_std = \
-                      weighted_average(self._alfa_mag, 1.0 / self._alfa_std**2)
+                      self._promedio_pesado(self._alfa_mag, self._alfa_std)
         # ----- fqs
         self._fqs_mag, self._fqs_std = self._split_pandas_ufloat(self.fqs)
         self.fqs_av = []
         for fq, fq_s in zip(self._fqs_mag, self._fqs_std):
-            self.fqs_av.append(weighted_average(fq, 1 / fq_s**2))
+            self.fqs_av.append(self._promedio_pesado(fq, fq_s))
 
         # ----- e/b2
         self._eb2_mag, self._eb2_std = self._split_pandas_ufloat(self.efi_b2s)
 
         self.eb2_av = []
         for eb2, eb2_s in zip(self._eb2_mag, self._eb2_std):
-            self.eb2_av.append(weighted_average(eb2, 1 / eb2_s**2))
+            self.eb2_av.append(self._promedio_pesado(eb2, eb2_s))
 
         if plot:
             # alfas
@@ -1679,7 +1756,7 @@ class FitResults():
             fq2 = self.fqs[1].apply(unumpy.nominal_values)
             fq2_s = self.fqs[1].apply(unumpy.std_devs)
             I_fq2 = self.I_fq2.apply(unumpy.nominal_values)
-            if fq2.size > 0:
+            if self.n_det == 2:
                 fig, ax = plt.subplots(1, 1)
                 ax.errorbar(I_fq2, fq2, yerr=fq2_s, fmt='ok',
                                                     label="Detector 2")
@@ -1707,7 +1784,7 @@ class FitResults():
             # efi/beta2 2
             efi2 = self.efi_2_bylevel.apply(unumpy.nominal_values)
             efi2_s = self.efi_2_bylevel.apply(unumpy.std_devs)
-            if fq2.size > 0:
+            if self.n_det == 2:
                 for p, ef2, ef2_s in zip(self.pote_bylevel, efi2, efi2_s):
                     ax.errorbar(p * np.ones_like(ef2), ef2, yerr=ef2_s,
                                                 fmt='ob', label="Detector 2")
