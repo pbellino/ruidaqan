@@ -17,6 +17,7 @@ from .data_io import (nombre_archivo_rui, write_RUI_file,
 from .cip import InputIpValues
 from .procesamiento_window import FitWindow
 from .ventanas_ayuda import VentanaAyuda
+from .pantalla import ajusta_tamano
 import ruidaqan
 if ruidaqan.DEBUG_MODE:
     from .reader_debug import SignalReader, GetDevicesInfo
@@ -437,7 +438,7 @@ class BackgroundWindow(QMainWindow):
 
 
     def init_ui(self):
-        self.resize(350, 600)
+        ajusta_tamano(self, 350, 600)
         self.setWindowTitle("Medición del fondo")
         self.center()
 
@@ -719,7 +720,7 @@ class AcquisitionWindow(QMainWindow):
 
     def init_ui(self):
         """ Define and initialize GUI """
-        self.resize(QSize(1170, 750)) # ancho, alto
+        ajusta_tamano(self, 1170, 750) # ancho, alto
         self.setWindowTitle("Medición")
         # Esto se hace por un bug que hay en Windows 10
         QTimer.singleShot(1, self.showMaximized)

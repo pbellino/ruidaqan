@@ -21,6 +21,7 @@ from .appconfig import get_data_folder, set_carpeta_lectura
 from ..script.data_fercin3_io import (FitResults, normaliza_resultados,
                                       COLUMNAS_RESULTADOS)
 from ..script.fit_models import ajuste_lineal, weighted_average
+from .pantalla import ajusta_tamano, elige_escala
 
 # Columna con la incerteza de la potencia usada en cada fila ('ajuste' o
 # 'lotes')
@@ -490,7 +491,8 @@ class ShowSpectrumFittedValues(QMainWindow):
 
     def _createMenu(self):
         menu1 = self.menuBar()
-        # menu1.addMenu('File')
+        ver = menu1.addMenu('&Ver')
+        ver.addAction('Escala de la interfaz...', lambda: elige_escala(self))
 
         self.menu_bar = QMenuBar(menu1)
         menu1.setCornerWidget(self.menu_bar, Qt.Corner.TopRightCorner)
@@ -673,7 +675,7 @@ class ShowSpectrumFittedValues(QMainWindow):
 
 
     def init_ui(self):
-        self.resize(1000, 890)
+        ajusta_tamano(self, 1000, 890)
         # Para centrar la ventana
         self.center()
         self.showMaximized()

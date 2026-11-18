@@ -13,6 +13,7 @@ from .oscilloscope_window import OscilloscopeWindow
 from .measurement_window import MeasurementWindow, AdvanceConfigurationWindow
 from .appconfig import get_data_folder, ask_data_folder, RESET_DEFAULT_PARAMS
 from .ventanas_ayuda import VentanaAyuda, AboutWindow
+from .pantalla import ubica_en_pantalla, elige_escala
 import ruidaqan
 if ruidaqan.DEBUG_MODE:
     from .reader_debug import GetDevicesInfo
@@ -52,7 +53,7 @@ class MainWindow(QMainWindow):
 
 
     def init_ui(self):
-        self.setGeometry(10, 30, 350, 500)
+        ubica_en_pantalla(self, 10, 30, 350, 500)
         self.setWindowTitle('RuiDAQAn')
         self._createMenu()
 
@@ -90,6 +91,7 @@ class MainWindow(QMainWindow):
         menu1 = self.menuBar()
         menu = menu1.addMenu('&Menu')
         menu.addAction('Cambiar carpeta de trabajo', self._cambiar_data_folder)
+        menu.addAction('Escala de la interfaz...', lambda: elige_escala(self))
         menu.addAction('&Exit', self.close)
         conf = menu1.addMenu("&Cfg. avanzada")
         conf.addAction('&Ver/Editar', self.show_advconf_win)

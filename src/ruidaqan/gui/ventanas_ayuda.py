@@ -4,6 +4,7 @@ from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtGui import QKeySequence, QAction, QGuiApplication
 from PyQt6.QtCore import QUrl, Qt
 import ruidaqan
+from .pantalla import ajusta_tamano
 
 
 class VentanaAyuda(QMainWindow):
@@ -43,7 +44,7 @@ class VentanaAyuda(QMainWindow):
                 f"<p>Se buscó en:<br><code>{pkg_path}</code></p>")
 
         self.setCentralWidget(self.VisorTexto)
-        self.resize(500, 800)
+        ajusta_tamano(self, 500, 800)
         self.center()
 
         self.exit = QAction("Exit", triggered=lambda: self.close())

@@ -11,9 +11,12 @@ Se guardan dos carpetas:
   - carpeta_lectura: última carpeta desde la que se abrió un archivo en las
     ventanas de procesamiento o de resultados. Es la carpeta inicial de esas
     ventanas cuando se abren solas (ruidaqan p, ruidaqan r).
+
+Y la escala de la interfaz (escala), que se aplica al iniciar el programa.
 """
 
 import json
+import os
 from pathlib import Path
 from platformdirs import user_data_dir
 from PyQt6.QtWidgets import QFileDialog, QMessageBox
@@ -140,3 +143,36 @@ def set_carpeta_lectura(folder):
     except OSError:
         # No poder recordar la carpeta no debe impedir abrir el archivo
         pass
+
+
+# Escala de la interfaz (equivale a QT_SCALE_FACTOR)
+ESCALA_MIN, ESCALA_MAX = 0.5, 2.0
+
+
+def get_escala():
+    """ Escala guardada (1 si no hay o si el valor no es válido) """
+    try:
+        escala = float(_load().get("escala", 1.0))
+    except (TypeError, ValueError):
+        return 1.0
+    return escala if ESCALA_MIN <= escala <= ESCALA_MAX else 1.0
+
+
+def set_escala(escala):
+    """ Guarda la escala de la interfaz (se aplica al reiniciar) """
+    cfg = _load()
+    cfg["escala"] = round(float(escala), 2)
+    _save(cfg)
+
+
+def aplica_escala():
+    """
+    Aplica la escala guardada. Se debe llamar antes de crear la
+    QApplication (Qt lee QT_SCALE_FACTOR al iniciar). Si la variable de
+    entorno QT_SCALE_FACTOR ya está definida, tiene prioridad.
+    """
+    if os.environ.get("QT_SCALE_FACTOR"):
+        return
+    escala = get_escala()
+    if escala != 1.0:
+        os.environ["QT_SCALE_FACTOR"] = f"{escala:g}"

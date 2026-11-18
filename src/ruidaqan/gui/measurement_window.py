@@ -14,6 +14,7 @@ from .data_io import FondoIncompatible
 from .ventanas_ayuda import VentanaAyuda
 from .oscilloscope_window import OscilloscopeWindow
 from .procesamiento_window import FitWindow
+from .pantalla import ubica_en_pantalla
 import ruidaqan
 if ruidaqan.DEBUG_MODE:
     from .reader_debug import GetDevicesInfo
@@ -72,7 +73,7 @@ class AdvanceConfigurationWindow(QMainWindow):
         self.devices = GetDevicesInfo()
         self.dev_names = self.devices.dev_names
 
-        self.setGeometry(360, 30, 350, 690)
+        ubica_en_pantalla(self, 360, 30, 350, 690)
         self.setWindowTitle("Configuración avanzada")
         self.checkbox = QCheckBox("Editar configuración", self)
         layout = QVBoxLayout()
@@ -153,7 +154,7 @@ class MeasurementWindow(QMainWindow):
                                             "Medición de CIp")
         self.cfg_esp = EspMedParamTree(self.n_det, self.cip, reset=True)
 
-        self.setGeometry(360, 30, 350, 690)
+        ubica_en_pantalla(self, 360, 30, 350, 690)
         self.setWindowTitle("Configuración medición")
 
         layout = QVBoxLayout()

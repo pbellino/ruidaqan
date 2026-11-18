@@ -120,6 +120,22 @@
   `make dist`). Si falta la ayuda compilada, la ventana de ayuda explica cómo
   generarla en lugar de quedar en blanco.
 
+### Pantallas chicas (notebooks)
+
+- Las ventanas con tamaño fijo (osciloscopio de 1300x690, configuraciones de
+  350x690, ayuda de 500x800) se achican y se reubican si no entran en el área
+  disponible de la pantalla.
+- Procesamiento: el panel izquierdo tiene barra de desplazamiento. La ventana
+  necesitaba 857 px de alto y en una notebook se perdían los resultados del
+  ajuste y los botones; ahora el mínimo es 333 px.
+- Osciloscopio: la grilla de 93 filas sumaba ~550 px de espaciado; el alto
+  mínimo pasó de 590 a 168 px.
+- Opción **Escala de la interfaz** (menú de la ventana principal y **Ver** de
+  procesamiento y resultados), que equivale a `QT_SCALE_FACTOR`. Se guarda en
+  `config.json` y se aplica al iniciar, también en los ejecutables.
+- Verificado con pantallas de 1280x720 y 1093x614 (1920x1080 al 150 % y
+  1366x768 al 125 %).
+
 ### Empaquetado
 
 - `make dist`, `make exe` y `make clean` no funcionaban con el make de

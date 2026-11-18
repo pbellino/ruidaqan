@@ -7,9 +7,11 @@ from PyQt6.QtWidgets import QApplication, QMainWindow
 from ruidaqan.gui.ruidaq_main import MainWindow
 from ruidaqan.gui.procesamiento_window import FitWindow
 from ruidaqan.gui.resultados_window import ShowSpectrumFittedValues
-from ruidaqan.gui.appconfig import get_carpeta_lectura
+from ruidaqan.gui.appconfig import get_carpeta_lectura, aplica_escala
 
 def main() -> None:
+    # Escala de la interfaz elegida en el menú (antes de crear la aplicación)
+    aplica_escala()
     app = QApplication(sys.argv)
     msg ="\n\nLos argumentos pueden ser: "
     msg += "[a]dquisición, [p]rocesamiento, [r]esultados]"

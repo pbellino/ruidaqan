@@ -221,6 +221,16 @@ Las incertezas de la sensibilidad (1 %) y de la ganancia AC (0.5 %) no se
 graban: las agrega el programa de procesamiento.
 
 
+Configuración del programa
+++++++++++++++++++++++++++
+
+``config.json`` (en ``~/.local/share/ruidaqan`` en Linux y en
+``C:\Users\<usuario>\AppData\Local\ruidaqan`` en Windows) guarda la carpeta
+de trabajo (``data_folder``), la última carpeta desde la que se abrió un
+archivo en procesamiento o resultados (``carpeta_lectura``) y la escala de la
+interfaz (``escala``).
+
+
 Corrientes de fondo
 +++++++++++++++++++
 

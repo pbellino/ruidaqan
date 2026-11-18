@@ -3,11 +3,12 @@ import numpy as np
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt, pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import (QMenu, QMenuBar, QMainWindow, QGridLayout,
-                             QPushButton, QWidget)
+                             QPushButton, QWidget, QVBoxLayout)
 # --- From DAQ Control --- #
 from .parameters import OscilloscopeParamTree
 from .plotter_oscilloscope import SignalPlot, Legend
 from .ventanas_ayuda import VentanaAyuda
+from .pantalla import ubica_en_pantalla
 import ruidaqan
 if ruidaqan.DEBUG_MODE:
     from .reader_debug import SignalReader, GetDevicesInfo
@@ -47,7 +48,7 @@ class OscilloscopeWindow(QMainWindow):
 
     def init_ui(self):
         """ Define and initialize GUI """
-        self.setGeometry(10, 30, 1300, 690)
+        ubica_en_pantalla(self, 10, 30, 1300, 690)
         self.setWindowTitle("Osciloscopio")
 
         layout = QGridLayout()
@@ -65,11 +66,19 @@ class OscilloscopeWindow(QMainWindow):
         self.start_signal_btn = QPushButton("Comenzar adquisición")
         self.cerrar_btn = QPushButton("Cerrar")
 
-        layout.addWidget(self.cfg_osc, 0, 0, 80, 30)
-        layout.addWidget(self.plotter, 0, 30, 90, 60)
-        layout.addWidget(self.start_signal_btn, 78, 0, 10, 30)
-        layout.addWidget(self.cerrar_btn, 83, 0, 10, 30)
-        layout.addWidget(self.legend, 0, 99, 90, 10)
+        # Columnas en proporción 3:6:1 (configuración, gráfico, leyenda).
+        # Antes era una grilla de 93 filas: el espaciado entre filas sumaba
+        # unos 550 px de alto mínimo y la ventana no entraba en notebooks.
+        columna_izq = QVBoxLayout()
+        columna_izq.addWidget(self.cfg_osc, 1)
+        columna_izq.addWidget(self.start_signal_btn)
+        columna_izq.addWidget(self.cerrar_btn)
+        layout.addLayout(columna_izq, 0, 0)
+        layout.addWidget(self.plotter, 0, 1)
+        layout.addWidget(self.legend, 0, 2)
+        layout.setColumnStretch(0, 3)
+        layout.setColumnStretch(1, 6)
+        layout.setColumnStretch(2, 1)
 
         self.mainbox = QWidget(self)
         self.mainbox.setLayout(layout)
@@ -210,6 +219,7 @@ if __name__ == "__main__":
                 print(devices.device_info(dev).scaling_coeff(chan, (-10, 10)))
         quit()
 
+    from PyQt6.QtWidgets import QApplication
     app = QApplication(sys.argv)
     mainWin = OscilloscopeWindow()
     mainWin.show()

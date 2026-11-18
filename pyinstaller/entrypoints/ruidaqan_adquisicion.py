@@ -8,8 +8,11 @@ if sys.platform != "win32":
 
 from PyQt6.QtWidgets import QApplication
 from ruidaqan.gui.ruidaq_main import MainWindow
+from ruidaqan.gui.appconfig import aplica_escala
 
 def main():
+    # Escala de la interfaz (antes de crear la aplicación)
+    aplica_escala()
     app = QApplication(sys.argv)
     win = MainWindow()
     win.show()

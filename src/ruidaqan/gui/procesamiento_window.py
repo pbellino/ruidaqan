@@ -13,10 +13,12 @@ from PyQt6.QtWidgets import (QMessageBox, QGridLayout, QLabel, QPushButton,
                              QProgressBar, QTabWidget, QWidget, QVBoxLayout,
                              QHBoxLayout, QLayout, QGroupBox, QMenu,
                              QSpinBox, QDoubleSpinBox, QComboBox, QMainWindow,
-                             QFileDialog, QCheckBox, QMenuBar)
+                             QFileDialog, QCheckBox, QMenuBar, QScrollArea,
+                             QFrame)
 import pyqtgraph as pg
 
 from .resultados_window import ShowSpectrumFittedValues
+from .pantalla import elige_escala
 from .plotter import PlotProcessing
 from .ventanas_ayuda import VentanaAyuda, AboutWindow
 from .appconfig import get_data_folder, set_carpeta_lectura
@@ -110,11 +112,21 @@ class FitWindow(QMainWindow):
         self.showMaximized()
         self._createMenu()
 
-        # Main layout
-        gridLayout_all = QGridLayout(self)
+        # Main layout (sin padre: la QMainWindow ya tiene su propio layout)
+        gridLayout_all = QGridLayout()
         verticalLayout_left = QVBoxLayout()
         verticalLayout_right = QVBoxLayout()
-        gridLayout_all.addLayout(verticalLayout_left, 0, 0, 1, 1)
+        # El panel izquierdo va en un área con barra de desplazamiento: en
+        # pantallas bajas (notebooks) no entra completo
+        panel_izq = QWidget()
+        panel_izq.setLayout(verticalLayout_left)
+        self.scroll_izq = QScrollArea()
+        self.scroll_izq.setWidget(panel_izq)
+        self.scroll_izq.setWidgetResizable(True)
+        self.scroll_izq.setFrameShape(QFrame.Shape.NoFrame)
+        self.scroll_izq.setHorizontalScrollBarPolicy(
+                                    Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        gridLayout_all.addWidget(self.scroll_izq, 0, 0, 1, 1)
         gridLayout_all.addLayout(verticalLayout_right, 0, 1, 1, 1)
 
         # Group box for header
@@ -301,6 +313,7 @@ class FitWindow(QMainWindow):
         verticalLayout_left.addWidget(groupBox_constants)
         verticalLayout_left.addWidget(groupBox_getSpectrums)
         verticalLayout_left.addWidget(groupBox_fitcontrols)
+        verticalLayout_left.addStretch(1)
 
         # Group box for fit results
         groupBox_results = QGroupBox("Resultados del ajuste")
@@ -379,10 +392,24 @@ class FitWindow(QMainWindow):
         self.mainbox = QWidget(self)
         self.mainbox.setLayout(gridLayout_all)
         self.setCentralWidget(self.mainbox)
+        self._ancho_panel_izq()
+
+
+    def _ancho_panel_izq(self):
+        """
+        El área con desplazamiento no toma el ancho de su contenido: se fija
+        el ancho mínimo para que el panel izquierdo nunca necesite barra
+        horizontal (se deja lugar para la barra vertical)
+        """
+        panel = self.scroll_izq.widget()
+        barra = self.scroll_izq.verticalScrollBar().sizeHint().width()
+        self.scroll_izq.setMinimumWidth(
+                                panel.minimumSizeHint().width() + barra + 2)
 
     def _createMenu(self):
         menu1 = self.menuBar()
-        # menu1.addMenu('File')
+        ver = menu1.addMenu('&Ver')
+        ver.addAction('Escala de la interfaz...', lambda: elige_escala(self))
 
         self.menu_bar = QMenuBar(menu1)
         menu1.setCornerWidget(self.menu_bar, Qt.Corner.TopRightCorner)
@@ -509,6 +536,9 @@ class FitWindow(QMainWindow):
        self.pushButton_getSpectrums.setEnabled(True)
        # Grafica las señales temporales
        self.plot_temporal_signals()
+       # El contenido del panel izquierdo cambia con el archivo (nombre,
+       # comentarios): se recalcula su ancho
+       self._ancho_panel_izq()
        # Obtiene los espectros y los ajusta
        if self.get_norm_spectrums():
            self.fit_spectrums()

@@ -81,6 +81,13 @@ Botones y menú
     carpeta desde la que se abrió un archivo en ellas; abrir un archivo de
     otra carpeta no cambia la carpeta de trabajo de la adquisición.
 
+    *Escala de la interfaz...*: agranda o achica ventanas, letras y botones
+    (factor entre 0.5 y 2; por ejemplo 0.8 en una notebook donde las ventanas
+    no entran). Se aplica la próxima vez que se abre el programa y vale para
+    todas las ventanas. También está en el menú **Ver** de las ventanas de
+    procesamiento y de resultados. Si está definida la variable de entorno
+    ``QT_SCALE_FACTOR``, tiene prioridad.
+
     *Exit*: cierra el programa.
 
 **Cfg. Avanzada**

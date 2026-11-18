@@ -8,10 +8,13 @@ if sys.platform != "win32":
 
 from PyQt6.QtWidgets import QApplication
 from ruidaqan.gui.resultados_window import ShowSpectrumFittedValues
+from ruidaqan.gui.appconfig import aplica_escala, get_carpeta_lectura
 
 def main():
+    # Escala de la interfaz (antes de crear la aplicación)
+    aplica_escala()
     app = QApplication(sys.argv)
-    win = ShowSpectrumFittedValues()
+    win = ShowSpectrumFittedValues(folder=str(get_carpeta_lectura()))
     win.show()
     sys.exit(app.exec())
 

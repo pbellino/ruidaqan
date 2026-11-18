@@ -12,6 +12,8 @@ from PyQt6.QtCore import pyqtSignal, Qt, QSize, pyqtSlot
 from PyQt6 import QtGui
 
 import pyqtgraph as pg
+
+from .pantalla import ajusta_tamano
 import numpy as np
 from.misc_functions import int_to_volt
 from ruidaqan import DEBUG_MODE
@@ -366,7 +368,7 @@ class VentanaControlDC(QMainWindow):
         """
 
         self.setWindowTitle("Control")
-        self.resize(QSize(900, 300))
+        ajusta_tamano(self, 900, 300)
         self.center()
         # Tamaño fuente para todos los QLabels de esta ventana
         self.setStyleSheet("QLabel{font-size: 20pt;}")
