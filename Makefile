@@ -2,11 +2,8 @@ NAME = ruidaqan
 
 .SUFFIXES:
 .PHONY: clean dist install install_dev docs capturas lint test exe exe_adquisicion \
-        exe_procesamiento exe_resultados stamp_hash restore_hash
+        exe_procesamiento exe_resultados
 
-# Variables de ruta
-INIT_FILE = src/ruidaqan/__init__.py
-MAKE_EXE = make -f pyinstaller/Makefile.exe
 
 # ── Instalación ──────────────────────────────────────────────────────────────
 
@@ -45,49 +42,18 @@ docs:
 capturas:
 	python docs/genera_capturas.py
 
-dist: docs
-	# 1. Preparar carpeta de docs interna
-	mkdir -p src/ruidaqan/docs/html/
-	cp -r docs/_build/html/* src/ruidaqan/docs/html/
-
-	# 2. Configuración de producción (GUI y Commit Hash)
-	sed -i -e 's/DEBUG_MODE =.*/DEBUG_MODE = False/g'   src/ruidaqan/gui/config.py
-
-	# El estampado con el ancla ^ para evitar el IndentationError
-	$(eval HASH=$(shell git rev-parse --short HEAD))
-	sed -i 's/^__commit__ =.*/__commit__ = "$(HASH)"/' src/ruidaqan/__init__.py
-
-	# 3. Construir paquete
-	python -m build
-
-	# 4. Limpiar para que tu repo local siga igual
-	git restore src/ruidaqan/gui/config.py src/ruidaqan/__init__.py
+# Paquete instalable con la documentación y el hash del commit estampado.
+# La lógica está en scripts/empaqueta.py para que funcione también con el
+# make de Windows (sin mkdir -p, cp, sed ni git restore).
+dist:
+	python scripts/empaqueta.py dist
 
 clean:
-	rm -fr dist build src/*.egg-info
+	python scripts/empaqueta.py limpia
 
-# Construye todo el ecosistema de distribución
-# Nota: 'dist' ya hace su propio stamp/restore interno.
+# Ejecutables con PyInstaller (también arma el paquete)
+exe:
+	python scripts/empaqueta.py exe
 
-exe_adquisicion exe_procesamiento exe_resultados: dist stamp_hash
-	$(MAKE_EXE) $@
-	@$(MAKE) restore_hash
-	@echo "Ejecutable $@ generado y repo restaurado."
-
-exe: dist
-	@$(MAKE) stamp_hash
-	@echo "Generando ejecutables independientes..."
-	$(MAKE_EXE) exe_adquisicion
-	$(MAKE_EXE) exe_procesamiento
-	$(MAKE_EXE) exe_resultados
-	@$(MAKE) restore_hash
-	@echo "Proceso de ejecutables finalizado y repo limpio."
-
-stamp_hash:
-	$(eval HASH=$(shell git rev-parse --short HEAD))
-	@echo "Estampando hash $(HASH) en $(INIT_FILE)..."
-	sed -i 's/^__commit__ =.*/__commit__ = "$(HASH)"/' $(INIT_FILE)
-
-restore_hash:
-	@echo "Restaurando $(INIT_FILE) al estado original..."
-	git restore $(INIT_FILE)
+exe_adquisicion exe_procesamiento exe_resultados:
+	python scripts/empaqueta.py exe $(subst exe_,,$@)

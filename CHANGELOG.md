@@ -120,6 +120,15 @@
   `make dist`). Si falta la ayuda compilada, la ventana de ayuda explica cómo
   generarla en lugar de quedar en blanco.
 
+### Empaquetado
+
+- `make dist`, `make exe` y `make clean` no funcionaban con el make de
+  Windows (las recetas usaban `mkdir -p`, `cp`, `sed` y `git restore`). La
+  lógica pasó a `scripts/empaqueta.py`, que también se puede usar sin make.
+  `__init__.py` se restaura desde una copia (antes `git restore` descartaba
+  los cambios sin commitear) y la ayuda se copia al paquete sin restos de
+  compilaciones anteriores.
+
 ### Para desarrolladores
 
 - `HDF5FileProcessing` y `RUIFileProcessing` comparten la clase base

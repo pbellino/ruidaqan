@@ -9,27 +9,28 @@ auto-contenida que corre sin necesidad de tener Python instalado.
 pip install pyinstaller
 ```
 
-También es necesario haber generado la documentación HTML antes de empaquetar:
-
-```bash
-make docs
-make dist   # esto copia docs/_build/html → src/ruidaqan/docs/html
-```
-
 ## Generar todos los ejecutables
 
+Desde la raíz del repo, con el entorno activo (funciona igual en Windows y en
+Linux):
+
 ```bash
-# Desde la raíz del repo, con el venv activo:
-make -f Makefile.exe exe
+make exe
+# o, sin make:
+python scripts/empaqueta.py exe
 ```
 
 O individualmente:
 
 ```bash
-make -f Makefile.exe exe_procesamiento
-make -f Makefile.exe exe_resultados
-make -f Makefile.exe exe_adquisicion
+make exe_procesamiento
+python scripts/empaqueta.py exe procesamiento resultados
 ```
+
+El script compila la documentación y la copia a `src/ruidaqan/docs/html`
+(para que la ayuda quede dentro del ejecutable), estampa el hash del commit en
+`src/ruidaqan/__init__.py` mientras se empaqueta y después lo deja como
+estaba.
 
 ## Resultado
 
@@ -65,8 +66,9 @@ zip -r ruidaqan-adquisicion-linux.zip   ruidaqan-adquisicion/
 ## Solución de problemas comunes
 
 **La ventana de ayuda no aparece:**
-Asegurate de haber corrido `make docs` y `make dist` antes de empaquetar.
-Los archivos HTML deben estar en `src/ruidaqan/docs/html/`.
+Generá los ejecutables con `make exe` (o `python scripts/empaqueta.py exe`),
+que compila la ayuda y la copia a `src/ruidaqan/docs/html/` antes de
+empaquetar.
 
 **Error con `tables` o `numexpr`:**
 Son módulos con extensiones C que PyInstaller a veces no detecta.
