@@ -119,6 +119,9 @@
   `src/ruidaqan/docs/` (el programa usa `src/ruidaqan/docs/html`, que genera
   `make dist`). Si falta la ayuda compilada, la ventana de ayuda explica cómo
   generarla en lugar de quedar en blanco.
+- Desde el repositorio, la ayuda usa `docs/_build/html` (lo que genera
+  `make docs`) antes que la copia de `src/ruidaqan/docs/html`, que queda del
+  último `make dist` y podía mostrar una versión vieja.
 
 ### Pantallas chicas (notebooks)
 

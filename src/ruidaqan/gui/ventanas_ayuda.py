@@ -7,6 +7,31 @@ import ruidaqan
 from .pantalla import ajusta_tamano
 
 
+def ruta_ayuda():
+    """
+    Archivo HTML de la ayuda.
+
+    - Paquete instalado: la copia incluida en el paquete
+      (ruidaqan/docs/html, que arma make dist).
+    - Desde el repositorio (versión de desarrollo): docs/_build/html, que es
+      lo que genera make docs. Se prefiere a la copia del paquete porque esa
+      queda de la última vez que se corrió make dist y puede estar
+      desactualizada.
+    """
+    pagina = os.path.join('manual', 'pantallas.html')
+    paquete = os.path.normpath(os.path.join(
+                    os.path.dirname(__file__), '..', 'docs', 'html', pagina))
+    # src/ruidaqan/gui/ventanas_ayuda.py -> raíz del repositorio
+    raiz = os.path.normpath(__file__).rsplit(os.sep, maxsplit=4)[0]
+    desarrollo = os.path.join(raiz, 'docs', '_build', 'html', pagina)
+    es_repositorio = os.path.isfile(os.path.join(raiz, 'docs', 'conf.py'))
+    candidatos = [desarrollo, paquete] if es_repositorio else [paquete]
+    for ruta in candidatos:
+        if os.path.exists(ruta):
+            return ruta
+    return candidatos[0]
+
+
 class VentanaAyuda(QMainWindow):
     """Ventana para mostrar ayuda dentro del programa."""
 
@@ -14,14 +39,7 @@ class VentanaAyuda(QMainWindow):
     def __init__(self, parent=None, referencia=None):
         super().__init__(parent)
 
-        # Ruta del archivo de ayuda
-        pkg_path = os.path.normpath(
-        os.path.join(os.path.dirname(__file__), '..', 'docs', 'html', 'manual', 'pantallas.html')
-        )
-        if not os.path.exists(pkg_path):
-            four_up = os.path.normpath(__file__).rsplit(os.sep, maxsplit=4)[0]
-            pkg_path = os.path.join(four_up, 'docs', '_build', 'html', 'manual', 'pantallas.html')
-        path = pkg_path
+        path = ruta_ayuda()
 
         self.setWindowTitle('Ayuda')
         self.VisorTexto = QWebEngineView()
@@ -41,7 +59,7 @@ class VentanaAyuda(QMainWindow):
                 "repositorio) o</li>"
                 "<li><code>make dist</code> (la incluye en el paquete "
                 "instalable).</li></ul>"
-                f"<p>Se buscó en:<br><code>{pkg_path}</code></p>")
+                f"<p>Se buscó en:<br><code>{path}</code></p>")
 
         self.setCentralWidget(self.VisorTexto)
         ajusta_tamano(self, 500, 800)

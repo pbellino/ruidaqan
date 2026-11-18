@@ -102,3 +102,44 @@ def test_variable_de_entorno_tiene_prioridad(config, monkeypatch):
 def test_escala_invalida_se_ignora(config, valor):
     config.write_text(json.dumps({"escala": valor}))
     assert appconfig.get_escala() == 1.0
+
+
+# ------------------------------------------------------------------- ayuda
+def _arbol(tmp_path, repo, copia_paquete, build_desarrollo):
+    """ Estructura de archivos de un repositorio o de un paquete instalado """
+    base = tmp_path / ("repo" if repo else "site-packages")
+    modulo = (base / "src" if repo else base) / "ruidaqan" / "gui" / \
+        "ventanas_ayuda.py"
+    modulo.parent.mkdir(parents=True)
+    modulo.touch()
+    if repo:
+        (base / "docs").mkdir()
+        (base / "docs" / "conf.py").touch()
+    rutas = {}
+    for nombre, existe, carpeta in (
+            ("paquete", copia_paquete, modulo.parents[1] / "docs" / "html"),
+            ("desarrollo", build_desarrollo,
+             base / "docs" / "_build" / "html")):
+        pagina = carpeta / "manual" / "pantallas.html"
+        if existe:
+            pagina.parent.mkdir(parents=True)
+            pagina.touch()
+        rutas[nombre] = str(pagina)
+    return str(modulo), rutas
+
+
+@pytest.mark.parametrize("repo, paquete, desarrollo, esperado", [
+    # Desarrollo después de make dist: se usa lo que genera make docs
+    (True, True, True, "desarrollo"),
+    (True, False, True, "desarrollo"),
+    (True, True, False, "paquete"),
+    # Paquete instalado: siempre la copia del paquete
+    (False, True, False, "paquete"),
+])
+def test_ruta_ayuda(tmp_path, monkeypatch, repo, paquete, desarrollo,
+                    esperado):
+    import PyQt6.QtWebEngineWidgets  # noqa: F401 (antes de QApplication)
+    from ruidaqan.gui import ventanas_ayuda
+    modulo, rutas = _arbol(tmp_path, repo, paquete, desarrollo)
+    monkeypatch.setattr(ventanas_ayuda, "__file__", modulo)
+    assert ventanas_ayuda.ruta_ayuda() == rutas[esperado]
