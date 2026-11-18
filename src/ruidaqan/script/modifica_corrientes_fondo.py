@@ -19,10 +19,19 @@ archivos = [
             #'S001-N1-2.h5',
            ]
 
-for archivo in archivos:
-    with tb.open_file(archivo, mode='r+') as f:
-        for cadena, corriente in corrientes_fondo.items():
-            bb = f.get_node("/" + cadena)
-            bb._v_attrs.Fondo = np.asarray(corriente)
+
+def modifica_corrientes_fondo(archivos, corrientes_fondo):
+    """ Reemplaza el atributo Fondo de las cadenas indicadas """
+    for archivo in archivos:
+        with tb.open_file(archivo, mode='r+') as f:
+            for cadena, corriente in corrientes_fondo.items():
+                bb = f.get_node("/" + cadena)
+                bb._v_attrs.Fondo = np.asarray(corriente)
+
+
+# Sólo al ejecutarlo como script: al importarlo (por ejemplo, al generar la
+# documentación del código) no debe modificar ningún archivo
+if __name__ == "__main__":
+    modifica_corrientes_fondo(archivos, corrientes_fondo)
 
 

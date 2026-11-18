@@ -80,7 +80,15 @@ def write_RUI_file(filename, data, cfg_gral, cfg_adv, cfg_meas, cip_manual=None)
         # Se usan los datos ingresados a mano
         ip_data = np.asarray(cip_manual)
         print(f"En .RUI: {ip_data}")
-        mean_Ip, std_Ip = weighted_average(ip_data[:, 0], 1 / ip_data[:, 1]**2)
+        # Sólo valores con incerteza positiva (con incerteza nula el peso es
+        # infinito y el promedio da NaN). La ventana de ingreso ya no los
+        # acepta, pero pueden venir de un archivo de recuperación anterior.
+        _ok = np.isfinite(ip_data[:, 0]) & (ip_data[:, 1] > 0)
+        if _ok.any():
+            mean_Ip, std_Ip = weighted_average(ip_data[_ok, 0],
+                                               1 / ip_data[_ok, 1]**2)
+        else:
+            mean_Ip, std_Ip = np.mean(ip_data[:, 0]), np.nan
         print(f"En .RUI promediado: {mean_Ip} +/- {std_Ip}")
 
     # TODO: no hardcodear rango
@@ -155,6 +163,20 @@ def write_background(filename, mean_datas, std_datas):
         f.write("# Ip    Ip_std\n")
         for mean, std in zip(mean_datas, std_datas):
             f.write(f"{mean:.6E}\t{std:.6E}\n")
+
+
+def nombre_archivo_rui(output_file_HDF):
+    """
+    Nombre del .RUI a partir del .h5 de la medición: se quita un cero al
+    comienzo de la serie (S010-N1-1.h5 -> S10-N1-1.RUI, formato de los
+    programas de DOS) y se cambia la extensión. Sólo se modifica el nombre:
+    la carpeta puede contener "S0" o ".h5".
+    """
+    carpeta, nombre = os.path.split(output_file_HDF)
+    if nombre.startswith("S0"):
+        nombre = "S" + nombre[2:]
+    nombre = os.path.splitext(nombre)[0] + ".RUI"
+    return os.path.join(carpeta, nombre)
 
 
 class FondoIncompatible(ValueError):

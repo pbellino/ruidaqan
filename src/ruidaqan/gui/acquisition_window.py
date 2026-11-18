@@ -12,8 +12,8 @@ from .parameters import GeneralParamTree, AdvancedParamTree, EspMedParamTree
 from .plotter import TabsPlot
 from .procesado_gui import (ProgresoMedicion, ShowRangesUtilization,
                            VentanaControlDC)
-from .data_io import (write_RUI_file, write_RUI_background, write_background,
-                     WriteHDF5File)
+from .data_io import (nombre_archivo_rui, write_RUI_file,
+                      write_RUI_background, write_background, WriteHDF5File)
 from .cip import InputIpValues
 from .procesamiento_window import FitWindow
 from .ventanas_ayuda import VentanaAyuda
@@ -221,7 +221,7 @@ class RangeAdjustmentWindow(QMainWindow):
         all_data = np.hstack(self.historias_acumuladas)
         # Calculo utilización y muestro
         porcentaje_utilizado = \
-                np.max(all_data, axis=1) / self.cur_ranges * 100
+                np.max(np.abs(all_data), axis=1) / self.cur_ranges * 100
         self.show_ranges.update(self.cur_ranges_bi, porcentaje_utilizado)
 
         if not hasattr(self , "adj_ranges_bi"):
@@ -781,7 +781,11 @@ class AcquisitionWindow(QMainWindow):
 
     def init_cip_win(self):
         self.cip_win_exist = True
-        self.cip_win = InputIpValues()
+        # Archivo de recuperación junto a la medición (no en el directorio
+        # desde donde se ejecuta el programa)
+        _recup = os.path.splitext(self.output_file_HDF)[0] \
+                                          + "-ingresos_manuales_cip.pkl"
+        self.cip_win = InputIpValues(archivo_recuperacion=_recup)
         self.cip_win.show()
         self.cip_win.cip_manual_win_closed.connect(self.cip_finished)
 
@@ -924,10 +928,8 @@ class AcquisitionWindow(QMainWindow):
 
         # Se escriben los datos en formato .RUI
 
-        # Quito un cero al comienzo
-        self.output_file_RUI = self.output_file_HDF.replace("S0", "S")
-        # Cambio la extensión
-        self.output_file_RUI = self.output_file_RUI.replace(".h5", ".RUI")
+        # S010-N1-1.h5 -> S10-N1-1.RUI (sólo cambia el nombre, no la carpeta)
+        self.output_file_RUI = nombre_archivo_rui(self.output_file_HDF)
 
         all_data = np.hstack(self.historias_acumuladas)
         if self.n_det <= 2:

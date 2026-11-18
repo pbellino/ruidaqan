@@ -251,16 +251,19 @@ class ProgresoMedicion(QWidget):
                 self.layout.itemAtPosition(3, i +1).widget().setText(volt_text)
                 self.reference_volt.append(float(volt_text))
             else:
-                # Límites para variaciones del 1% en las corrientes
-                # Se debe tener en cuenta el offset de la señal
-                sup_li = 1.01 * self.reference_volt[i] - 0.01 * self.offsets[i]
-                inf_li = 0.99 * self.reference_volt[i] + 0.01 * self.offsets[i]
-                if float(volt_text) >= sup_li:
+                # Variación de la corriente respecto de la primera historia
+                # (se descuenta el offset de la señal). Con el cociente de
+                # corrientes los límites del 1 % valen también para señales
+                # negativas.
+                _ref = self.reference_volt[i] - self.offsets[i]
+                _var = ((float(volt_text) - self.offsets[i]) / _ref - 1
+                        if _ref != 0 else 0.0)
+                if _var >= 0.01:
                     self.layout.itemAtPosition(2, i +1).widget().setStyleSheet(
                                                "color: red; font-weight: bold")
                     self.layout.itemAtPosition(4, i +1).widget().setStyleSheet(
                                                "color: red; font-weight: bold")
-                elif float(volt_text) <= inf_li:
+                elif _var <= -0.01:
                     self.layout.itemAtPosition(2, i +1).widget().setStyleSheet(
                                               "color: blue; font-weight: bold")
                     self.layout.itemAtPosition(4, i +1).widget().setStyleSheet(
@@ -281,9 +284,11 @@ class ProgresoMedicion(QWidget):
 
     def check_saturation_ranges(self, incoming_data):
         """ Comprueba si se produce saturación en el rango de la DAC usado """
-        # Cuenta la cantida de datos saturados
+        # Cuenta la cantida de datos saturados, en los dos extremos del rango
+        # (+32767 y -32768 con 16 bits; también -32767 por simetría)
         self.saturation_range += np.count_nonzero(
-                                   incoming_data==self.SATURATION_BIT, axis=1)
+                np.abs(np.asarray(incoming_data, dtype=np.int32))
+                >= self.SATURATION_BIT, axis=1)
         print(f"**** Datos rangos saturados: {self.saturation_range}")
         # Determina qué canal está saturado
         sat_channels_range = np.where(
@@ -306,8 +311,9 @@ class ProgresoMedicion(QWidget):
 
     def check_saturation_antialiasing(self, ac_data):
         # Cuenta la cantida de datos saturados
+        # Satura tanto en +4 V como en -4 V
         self.saturation_ac_filt += np.count_nonzero(
-                                ac_data > self.SATURATION_AC_ANTIALIAS, axis=1)
+                        np.abs(ac_data) > self.SATURATION_AC_ANTIALIAS, axis=1)
         print(f"**** Datos saturados entrada AA: {self.saturation_ac_filt}")
         # Determina qué canal está saturado
         sat_channels_ac = np.where(

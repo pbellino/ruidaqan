@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import os
+import re
 import numpy as np
 import importlib
 import tables as tb
@@ -97,9 +98,8 @@ class FitWindow(QMainWindow):
         # archivo recién medido
         if from_acquisition:
             self.pushButton_openfile.setEnabled(False)
+            # Abre, estima los espectros y los ajusta (process_time_file)
             self.get_time_file()
-            self.get_norm_spectrums()
-            self.fit_spectrums()
 
 
     def init_ui(self):
@@ -418,21 +418,43 @@ class FitWindow(QMainWindow):
             # Los resultados se graban junto al archivo procesado
             self.data_folder = os.path.dirname(
                                        os.path.abspath(self.time_filename))
+            _nombre = os.path.basename(self.time_filename)
             try:
-                # Intenta abrir como HDF5
-                self.time_file = HDF5FileProcessing(self.time_filename)
-            except tb.HDF5ExtError:
                 try:
+                    # Intenta abrir como HDF5
+                    time_file = HDF5FileProcessing(self.time_filename)
+                    is_hdf5 = True
+                except tb.HDF5ExtError:
                     # Intenta abrir como .RUI
-                    self.time_file = RUIFileProcessing(self.time_filename)
-                except Exception as e:
-                    print("No se pudo abrir ningún archivo", e)
-                else:
-                    self.is_hdf5_file = False
-                    self.process_time_file()
-            else:
-                self.is_hdf5_file = True
+                    time_file = RUIFileProcessing(self.time_filename)
+                    is_hdf5 = False
+            except Exception as e:
+                self._muestra_error("No se pudo abrir el archivo",
+                                    f"No se pudo abrir {_nombre} como .h5 ni "
+                                    "como .RUI.", e)
+                return
+            self.time_file = time_file
+            self.is_hdf5_file = is_hdf5
+            try:
                 self.process_time_file()
+            except Exception as e:
+                self._muestra_error("Error al procesar el archivo",
+                                    f"Se produjo un error al procesar {_nombre}.",
+                                    e)
+
+
+    def _muestra_error(self, titulo, texto, excepcion):
+        """
+        Muestra un error en pantalla (con el detalle técnico desplegable) en
+        lugar de cerrar el programa
+        """
+        import traceback
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle(titulo)
+        dlg.setIcon(QMessageBox.Icon.Critical)
+        dlg.setText(f"{texto}\n\n{type(excepcion).__name__}: {excepcion}")
+        dlg.setDetailedText("".join(traceback.format_exception(excepcion)))
+        dlg.exec()
 
 
     def process_time_file(self):
@@ -459,25 +481,37 @@ class FitWindow(QMainWindow):
            self.lbl_I2_title.hide()
            self.lbl_I2.hide()
 
+       # Serie, nivel y medición (del nombre del archivo)
+       self._get_info_from_filename()
+
        # Fija el reactor
-       try:
-           reactor = self.time_file.reactor.replace('-', '')
-           self.comboBox_reactorfile.setCurrentText(reactor)
-           self.checkbox_edit.setCheckState(Qt.CheckState.Unchecked)
-       except AttributeError:
+       reactor = getattr(self.time_file, "reactor", None)
+       if reactor is None:
            self.checkbox_edit.setCheckState(Qt.CheckState.Checked)
+       else:
+           reactor = str(reactor).replace('-', '').strip()
+           if reactor in self._lista_reactores:
+               self.comboBox_reactorfile.setCurrentText(reactor)
+               self.checkbox_edit.setCheckState(Qt.CheckState.Unchecked)
+           else:
+               # No hay constantes para el reactor del archivo: no se puede
+               # seguir con las del reactor anterior sin avisar
+               self.checkbox_edit.setCheckState(Qt.CheckState.Checked)
+               QMessageBox.warning(self, "Reactor sin constantes",
+                   f"No hay constantes nucleares para el reactor {reactor} "
+                   "del archivo. Se usan las de "
+                   f"{self.comboBox_reactorfile.currentText()}: elegí las "
+                   "constantes a mano y volvé a estimar los espectros, o "
+                   "agregá el reactor en 'constantes_reactores.py'.")
        # Constantes del núcleo indicado en el archivo
        self._aplica_nucleo_archivo()
 
        self.pushButton_getSpectrums.setEnabled(True)
        # Grafica las señales temporales
        self.plot_temporal_signals()
-       # Obtiene los espectros
-       self.get_norm_spectrums()
-       # Ajusta los espectros
-       self.fit_spectrums()
-       # Obtengo los atributos "serie", "nivel", "medicion"
-       self._get_info_from_filename()
+       # Obtiene los espectros y los ajusta
+       if self.get_norm_spectrums():
+           self.fit_spectrums()
 
 
     def plot_temporal_signals(self):
@@ -603,8 +637,13 @@ class FitWindow(QMainWindow):
 
     @pyqtSlot()
     def get_norm_spectrums(self):
+        """
+        Estima y grafica los espectros normalizados. Devuelve False si no se
+        pudieron estimar (por ejemplo, si falta la función transferencia).
+        """
         uf = self.spinBox_utility_freq.value()
-        self.time_file.get_normalized_spectrums(
+        try:
+            self.time_file.get_normalized_spectrums(
                                          self.reactor,
                                          self.spinBox_Nfft.value(),
                                          self.spinBox_overlap.value(),
@@ -613,6 +652,13 @@ class FitWindow(QMainWindow):
                                          window=VENTANAS[
                                            self.comboBox_ventana.currentText()]
                                          )
+        except FileNotFoundError as e:
+            # No se ajusta ni se graba con espectros de otro archivo
+            self.pushButton_fit.setEnabled(False)
+            self.btn_grabar.setEnabled(False)
+            QMessageBox.warning(self, "Función transferencia no encontrada",
+                                str(e))
+            return False
 
         # Grafica los espectros y agrega regiones de selección
         styles = {"color": "white", "font-size": "12pt"}
@@ -669,6 +715,7 @@ class FitWindow(QMainWindow):
         self.pushButton_fit.setEnabled(True)
 
         self.tabs.setCurrentIndex(2)
+        return True
 
 
     @pyqtSlot()
@@ -761,10 +808,6 @@ class FitWindow(QMainWindow):
             # Selecciono los datos del ajuste
             f1, f2 = self.regions[i].getRegion()
             ind = (self.time_file.f >= f1) & (self.time_file.f <= f2)
-            if i !=2:
-                data = self.time_file.norm_spectrums[i][ind]
-            else:
-                data = np.real(self.time_file.norm_spectrums[i][ind])
             # Se evalúa el modelo (con el ajuste pesado el residuo está
             # dividido por la incerteza y no sirve para reconstruirlo)
             _p = self.time_file.fit_results[i].params.valuesdict()
@@ -790,7 +833,8 @@ class FitWindow(QMainWindow):
                     if lab is not None: _str = f"{lab:.1f}"
                 self.lcds[f"{i}, {j}"].setText(_str)
 
-        self.btn_grabar.setEnabled(True)
+        # Sólo se puede grabar si se conocen serie, nivel y medición
+        self.btn_grabar.setEnabled(self.serie is not None)
         self.tabs.setCurrentIndex(2)
 
 
@@ -910,10 +954,23 @@ class FitWindow(QMainWindow):
 
 
     def _get_info_from_filename(self):
+        """
+        Serie, nivel y medición a partir del nombre del archivo
+        (SXXX-NY-Z.h5 o SXX-NY-Z.RUI). Si el nombre no tiene ese formato se
+        avisa y no se pueden grabar los resultados (self.serie = None).
+        """
         _file = os.path.split(self.time_filename)[-1]
-        self.serie = int(_file.split('-')[0][1:])
-        self.nivel = int(_file.split('-')[1][1:])
-        self.medicion = int(_file.split('-')[-1].split('.')[0])
+        m = re.fullmatch(r"S(\d+)-N(\d+)-(\d+)\.(h5|rui)", _file,
+                         flags=re.IGNORECASE)
+        if m is None:
+            self.serie = self.nivel = self.medicion = None
+            QMessageBox.warning(self, "Nombre de archivo no reconocido",
+                f"El nombre {_file} no tiene el formato SXXX-NY-Z: se puede "
+                "procesar, pero no se pueden grabar los resultados porque no "
+                "se conocen la serie, el nivel y la medición. Renombrá el "
+                "archivo para poder grabarlos.")
+            return
+        self.serie, self.nivel, self.medicion = map(int, m.groups()[:3])
 
 
     def _format_fitresults(self):
@@ -973,9 +1030,9 @@ class FitWindow(QMainWindow):
 
 if __name__ == "__main__":
     import sys
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
     app = QApplication(sys.argv)
     win = FitWindow()
     win.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 

@@ -278,8 +278,8 @@ Los valores instantáneos cambian de color cuando éstos cambian en más de un 1
 respecto al valor inicial (ver clase `ProgresoMedicion` en `procesado_gui.py`):
 
 - negro: valores dentro del 1% respecto al valor inicial
-- rojo: valores en más del 1% por encima del valor inicial
-- azul: valores en más del 1% por debajo del valor inicial
+- rojo: la corriente aumenta (en valor absoluto) más del 1%
+- azul: la corriente disminuye (en valor absoluto) más del 1%
 
 La comparación entre valores instantáneos e iniciales se hace sobre las
 corrientes medidas (y no sobre los voltajes).

@@ -43,20 +43,15 @@ class FittingTableModel(QtCore.QAbstractTableModel):
     def data(self, index, role):
         # Para formatear visualización del contenido de las celdas
         if role == Qt.ItemDataRole.DisplayRole:
-            _nul = ufloat(0, 0)
             value = self._data[index.row(), index.column()]
-            if isinstance(value, type(_nul)):
-                if umath.isnan(value):
+            if hasattr(value, "nominal_value"):
+                # ufloat (también los parámetros correlacionados, que son de
+                # otro tipo); los valores faltantes (NaN) se dejan vacíos
+                if np.isnan(value.nominal_value):
                     return ""
-                else:
-                    return f"{value:.2e}"
-            elif isinstance(value, float):
-                return f"{value:.2f}"
-            elif isinstance(value, type(umath.sin(_nul))):
-                # Los parámetros correlacionados tienen otro tipo de datos
-                # distinto al ufloat
-                _v = ufloat(value.n, value.s)
-                return f"{_v:.2e}"
+                return f"{ufloat(value.nominal_value, value.std_dev):.2e}"
+            elif isinstance(value, (float, np.floating)):
+                return "" if np.isnan(value) else f"{value:.2f}"
         # Para alinear contenido de las celdas
         if role == Qt.ItemDataRole.TextAlignmentRole:
             value = self._data[index.row(), index.column()]
@@ -261,6 +256,10 @@ class FittingView(QWidget):
                     self.lbl_results["r<sup>2</sup> "].setVisible(False)
                     self.groupBox_results.setTitle(
                             "Resultados del ajuste y = a ")
+                    # Puntos con incerteza positiva (con incerteza nula el
+                    # peso es infinito y el promedio da NaN)
+                    ok = np.isfinite(y_s) & (y_s > 0)
+                    x, y_n, y_s = x[ok], y_n[ok], y_s[ok]
                     if x.size < 1:
                         return
                     mean_y, std_y = weighted_average(y_n,  1 / y_s**2)
@@ -295,7 +294,10 @@ class FittingView(QWidget):
                     x = unumpy.nominal_values(_dat[:, 0])
                     y_n = unumpy.nominal_values(_dat[:, 1])
                     y_s = unumpy.std_devs(_dat[:, 1])
-                    mean, std = weighted_average(y_n,  1 / y_s**2)
+                    ok = np.isfinite(y_s) & (y_s > 0)
+                    if not ok.any():
+                        continue
+                    mean, std = weighted_average(y_n[ok],  1 / y_s[ok]**2)
                     # Escribo los resultados
                     self.lcds[f"{fila}, 1"].setText(f"{ufloat(mean, std)}")
                     # Grafico los resultados
@@ -347,11 +349,17 @@ class TableModel(QtCore.QAbstractTableModel):
 
         self._data = data or []
         self.header = header
+        # Tema del sistema (isDark es una función: sin paréntesis siempre era
+        # verdadero y nunca se usaban los colores del tema claro)
+        try:
+            self._tema_oscuro = bool(darkdetect.isDark())
+        except Exception:
+            self._tema_oscuro = False
 
 
     def data(self, index, role):
         # Colores a utlizar dependiendo del tema
-        if darkdetect.isDark:
+        if self._tema_oscuro:
             fondo_par = "DimGrey"
             fondo_impar = "DarkSlateGrey"
             fondo_vacio = "SlateGrey"
@@ -372,8 +380,6 @@ class TableModel(QtCore.QAbstractTableModel):
                 return f"{value:.2g}" if np.isfinite(value) else ""
             else:
                 return f"{value}"
-            if index.column() in [6, 7, 8]:
-                return f"{value:.2f}"
         # Para alinear contenido de las celdas
         if role == Qt.ItemDataRole.TextAlignmentRole:
             value = self._data[index.row()][index.column()]
@@ -568,8 +574,13 @@ class ShowSpectrumFittedValues(QMainWindow):
                 return
 
         self.model = TableModel(header=self.header)
+        self.tableView.setModel(self.model)
 
-        self.load()
+        try:
+            self.load()
+        except IOError:
+            # load ya avisó
+            return
         # Variable para saber si la tabla está vacia o no
         self.empty_table = False if np.asarray(self.model._data).size > 0 else True
         self.tableView.setModel(self.model)
@@ -869,6 +880,13 @@ class ShowSpectrumFittedValues(QMainWindow):
         salvo los de esta misma medición: si se borró y se vuelve a grabar,
         se reemplaza también en el archivo.
         """
+        if self._datos_grabados is None and os.path.exists(self.file_path):
+            # El archivo existe pero no se pudo leer: no se lo sobrescribe
+            QMessageBox.critical(self, "Error",
+                f"No se grabaron los datos: el archivo {self.file_path} "
+                "existe pero no se pudo leer. Revisalo (o movelo a otra "
+                "carpeta) antes de grabar.")
+            return
         if self._measurement_exists(data):
             # No se guardan los datos
             dlg = QMessageBox(self)
@@ -1004,34 +1022,44 @@ class ShowSpectrumFittedValues(QMainWindow):
 
 
     def load(self):
+        """
+        Lee el archivo de resultados. Si no se puede leer (no existe, está
+        dañado o no es una tabla de resultados) avisa y lanza IOError.
+        """
         try:
             with open(self.file_path, "rb") as f:
                 # Los archivos anteriores al test por lotes tienen 10
                 # columnas: se completan con las nuevas vacías. Al grabar,
                 # el archivo queda en el formato nuevo.
-                self.model._data = normaliza_resultados(pickle.load(f))
+                datos = normaliza_resultados(pickle.load(f))
+            self.model._data = datos
             # Copia de lo que está en el archivo, para saber si hay borrados
             # sin grabar
-            self._datos_grabados = np.copy(self.model._data)
+            self._datos_grabados = np.copy(datos)
             self.model.layoutChanged.emit()
             self._update_fit_widgets()
-            self._actualiza_titulo()
-            self.lbl_openfile.setText(self.file_path)
-            self.tabs_view.setEnabled(True)
-            self.tabs_view.setEnabled(True)
-        except IOError:
+        except Exception as e:
+            self._datos_grabados = None
+            self.model._data = normaliza_resultados([])
+            self.model.layoutChanged.emit()
             dlg = QMessageBox(self)
             dlg.setWindowTitle("Error")
             dlg.setIcon(QMessageBox.Icon.Critical)
-            dlg.setText(f"No se pudo abrir el archivo {self.file_path}")
-            button = dlg.exec()
+            detalle = ("" if isinstance(e, FileNotFoundError)
+                       else f"\n\n{type(e).__name__}: {e}")
+            dlg.setText(f"No se pudo abrir el archivo {self.file_path}"
+                        + detalle)
+            dlg.exec()
             self.cargar_btn.setEnabled(True)
             self.serie = None
-            raise
+            raise IOError(f"No se pudo abrir {self.file_path}") from e
+        self._actualiza_titulo()
+        self.lbl_openfile.setText(self.file_path)
+        self.tabs_view.setEnabled(True)
 
 
 if __name__ == "__main__":
-    from PyQt5 import QtWidgets
+    from PyQt6 import QtWidgets
     import sys
 
     app = QtWidgets.QApplication(sys.argv)

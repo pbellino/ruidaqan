@@ -75,6 +75,33 @@
   trabajo de la adquisición sólo cambia desde el menú de la ventana
   principal. Cancelar el diálogo de abrir ya no deja la carpeta vacía.
 
+### Correcciones de la revisión (segunda parte)
+
+- **Saturación**: sólo se detectaba en el extremo positivo del rango de la
+  placa (+32767) y del filtro antialias (+4 V). Ahora también en el
+  negativo. El indicador de utilización del rango usa el valor absoluto.
+- Control de las DC durante la adquisición: con señales negativas los
+  límites del 1 % quedaban invertidos (colores rojo/azul al revés).
+- Procesamiento: un archivo que no se puede abrir, uno con nombre fuera del
+  formato SXXX-NY-Z, un reactor sin constantes o sin funciones transferencia
+  ya no cierran el programa ni se procesan en silencio con las constantes
+  del archivo anterior: se avisa. Sin nombre válido no se habilita "Grabar".
+- Resultados: un `.pkl` dañado se avisa al abrirlo y "Grabar" no lo
+  sobrescribe.
+- CIp manual: se rechazan valores no numéricos e incertezas nulas o
+  negativas (daban NaN en la Ip). Acepta coma decimal. El archivo de
+  recuperación se guarda junto a la medición
+  (`SXXX-NY-Z-ingresos_manuales_cip.pkl`) y no en el directorio desde el
+  que se ejecuta el programa.
+- El nombre del .RUI se armaba reemplazando "S0" en toda la ruta.
+- Colores de la tabla de resultados según el tema del sistema (siempre se
+  usaban los del tema oscuro); valores faltantes vacíos en lugar de
+  "nan+/-nan".
+- `modifica_corrientes_fondo.py` modificaba archivos del directorio actual
+  al importarse.
+- Bloques `__main__` con PyQt5, `\d` sin raw string, dirección de correo
+  del "Acerca de".
+
 ### Para desarrolladores
 
 - `HDF5FileProcessing` y `RUIFileProcessing` comparten la clase base

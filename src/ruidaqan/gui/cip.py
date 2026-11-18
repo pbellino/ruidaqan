@@ -62,10 +62,15 @@ class InputIpValues(QtWidgets.QMainWindow):
 
     cip_manual_win_closed = pyqtSignal(list)
 
-    def __init__(self):
+    def __init__(self, archivo_recuperacion="ingresos_manuales_cip.pkl"):
+        """
+        archivo_recuperacion: archivo donde se van guardando los valores
+            ingresados, para recuperarlos si el programa se cierra antes de
+            finalizar. Se borra al finalizar.
+        """
         super().__init__()
 
-        self.FILE_NAME = "ingresos_manuales_cip.pkl"
+        self.FILE_NAME = archivo_recuperacion
 
         self.init_ui()
 
@@ -147,11 +152,20 @@ class InputIpValues(QtWidgets.QMainWindow):
         text_std = text_std.strip()  # Remove whitespace from the ends
         if text_I and text_std: # Don't add empty strings.
             try:
-                float_I = float(text_I)
-                float_std = float(text_std)
-            except:
-                print("Los valores ingresados deben ser números")
+                float_I = float(text_I.replace(",", "."))
+                float_std = float(text_std.replace(",", "."))
+                if not (np.isfinite(float_I) and np.isfinite(float_std)):
+                    raise ValueError
+            except ValueError:
+                QMessageBox.warning(self, "Valor inválido",
+                                    "Los valores ingresados deben ser números.")
             else:
+                if float_std <= 0:
+                    # Con incerteza nula el promedio pesado da NaN
+                    QMessageBox.warning(self, "Incerteza inválida",
+                                        "La incerteza de Ip debe ser mayor "
+                                        "que cero.")
+                    return
                 # Time
                 now_time = datetime.now().time()
                 # Access the list via the model.
@@ -202,7 +216,8 @@ class InputIpValues(QtWidgets.QMainWindow):
             except:
                 pass
         else:
-            print("Se debe introducir al menos un valor")
+            QMessageBox.warning(self, "Sin valores",
+                                "Se debe introducir al menos un valor de Ip.")
 
 
     def closeEvent(self, event):

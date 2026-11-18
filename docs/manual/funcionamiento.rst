@@ -114,8 +114,9 @@ La implementación se hizo en la clase ``ProgresoMedicion`` en
    adquiriendo dentro de los límites del rango especificado.
 
    La comparación se hace sobre los datos adquiridos en enteros de 16 bits. Es 
-   decir, que no se sobrepase el valor :math:`2^{16-1} -1` (para una ADC de 16 
-   bits con rango bipolar). ESte criterio es más laxo que hacer la comprobación
+   decir, que el valor absoluto no alcance :math:`2^{16-1} -1` (para una ADC
+   de 16 bits con rango bipolar), de modo que se detecta la saturación en los
+   dos extremos del rango. ESte criterio es más laxo que hacer la comprobación
    por voltaje, ya que usualmente las tarjetas permiten medir valores cercanos 
    por fuera del rango especificado.
 
@@ -129,7 +130,8 @@ La implementación se hizo en la clase ``ProgresoMedicion`` en
 2. Control a la entrada del filtro anti-aliasing
 
    Debido a que el filtro anti-aliasing CNEA-K340 posee una entrada que satura 
-   en 4V, se controla que no se supere dicho valor.
+   en 4V, se controla que el valor absoluto de la señal no supere dicho valor
+   (+4 V o -4 V).
 
    Se hace la comparación convirtiendo los datos adquiridos a voltaje.
 

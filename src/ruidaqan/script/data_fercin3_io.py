@@ -234,6 +234,16 @@ class _ProcesamientoEspectral():
                     window=window if window is not None else self.window)
         # Nombres de las funciones transferencia que voy a leer
         _tr_names = self._get_transfer_name(reactor_name)
+        _faltan = [os.path.basename(n) for n in _tr_names
+                   if not os.path.isfile(n)]
+        if _faltan:
+            raise FileNotFoundError(
+                f"No se encontraron las funciones transferencia "
+                f"{', '.join(_faltan)} del reactor {reactor_name} (ganancia "
+                f"AC y BW = {self.BW:.0f} Hz de la medición) en la carpeta "
+                f"{os.path.join(self.TRANSFERS_FOLDER, reactor_name or '')}. "
+                "Hay transferencias para: "
+                f"{', '.join(reactores_con_transferencias()) or 'ninguno'}.")
 
         # Lectura de las funciones transferencia
         _trans = []
@@ -1216,6 +1226,15 @@ class RUIFileProcessing(_ProcesamientoEspectral):
             for k, c in enumerate(conversion[_volt_float]):
                 volt_data +=  c * raw_data**k
             return volt_data
+
+
+def reactores_con_transferencias():
+    """ Reactores que tienen carpeta de funciones transferencia """
+    carpeta = importlib.resources.files("ruidaqan") / "transferencias"
+    try:
+        return sorted(c.name for c in carpeta.iterdir() if c.is_dir())
+    except OSError:
+        return []
 
 
 # Columnas de los archivos S###-resultados_ajustes.pkl (una fila por
