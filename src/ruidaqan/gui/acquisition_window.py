@@ -285,8 +285,9 @@ class RangeAdjustmentWindow(QMainWindow):
         """
         # Valores máximos adquiridos en cada canal (de los valores absolutos)
         max_values = np.max(abs(data), axis=1)
-        # Se comienza con los valores máximos (unipolares)
-        adj_ranges = self.max_rngs
+        # Se comienza con los valores máximos (unipolares). Copia: no se debe
+        # modificar self.max_rngs
+        adj_ranges = list(self.max_rngs)
         _av_rng = np.asarray(self.available_rngs)
         for i, max_val in enumerate(max_values):
             if (i + 1) % 3 != 0:
@@ -302,7 +303,8 @@ class RangeAdjustmentWindow(QMainWindow):
         # Aplico los rangos
         self.cfg_adv.set_channels_ranges(self.adj_ranges_bi)
         # print(f"Rangos ajustados: {adj_ranges}")
-        porcentaje_utilizado = max_values / np.asarray(self.max_rngs) * 100
+        # Utilización de los rangos ajustados
+        porcentaje_utilizado = max_values / np.asarray(adj_ranges) * 100
         # print(f"Utilización del rango: {porcentaje_utilizado} %")
         self.show_ranges.update(self.adj_ranges_bi, porcentaje_utilizado)
 

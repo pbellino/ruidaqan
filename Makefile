@@ -1,7 +1,7 @@
 NAME = ruidaqan
 
 .SUFFIXES:
-.PHONY: clean dist install install_dev docs lint test exe exe_adquisicion \
+.PHONY: clean dist install install_dev docs capturas lint test exe exe_adquisicion \
         exe_procesamiento exe_resultados stamp_hash restore_hash
 
 # Variables de ruta
@@ -39,6 +39,11 @@ test_cov:
 
 docs:
 	$(MAKE) -C docs html
+
+# Regenera las capturas de procesamiento y resultados (docs/manual/images)
+# con una serie sintética, sin pantalla ni placa
+capturas:
+	python docs/genera_capturas.py
 
 dist: docs
 	# 1. Preparar carpeta de docs interna

@@ -38,7 +38,7 @@ Parámetros configurables
     transferencia para normalizar los espectros.
 
 **Núcleo**
-    Identificación del núcleo en donde se realizal a medición.  Junto con
+    Identificación del núcleo en donde se realiza la medición. Junto con
     **Reactor** se utilizará para elegir las constantes nucleares.
 
 **Cadenas de medición**
@@ -66,10 +66,10 @@ Botones y menú
     Abre la pantalla del osciloscopio.
 
 **Medición de fondo**
-    Abre la pantala para la medición de fondo.
+    Abre la pantalla para la medición de fondo.
 
 **Medición**
-    Abre la pantalla para la medición de ruido neutrónico
+    Abre la pantalla para la medición de ruido neutrónico.
 
 **Menú**
     *Cambiar carpeta de trabajo*: elige la carpeta donde se graban las
@@ -84,22 +84,22 @@ Botones y menú
     *Exit*: cierra el programa.
 
 **Cfg. Avanzada**
-    Permite abrir la ventana de configuración avanzada
+    Permite abrir la ventana de configuración avanzada.
 
 **Ayuda**
-    Ayuda e información del programa
+    Ayuda de cada ventana e información del programa.
 
 
 Osciloscopio
 ------------
 
-Aplicación para visualizar las señales conectadas en las distintos canales
+Aplicación para visualizar las señales conectadas en los distintos canales
 analógicos de la placa de adquisición.
 
 .. image:: images/pantalla_osciloscopio.png
   :width: 400
   :align: center
-  :alt: Ventana para la configuración avanzada.
+  :alt: Ventana del osciloscopio.
 
 La adquisición se realiza en forma de bloques, cuya cantidad de puntos se puede
 configurar.
@@ -108,11 +108,11 @@ Se pueden configurar tanto los parámetros comunes a todos los canales, como as�
 también parámetros individuales a cada canal por separado.
 
 **Parámetros comunes**
-    Configuran la forma en que se realizará la adquisición de datos
+    Configuran la forma en que se realizará la adquisición de datos.
 
     - Cantidad de canales: cantidad de canales que se desean adquirir.
 
-    - Dispositivo: identificación del dispositivo NI dispinible para la
+    - Dispositivo: identificación del dispositivo NI disponible para la
       adquisición. Sólo se muestran los disponibles.
 
     - Frecuencia: frecuencia de muestreo, en Hertz.
@@ -126,12 +126,12 @@ también parámetros individuales a cada canal por separado.
     - Nombre: identificación del canal analógico. Sólo se muestran los
       disponibles en la placa de adquisición.
 
-    - Rango: rango en que se realizará la adquisicón. Sólo se muestran los 
+    - Rango: rango en que se realizará la adquisición. Sólo se muestran los 
       rangos disponibles en la placa de adquisición.
 
     - Color: color que tendrán los datos adquiridos al ser visualizados.
 
-    - Identificación: nombre con que se identificarán a la curva de datos
+    - Identificación: nombre con que se identificará la curva de datos
       adquiridos al ser graficados.
 
 En la parte derecha del gráfico se pueden seleccionar, mientras se realiza la 
@@ -151,29 +151,29 @@ que se utilizará para la adquisición de datos y de sus parámetros asociados.
 
 
 *Importante:*
-    *Esta ventana se debe acceder una vez seteados los parámetros de la `Ventana
-    principal`_ (pues depende de ellos).*
+    *A esta ventana se debe acceder una vez fijados los parámetros de la
+    `Ventana principal`_ (pues depende de ellos).*
 
-Al abrir esta ventana, por default lo hace en modo de sólo lectura. Si se desea
-modificar los parámetros abrá que tildar, en la parte superior, la opción
-**Editar configuracón**
+Al abrir esta ventana, por defecto lo hace en modo de sólo lectura. Si se desea
+modificar los parámetros habrá que tildar, en la parte superior, la opción
+**Editar configuración**.
 
 Los parámetros configurables están organizados en tres grupos: dispositivo,
-cadenas para la medición de ruido neutrónico y cadena para la medición de Ip (
-en caso de haber tildado **Medición de CIp** en la `Ventana principal`_).
+cadenas para la medición de ruido neutrónico y cadena para la medición de Ip
+(en caso de haber tildado **Medición de CIp** en la `Ventana principal`_).
 
 **Dispositivo**
     Selección del dispositivo NI con que se hará la adquisición de datos.
-    Automaticamente se listan todos los dipositivos disponibles. Pueden ser
+    Automáticamente se listan todos los dispositivos disponibles. Pueden ser
     reales o simulados.
 
 **Cadena n**
-    En cada cadena se deben especificar la adquisicón de las tres señales: 
+    En cada cadena se debe especificar la adquisición de las tres señales:
 
     - AC: Canal donde se hará la adquisición de la componente fluctuante a
       la salida del filtro anti-aliasing.
 
-    - DC: Canal donde se hará la adquisición de la componente contínua a la
+    - DC: Canal donde se hará la adquisición de la componente continua a la
       salida del amplificador.
 
     - AC filtro: Canal donde se hará la adquisición de la componente
@@ -195,18 +195,18 @@ en caso de haber tildado **Medición de CIp** en la `Ventana principal`_).
     
 **Cadena CIp**
     Aparece sólo si se tildó **Medición de CIp** en la `Ventana principal`_.
-    Sólamente se configura la adquisición de la señal de DC de dicho detector.
+    Solamente se configura la adquisición de la señal de DC de dicho detector.
     Los parámetros son similares a los especificados anteriormente para cada
     **Cadena n**.
 
 La lista de canales disponibles, como así también de rangos disponibles, son
 leídos directamente del **Dispositivo** indicado.
 
-Por default, el orden en que se especifican los canales coincide con el orden 
+Por defecto, el orden en que se especifican los canales coincide con el orden 
 utilizado por el programa FERCIN-3 para la adquisición de dos cadenas de ruido.
 
-Conviente siempre adquirir canales consecutivos. De nos ser posible, se deben
-corto-circuitear los canales libres intermedios.
+Conviene siempre adquirir canales consecutivos. De no ser posible, se deben
+cortocircuitar los canales libres intermedios.
 
 
 Medición de fondo
@@ -217,7 +217,7 @@ Esta ventana permite fijar los parámetros para realizar la medición de fondo.
 .. image:: images/pantalla_med_fondo.png
   :width: 300
   :align: center
-  :alt: Ventana para la configuración avanzada.
+  :alt: Ventana para la medición de fondo.
 
 
 Los parámetros a configurar están agrupados por cadena de medición. 
@@ -269,8 +269,8 @@ la ventana de `Ajuste de rangos`_.
 Al comenzar la medición de fondo se podrá ver el avance a través de la barra
 de progreso. 
 
-Se muestran también los voltajes (en Volts) instantáneos de cada señal medida.
-Los instantáneos (promedio de cada bloque adquirido) y el inicial. Utilizando
+Se muestran también los voltajes (en Volts) de cada señal medida: el
+instantáneo (promedio de cada bloque adquirido) y el inicial. Utilizando
 la sensibilidad y el offset definidos se muestra también la corriente (en
 Amperes).
 
@@ -297,26 +297,26 @@ clase `BackgroundWindow` en `acquisition_window.py`).
 
 **Archivos generados**
     Los valores de las corrientes de fondo son guardados en el archivo
-    `SXXX-FONDOS` (donde XXX es la **Serie** definida en la `Ventana 
+    ``SXXX-FONDOS`` (donde XXX es la **Serie** definida en la `Ventana 
     principal`_). Todas las corrientes con sus incertezas se ordenan por fila 
     (ver encabezado de dicho archivo).
 
     Por compatibilidad con el programa FERCIN3, también se guardan en los 
-    archivos `FONDO1`, `FONDO2` (en caso de medir con dos detectores) y 
-    `FONDO-IP` por separado.
+    archivos ``FONDO1``, ``FONDO2`` (en caso de medir con dos detectores) y
+    ``FONDO-IP`` por separado.
 
 
 Ajuste de rangos
 ----------------
 
-Esta ventana permitirá ajustar de forma óptima a los rangos utilizados para la
-adquisición de voltaje de la tarjeta.
+Esta ventana permite ajustar de forma óptima los rangos de voltaje de la
+tarjeta utilizados para la adquisición.
 
 
 .. image:: images/pantalla_ajuste_rangos.png
   :width: 300
   :align: center
-  :alt: Ventana para la configuración avanzada.
+  :alt: Ventana para el ajuste de rangos.
 
 
 Una vez abierta esta ventana, automáticamente se comenzará a buscar cuál es el
@@ -331,7 +331,7 @@ el rango y el porcentaje de utilización de dicho rango.
     (por lo general serán aquellos configurados en `Configuración avanzada`_).
 
 **Ajustar**
-    Selecciona a los mejores rangos disponibles en la tarjeta de acuerdo a las
+    Selecciona los mejores rangos disponibles en la tarjeta de acuerdo con las
     señales medidas en cada canal.
 
 Si los porcentajes de utilización de los rangos no son satisfactorios, se debe
@@ -347,8 +347,10 @@ continuar con alguna de las tres opciones:
     `Configuración avanzada`_).
 
 **Ajustados**
-    Comienza la medición utilizando los rangos ajustados de acuerdo al criterio
-    (TODO).
+    Comienza la medición utilizando los rangos ajustados: para cada canal, el
+    menor rango de la tarjeta que es mayor que el máximo valor absoluto medido
+    (ver :doc:`funcionamiento`). El rango de la señal a la entrada del filtro
+    anti-aliasing queda fijo.
 
 **Cancelar**
     Cierra la ventana sin efectuar ninguna modificación en los rangos. Se
@@ -393,7 +395,7 @@ individual.
 
     - **Ganancia AC**
         Ganancia que se aplica a la componente fluctuante de la señal. Sólo se
-        permite elegir entre las ganancias disponibles dek amplificador 
+        permite elegir entre las ganancias disponibles del amplificador
         CNEA-K330.
 
     - **Offset**
@@ -420,24 +422,24 @@ individual.
     Configuración de parámetros relevantes para la adquisición de datos.
 
     - **BW**
-        Ancho de banda (en Hz) que se utilizará para la medición. la frecuencia
+        Ancho de banda (en Hz) que se utilizará para la medición. La frecuencia
         de muestreo será el doble de **BW**.
 
     - **Puntos**
         Cantidad de datos que se adquirirán por bloque (o historia).
 
     - **Historias**
-        Cantidad de historias que se adquirirán por medición
+        Cantidad de historias que se adquirirán por medición.
 
 
 **Medición**
     Configuración para identificar a cada medición
 
     - **Nivel**
-        Número que identifica al nivel de potencia en que se está midiendo
+        Número que identifica al nivel de potencia en que se está midiendo.
 
     - **Medición**
-        Número para identificar a la medición dentro de un mismo **Nivel**
+        Número para identificar a la medición dentro de un mismo **Nivel**.
 
     - **Comentario**
         Cualquier comentario relevante a la medición en particular.
@@ -445,8 +447,8 @@ individual.
         Este campo será el reemplazo de los comentarios que se hacen dentro
         de cada **Cadena n**.
 
-En el menú superior se encuentra un botón para abrir la ventana de **Ajustes**
-en caso de que se quiera analizar una medición ya realizada.
+En el menú superior (**Ver**) se puede abrir la ventana de `Procesamiento y
+ajustes`_, en caso de que se quiera analizar una medición ya realizada.
 
 En la parte inferior se encuentran los botones para abrir el **Osciloscopio** y
 para **Comenzar la medición**.
@@ -478,7 +480,7 @@ más relevantes.
         las señales medidas. Se actualiza con cada historia leída.
 
     - **Espectros**
-        Muestra el espectro asociado de la componente fluctuantes **AC**. Con
+        Muestra el espectro asociado de la componente fluctuante **AC**. Con
         cada nueva historia adquirida se calcula un espectro. El gráfico que
         se muestra consiste en los promedios de todos los espectros adquiridos 
         hasta ese momento.
@@ -488,7 +490,7 @@ más relevantes.
         Sólo se lo pone para ir viendo si la forma del espectro es la esperada.
 
     - **DC**
-        Muestra el gráfico con los valores de las componentes contínuas de las 
+        Muestra el gráfico con los valores de las componentes continuas de las
         señales medidas. Se actualiza con cada historia leída.
 
 En todas las pestañas es posible elegir qué señales se mostrarán al tildar o no
@@ -510,14 +512,14 @@ Barra de menú
 
 **Configuraciones**
     Muestra y/o oculta las pestañas de configuración, que aparecerá a la
-    izquierda de los gráficos. Se muestran todas los parámetros configurados
+    izquierda de los gráficos. Se muestran todos los parámetros configurados
     (en modo sólo lectura). También existe una pestaña para controlar 
     visualmente la saturación de los rangos de cada señal.
 
 **Control**
     Abre una ventana donde se replica toda la información sobre el progreso de
-    la medición (lo que aparece en la parte inferior de la ventana de 
-    `Medición`_. Está ampliada para que, de ser necesario, pueda ser observada
+    la medición (lo que aparece en la parte inferior de la ventana de
+    `Medición`_). Está ampliada para que, de ser necesario, pueda ser observada
     de lejos.
 
 **Salir**
@@ -549,7 +551,7 @@ a la ventana de adquisición. Se llega a ella mediante dos maneras:
 
 2. Automáticamente se abrirá esta ventana al finalizar una adquisición de datos.
 
-   En este caso, se abre el archivo corresponiente a la medición que acaba de
+   En este caso, se abre el archivo correspondiente a la medición que acaba de
    finalizar.
 
 .. image:: images/pantalla_procesamiento.png
@@ -569,7 +571,7 @@ El uso de esta ventana consiste en cuatro etapas consecutivas:
 
 
 Dependiendo de cómo se llame a esta ventana, es posible que muchas de estas
-etapas se ejecuten automáticamente (con parámetros por default o leidos del 
+etapas se ejecuten automáticamente (con parámetros por defecto o leídos del
 archivo con los datos adquiridos).
 
 1. Cargado del archivo
@@ -588,10 +590,15 @@ siguientes archivos:
   Son archivos con extensión .RUI. La mayoría de las veces se los reconoce por
   haber sido generados a partir de una DAQ de 12 bits.
 
-- Archivos grabados con el programa ``FERCIN3-VB```
+- Archivos grabados con el programa ``FERCIN3-VB``
 
   Son archivos con extensión .RUI. La mayoría de las veces se los reconoce por 
   haber sido generados a partir de una DAQ con 16 bits.
+
+Para poder grabar los resultados, el nombre del archivo debe tener el formato
+``SXXX-NY-Z`` (serie, nivel y medición); si no, se avisa y se puede procesar
+pero no grabar. Si el archivo no se puede abrir, se avisa y queda cargado el
+anterior.
 
 Como se puede ver, los archivos con formato .RUI pueden venir de distintos 
 programas de adquisición. Se los diferencia por la cantidad de bits de la DAQ 
@@ -600,8 +607,8 @@ bits, pero para una de 12 bits puede ser erróneo).
 
 Tanto los programas ``RuiDAQAn`` como ``FERCIN3-VB`` trabajan con DAQ de 16 
 bits. La diferencia radica en que el primero genera un archivo extra con los 
-valores de los coeficientes para pasar de enteros a voltajes 
-(``SXX-coeficientes_int_to_volt.pkl`` dentro de la carpeta ``datos``). 
+valores de los coeficientes para pasar de enteros a voltajes
+(``SXX-coeficientes_int_to_volt.pkl``, en la misma carpeta que el .RUI).
 Entonces, al cargar el .RUI, el programa busca dicho archivo. Si no lo 
 encuentra, asume que fue generado por el ``FERCIN3-VB`` y se toman 
 coeficientes genéricos.
@@ -611,15 +618,20 @@ coeficientes genéricos.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Se deberá seleccionar el reactor y, de ser necesario, el núcleo en donde se 
-realizaron las mediciones. Estos datos están incluidos en los archvios .h5, 
-por lo cual la selección se hace automáticamente. De todas formas, si se desea
-modificar esos parámetros, se debe tildar ``Habilitar edición``.
+realizaron las mediciones. Estos datos están incluidos en los archivos .h5,
+por lo cual la selección se hace automáticamente (también la del núcleo). De
+todas formas, si se desea modificar esos parámetros, se debe tildar
+**Habilitar edición** y volver a estimar los espectros.
 
-Si se abre un .RUI se debe saber de ante-mano en qué reactor se realizó la 
+Si el reactor del archivo no tiene constantes, o el núcleo indicado no las
+tiene, se avisa: en el primer caso se habilita la edición para elegirlas a
+mano; en el segundo se usan las del núcleo por defecto.
+
+Si se abre un .RUI se debe saber de antemano en qué reactor se realizó la
 medición.
 
-Los datos cinéticos son leidos del archivo 
-``ruidaqan/constantes/constantes_reactores.py`` ubicado en la carpeta donde
+Los datos cinéticos son leídos del archivo
+``ruidaqan/constants/constantes_reactores.py`` ubicado en la carpeta donde
 se instaló el paquete. Si se quieren agregar o modificar datos, se deberá
 editar dicho archivo (y volver a abrir el programa).
 
@@ -657,9 +669,10 @@ cada bloque y finalmente se promedian).
 **Frecuencia de línea**
     Se utilizará para eliminar el pico en el espectro correspondiente a la
     frecuencia de línea y a sus dos primeros armónicos
-    (:math:`f_l, 2f_l\text{ y } 3f_l`).
-    La forma de eliminar el pico es buscando el punto donde ocurre y borrando
-    dicho punto con sus dos vecinos.
+    (:math:`f_l, 2f_l\text{ y } 3f_l`), tanto en los espectros como en las
+    funciones transferencia. Los puntos a menos de 1 Hz de cada una de esas
+    frecuencias se reemplazan por el valor del punto anterior a ese
+    intervalo.
 
 
 4. Ajuste de los espectros
@@ -667,10 +680,10 @@ cada bloque y finalmente se promedian).
 
 Se define el rango de frecuencias en donde se hará el ajuste.
 
-Los valores por default coinciden con los utilizados por el programa
-`FERCIN3`.
+Los valores por defecto coinciden con los utilizados por el programa
+FERCIN3 (2.3-178.9 Hz con BW = 200 Hz y 2.8-35.8 Hz con BW = 40 Hz).
 
-Se pueden seleccionar los espectros individualmente o todo juntos, a través
+Se pueden seleccionar los espectros individualmente o todos juntos, a través
 del combo-box **Espectros**. La selección también se puede hacer moviendo
 la zona de ajuste desde el mismo gráfico.
 
@@ -709,7 +722,9 @@ la zona de ajuste desde el mismo gráfico.
     :math:`\alpha` conserva siempre la incerteza del ajuste.
 
 
-Cuando se abre un archivo .h5, los pasos 1 a 4 se realizan automáticamente.
+Al abrir un archivo, los pasos 1 a 4 se realizan automáticamente. Si falta
+la función transferencia del reactor (para la ganancia AC y el BW de la
+medición), se avisa qué archivo falta y no se ajusta.
 
 Una vez realizado el ajuste, aparecerán los resultados en la parte inferior de 
 la ventana, junto con los valores :math:`p` del test por lotes.
@@ -737,40 +752,102 @@ Los botones a la derecha son:
 Resultados
 ----------
 
-La tabla de **Datos** tiene, además de los parámetros de cada espectro, dos
-columnas del test por lotes de la potencia:
+Ventana para revisar las mediciones de una serie y obtener los resultados de
+la calibración: factores de calibración de cada cadena, :math:`\alpha`,
+:math:`f_q` y :math:`\varepsilon/\beta^2`. Se llega a ella de dos maneras:
 
-**p lotes (P)**
-    Valor :math:`p` del test.
+1. Desde la ventana de `Procesamiento y ajustes`_, con **Datos previos** o al
+   apretar **Grabar datos**. Se abre el archivo de la serie del archivo
+   procesado y no se puede cambiar.
 
-**Incerteza (P)**
-    ``ajuste`` o ``lotes``, según qué incerteza se informó para la potencia.
-    Las mediciones con ``lotes`` se resaltan en color.
+2. Desde la consola, con cualquiera de los comandos
 
-Los archivos ``SXXX-resultados_ajustes.pkl`` grabados con versiones
-anteriores (sin el test) se pueden abrir igual: esas dos columnas quedan
-vacías. Al grabar, el archivo pasa al formato nuevo, que las versiones
-anteriores del programa no pueden leer.
+   .. code-block:: bash
 
-**Borrar** quita de la tabla las filas seleccionadas y recalcula los
-ajustes, pero no modifica el archivo: el título de la ventana muestra un
-``*`` mientras haya borrados sin grabar. Al cerrar la ventana (o al abrir
-otro archivo) se pregunta si se graban (*Save*), se descartan (*Discard*,
-las filas quedan en el archivo) o se cancela el cierre. Las mediciones
-nuevas que llegan con **Grabar datos** se graban enseguida; si se borró una
-medición y se la vuelve a grabar, se reemplaza también en el archivo.
+       > ruidaqan resultados
+       > ruidaqan r
+
+   y luego **Abrir archivo**. El diálogo arranca en la última carpeta desde la
+   que se abrió un archivo.
+
+Se lee y se graba el archivo ``SXXX-resultados_ajustes.pkl`` (ver
+:doc:`funcionamiento`).
+
+.. image:: images/pantalla_resultados.png
+  :width: 700
+  :align: center
+  :alt: Ventana de resultados, pestaña de datos.
+
+La ventana tiene tres pestañas y, debajo, un resumen y las predicciones.
+
+**Datos**
+    Una fila por espectro grabado: nivel, medición, BW, espectro, Ip, corriente
+    de la cadena (Ii), :math:`\alpha`, potencia, :math:`f_q` y
+    :math:`\varepsilon/\beta^2` (los dos últimos sólo para las NPSD), y dos
+    columnas del test por lotes de la potencia:
+
+    - **p lotes (P)**: valor :math:`p` del test.
+
+    - **Incerteza (P)**: ``ajuste`` o ``lotes``, según qué incerteza se
+      informó para la potencia. Las mediciones con ``lotes`` se resaltan en
+      color: conviene revisarlas.
+
+    Los archivos grabados con versiones anteriores (sin el test) se pueden
+    abrir igual: esas dos columnas quedan vacías. Al grabar, el archivo pasa al
+    formato nuevo, que las versiones anteriores del programa no pueden leer.
+
+    **Borrar** quita de la tabla las filas seleccionadas y recalcula todo,
+    pero no modifica el archivo: el título de la ventana muestra un ``*``
+    mientras haya borrados sin grabar. Al cerrar la ventana (o al abrir otro
+    archivo) se pregunta si se graban (*Save*), se descartan (*Discard*: las
+    filas quedan en el archivo) o se cancela el cierre. Las mediciones nuevas
+    que llegan con **Grabar datos** se graban enseguida; si se borró una
+    medición y se la vuelve a grabar, se reemplaza también en el archivo.
+
+**Ajustes**
+    Ajustes lineales :math:`y = a x + b` de la potencia en función de cada
+    corriente (**p vs I1**, **p vs I2**, **p vs Ip**) y de Ip en función de
+    las corrientes de las cadenas (**Ip vs I1**, **Ip vs I2**). La pendiente
+    :math:`a` de **p vs I** es el factor de calibración de esa cadena; la
+    ordenada :math:`b` debería ser compatible con cero. Se usa la potencia de
+    la NCPSD (o de la NPSD1 si se midió con un solo detector).
+
+    .. image:: images/pantalla_resultados_ajustes.png
+      :width: 700
+      :align: center
+      :alt: Ventana de resultados, ajuste de la potencia en función de Ip.
+
+**Parámetros**
+    :math:`\alpha`, :math:`f_q` de cada cadena y :math:`\varepsilon/\beta^2`,
+    graficados en función de la potencia media del nivel (o de la corriente,
+    para :math:`f_q`), con su promedio pesado. :math:`f_q` y
+    :math:`\varepsilon/\beta^2` se calculan sólo con las mediciones de
+    BW = 200 Hz.
+
+En cada pestaña de **Ajustes** y **Parámetros** se pueden excluir puntos
+seleccionándolos en la tabla y apretando **Borrar**; **Todos** los recupera.
+Esto sólo cambia el ajuste de esa pestaña y no modifica el archivo.
 
 Los ajustes y promedios se arman por medición (nivel y número de medición):
-si se borra el espectro de una medición, esa medición no se usa en los
-ajustes que lo necesitan y el resto no se ve afectado. Un ajuste lineal
-necesita mediciones en al menos dos niveles distintos.
+si se borra el espectro de una medición, esa medición no se usa en los ajustes
+que lo necesitan y el resto no se ve afectado. Un ajuste lineal necesita
+mediciones en al menos dos niveles distintos; si no las hay, no se muestra
+resultado.
+
+**Parámetros comunes e individuales**
+    Resumen de :math:`f_p`, :math:`\alpha`, y de :math:`f_i`,
+    :math:`\varepsilon/\beta^2` y :math:`f_q` de cada cadena. Se actualiza al
+    borrar o recuperar puntos.
 
 **Predicciones**
-    Se usan los ajustes lineales :math:`p = a_i I_i + b_i`. Al cambiar una
-    corriente se calcula la potencia con su ajuste y, con esa potencia, el
-    resto de las corrientes: :math:`I_j = (p - b_j)/a_j`. La ordenada
-    :math:`b` de cada ajuste se muestra en su pestaña y debería ser
-    compatible con cero.
+    Se usan los ajustes lineales :math:`p = a_i I_i + b_i`. Al cambiar la
+    potencia se calculan las corrientes; al cambiar una corriente se calcula
+    la potencia con su ajuste y, con esa potencia, el resto de las corrientes:
+    :math:`I_j = (p - b_j)/a_j`. Se usan los valores centrales de :math:`a` y
+    :math:`b`.
 
-TODO
+**Abrir archivo**
+    Sólo está habilitado si la ventana se abrió desde la consola.
 
+**Cerrar**
+    Cierra la ventana (preguntando antes si hay borrados sin grabar).

@@ -22,13 +22,25 @@ class VentanaAyuda(QMainWindow):
             pkg_path = os.path.join(four_up, 'docs', '_build', 'html', 'manual', 'pantallas.html')
         path = pkg_path
 
-        URL = QUrl.fromLocalFile(path)
-        # Para abrir la página en una determinada referencia
-        if referencia: URL.setFragment(referencia)
         self.setWindowTitle('Ayuda')
-
         self.VisorTexto = QWebEngineView()
-        self.VisorTexto.setUrl(URL)
+
+        if os.path.exists(path):
+            URL = QUrl.fromLocalFile(path)
+            # Para abrir la página en una determinada referencia
+            if referencia: URL.setFragment(referencia)
+            self.VisorTexto.setUrl(URL)
+        else:
+            # Sin la documentación compilada se vería una página en blanco
+            self.VisorTexto.setHtml(
+                "<h3>No se encontró la ayuda</h3>"
+                "<p>La ayuda se genera con Sphinx a partir de la carpeta "
+                "<code>docs</code> del repositorio:</p>"
+                "<ul><li><code>make docs</code> (para usar desde el "
+                "repositorio) o</li>"
+                "<li><code>make dist</code> (la incluye en el paquete "
+                "instalable).</li></ul>"
+                f"<p>Se buscó en:<br><code>{pkg_path}</code></p>")
 
         self.setCentralWidget(self.VisorTexto)
         self.resize(500, 800)

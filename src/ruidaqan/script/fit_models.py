@@ -116,7 +116,7 @@ def ajuste_cpsd_ponderado(freq, re_cpsd, apsd1, apsd2, n_eff, n_iter=3):
     freq, y S12 el modelo de la NCPSD (iterado n_iter veces).
 
     Notar que cuando la coherencia es baja la varianza está dominada por
-    S11 S22 y no por Re(S12)^2: pesar con sigma = |S12| / sqrt(n_eff) (como
+    S11 S22 y no por Re(S12)^2: pesar con sigma = abs(S12) / sqrt(n_eff) (como
     en las NPSD) subestima fuertemente la varianza a alta frecuencia.
     """
     result = ajuste_cpsd(freq, re_cpsd)

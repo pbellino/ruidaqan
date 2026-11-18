@@ -102,6 +102,24 @@
 - Bloques `__main__` con PyQt5, `\d` sin raw string, dirección de correo
   del "Acerca de".
 
+### Documentación
+
+- "Funcionamiento": secciones nuevas de formato de archivos (HDF5, fondos,
+  resultados), método espectral, corrección por función transferencia,
+  ajuste y cálculo de parámetros, incerteza por lotes y resultados.
+- "Ventanas": sección de Resultados completa con capturas, criterio de los
+  rangos ajustados, menú de la ventana principal; descripción de la
+  frecuencia de línea corregida y erratas.
+- Las fórmulas se ven sin conexión a internet (MathJax local en
+  `docs/_static/mathjax`).
+- Sin warnings al compilar (antes 21); `conf.py` ya no simula PyQt5.
+- `make capturas` regenera las capturas de procesamiento y resultados con
+  una serie sintética, sin pantalla ni placa.
+- Se quitó el build viejo de la documentación versionado en
+  `src/ruidaqan/docs/` (el programa usa `src/ruidaqan/docs/html`, que genera
+  `make dist`). Si falta la ayuda compilada, la ventana de ayuda explica cómo
+  generarla en lugar de quedar en blanco.
+
 ### Para desarrolladores
 
 - `HDF5FileProcessing` y `RUIFileProcessing` comparten la clase base

@@ -108,7 +108,7 @@ def read_PSD_file(file_name):
             dicc["IpE"] Incerteza en Ip [A]
             dicc["NDET"] Cantidad de cadenas utilizadas (1 ó 2)
 
-            - Parámetros de la cadena 1
+            Parámetros de la cadena 1:
             dicc["V1"] Voltaje medio de cadena 1 [V]
             dicc["V1E"] Incerteza en V1 [V]
             dicc["I1F"] Corriente de fondo de I1 [A]
@@ -118,7 +118,7 @@ def read_PSD_file(file_name):
             dicc["K1"] Ganancia AC cadena 1
             dicc["K1E"] Incerteza en K1
             dicc["COM1"] Comentario sobre cadea 1
-            - Parámetros de la cadena 2
+            Parámetros de la cadena 2
             (en caso de existir, de lo contrario no se definen las claves)
             dicc["V2"] Voltaje medio de cadena 2 [V]
             dicc["V2E"] Incerteza en V2 [V]
@@ -474,9 +474,8 @@ def obtain_normalized_spectrum(PSD_dic, get_spectrum="APSD1",
             Frequency/ies to be removed
 
         reactor_name : string (Optional)
-            Nombre del reactor. Se asume que los archivos están en:
-                "trs/reactor_name/"
-            El nombre "trs" está hardcodeado
+            Nombre del reactor. Se asume que los archivos están en
+            ``trs/reactor_name/`` (el nombre "trs" está fijo en el código).
             Si no se especifica, se toma la carpeta como "trs/"
 
     Returns
@@ -623,9 +622,8 @@ def get_transfer_name(PSD_dic, get_spectrum, reactor_name=None):
             Nombre del espectro que se desee calcular
 
         reactor_name : string (Optional)
-            Nombre del reactor. Se asume que los archivos están en:
-                "trs/reactor_name/"
-            El nombre "trs" está hardcodeado
+            Nombre del reactor. Se asume que los archivos están en
+            ``trs/reactor_name/`` (el nombre "trs" está fijo en el código).
             Si no se especifica, se toma la carpeta como "trs/"
             TODO: definir la estructura luego.
 

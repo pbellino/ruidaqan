@@ -21,7 +21,7 @@ except ImportError:
 # Si el hash está vacío (no estampado), intentamos obtenerlo de Git
 if not git_hash or git_hash == "":
     try:
-        git_hash = subprocess.check_output(['git', 'rev-parse', '--short', HEAD]).decode('ascii').strip()
+        git_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
     except Exception:
         git_hash = "unknown"
 
@@ -44,9 +44,9 @@ extensions = [
 ]
 
 # Mock de imports para evitar dependencias pesadas o de sistema en el build
+# PyQt6 no se simula: los módulos de la GUI usan valores de Qt al importarse
+# (por ejemplo, el separador decimal del sistema)
 autodoc_mock_imports = [
-    'PyQt5', 'PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.QtWidgets',
-    'PyQt5.QtWebEngineWidgets', 'PyQt5.QtChart',
     'pyqtgraph',
     'pyqtgraph.Qt',
     'pyqtgraph.parametertree',
@@ -59,4 +59,25 @@ templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 language = 'es'
 html_theme = 'pydata_sphinx_theme'
-html_static_path = []
+html_static_path = ['_static']
+# Título corto (el largo se superpone con las pestañas en pantallas angostas)
+html_title = f"RuiDAQAn {version}"
+
+# MathJax local (docs/_static/mathjax): la ayuda se usa sin conexión
+mathjax_path = 'mathjax/tex-svg.js'
+
+
+# Las señales de Qt (pyqtSignal) se documentarían con el docstring genérico de
+# PyQt, que además no es reStructuredText válido: se omiten
+def _omite_senales_qt(app, what, name, obj, skip, options):
+    try:
+        from PyQt6.QtCore import pyqtSignal, pyqtBoundSignal
+    except ImportError:
+        return None
+    if isinstance(obj, (pyqtSignal, pyqtBoundSignal)):
+        return True
+    return None
+
+
+def setup(app):
+    app.connect("autodoc-skip-member", _omite_senales_qt)
