@@ -127,7 +127,8 @@
   lógica pasó a `scripts/empaqueta.py`, que también se puede usar sin make.
   `__init__.py` se restaura desde una copia (antes `git restore` descartaba
   los cambios sin commitear) y la ayuda se copia al paquete sin restos de
-  compilaciones anteriores.
+  compilaciones anteriores. Con `--sin-aislamiento` (`make dist
+  OPC=--sin-aislamiento`) el paquete se arma sin descargar nada de PyPI.
 
 ### Para desarrolladores
 

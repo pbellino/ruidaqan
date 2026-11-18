@@ -14,6 +14,11 @@ Arma el paquete instalable y los ejecutables, en Windows y en Linux.
     python scripts/empaqueta.py limpia
         Borra dist/, build/ y src/*.egg-info.
 
+Con --sin-aislamiento (dist y exe) el paquete se arma con el setuptools y el
+wheel del entorno actual (python -m build --no-isolation), sin crear un
+entorno aislado ni descargar nada de PyPI. Sirve detrás de un proxy o sin
+conexión.
+
 Reemplaza a las recetas del Makefile, que usaban herramientas de Unix
 (mkdir -p, cp, sed, git restore) y no funcionaban con el make de Windows.
 Se usa el mismo intérprete de Python con el que se ejecuta este script.
@@ -82,16 +87,21 @@ def hash_estampado():
         print(f"{INIT.relative_to(RAIZ)} restaurado")
 
 
-def dist():
-    compila_documentacion()
-    with hash_estampado():
-        corre(sys.executable, "-m", "build")
+def arma_paquete(sin_aislamiento=False):
+    extra = ["--no-isolation"] if sin_aislamiento else []
+    corre(sys.executable, "-m", "build", *extra)
 
 
-def exe(nombres):
+def dist(sin_aislamiento=False):
     compila_documentacion()
     with hash_estampado():
-        corre(sys.executable, "-m", "build")
+        arma_paquete(sin_aislamiento)
+
+
+def exe(nombres, sin_aislamiento=False):
+    compila_documentacion()
+    with hash_estampado():
+        arma_paquete(sin_aislamiento)
         for nombre in nombres:
             corre(sys.executable, "-m", "PyInstaller",
                   SPECS / f"ruidaqan_{nombre}.spec", "--noconfirm")
@@ -109,8 +119,13 @@ def limpia():
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = parser.add_subparsers(dest="comando", required=True)
-    sub.add_parser("dist", help="paquete instalable con la documentación")
+    p_dist = sub.add_parser("dist",
+                            help="paquete instalable con la documentación")
     p_exe = sub.add_parser("exe", help="paquete y ejecutables (PyInstaller)")
+    for p in (p_dist, p_exe):
+        p.add_argument("--sin-aislamiento", action="store_true",
+                       help="usa setuptools y wheel del entorno actual (no "
+                            "descarga nada; útil detrás de un proxy)")
     # Sin default en argparse (algunas versiones validan el default de
     # nargs="*" contra choices): vacío = los tres
     p_exe.add_argument("nombres", nargs="*", choices=EJECUTABLES,
@@ -120,9 +135,9 @@ def main():
     args = parser.parse_args()
     try:
         if args.comando == "dist":
-            dist()
+            dist(args.sin_aislamiento)
         elif args.comando == "exe":
-            exe(args.nombres or list(EJECUTABLES))
+            exe(args.nombres or list(EJECUTABLES), args.sin_aislamiento)
         else:
             limpia()
     except subprocess.CalledProcessError as e:

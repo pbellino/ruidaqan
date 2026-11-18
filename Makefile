@@ -45,15 +45,18 @@ capturas:
 # Paquete instalable con la documentación y el hash del commit estampado.
 # La lógica está en scripts/empaqueta.py para que funcione también con el
 # make de Windows (sin mkdir -p, cp, sed ni git restore).
+# Detrás de un proxy o sin conexión: make dist OPC=--sin-aislamiento
+OPC ?=
+
 dist:
-	python scripts/empaqueta.py dist
+	python scripts/empaqueta.py dist $(OPC)
 
 clean:
 	python scripts/empaqueta.py limpia
 
 # Ejecutables con PyInstaller (también arma el paquete)
 exe:
-	python scripts/empaqueta.py exe
+	python scripts/empaqueta.py exe $(OPC)
 
 exe_adquisicion exe_procesamiento exe_resultados:
-	python scripts/empaqueta.py exe $(subst exe_,,$@)
+	python scripts/empaqueta.py exe $(subst exe_,,$@) $(OPC)

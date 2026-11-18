@@ -27,6 +27,11 @@ make exe_procesamiento
 python scripts/empaqueta.py exe procesamiento resultados
 ```
 
+Si `python -m build` se queda en *Installing packages in isolated
+environment* (por ejemplo, detrás de un proxy sin configurar en pip), agregá
+`--sin-aislamiento` (o `make exe OPC=--sin-aislamiento`): usa el `setuptools`
+y el `wheel` del entorno actual y no descarga nada.
+
 El script compila la documentación y la copia a `src/ruidaqan/docs/html`
 (para que la ayuda quede dentro del ejecutable), estampa el hash del commit en
 `src/ruidaqan/__init__.py` mientras se empaqueta y después lo deja como
